@@ -1,2 +1,2 @@
 # sMTL
-smTL CRAN Package
+sMTL CRAN Package
