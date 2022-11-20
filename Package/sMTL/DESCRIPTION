@@ -1,0 +1,24 @@
+Package: sMTL
+Title: Sparse Multi-Task Learning
+Version: 0.1.0
+Authors@R: c(person("Gabriel", "Loewinger", email = "gloewinger@gmail.com", role = c("aut"), comment = c(ORCID = "0000-0002-0755-8520")), 
+		person("Kayhan", "Behdin", email = "behdink@mit.edu", role = c("aut", "cre")),
+		person("Giovanni", "Parmigiani", email = "gp@jimmy.harvard.edu", role = c("ths")), 
+		person("Rahul", "Mazumder", email = "rahulmaz@mit.edu", role = c("ths")),
+		person("National Science Foundation", "Grant DMS1810829", role = c("fnd")),
+		person("National Institutes of Health", "Grant T32 AI 007358", role = c("fnd")))
+Description: Implements sparse multi-Task learning and sparse domain generalization algorithms.
+		<doi:10.1101/856385>.
+Maintainer: Gabriel Loewinger <gloewinger@gmail.com>
+Depends: R (>= 3.4.0)
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports:
+  	JuliaCall,
+	JuliaConnectoR
+RoxygenNote: 7.1.1
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
