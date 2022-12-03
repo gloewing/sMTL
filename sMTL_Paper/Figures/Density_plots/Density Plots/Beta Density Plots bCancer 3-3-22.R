@@ -117,7 +117,7 @@ ggsave( paste0("~/Desktop/Research Final/Sparse Multi-Study/Figures/Density Plot
 L <- 50
 
 # read back in (remove row.numbers)
-betas <- read.csv(  "~/Desktop/Research Final/Sparse Multi-Study/Figures/Density Plots/fscv_density_betas" )[,-1]
+betas <- read.csv( "~/Desktop/Research Final/Sparse Multi-Study/Figures/Density Plots/bCancer_betas" )[,-1]
 betaStar <- betas[-1,] # remove intercept
 
 # like the variance across betas (variance of random effects)
