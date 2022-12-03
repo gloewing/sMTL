@@ -178,10 +178,10 @@ ggsave( paste0("~/Desktop/Research Final/Sparse Multi-Study/Figures/Density Plot
 
 
 ####################################################
-# rug plot with 100 RANDOM coefficients
+# rug plot with 50 RANDOM coefficients
 ####################################################
 set.seed(1)
-L <- 100
+L <- 50
 
 # read back in (remove row.numbers)
 betas <- read.csv(  "~/Desktop/Research Final/Sparse Multi-Study/Figures/Density Plots/fscv_density_betas" )[,-1]
@@ -233,7 +233,7 @@ betaDensity5 <-
 
 betaDensity5
 
-ggsave( paste0("~/Desktop/Research Final/Sparse Multi-Study/Figures/Density Plots/fscv_betas_rug_randomCoefs.pdf"),
+ggsave( paste0("~/Desktop/Research Final/Sparse Multi-Study/Figures/Density Plots/fscv_betas_rug_randomCoefs50.pdf"),
         plot = betaDensity5,
         width = 14,
         height = 20
