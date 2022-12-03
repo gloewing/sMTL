@@ -190,6 +190,7 @@ betaStar <- betas[-1,] # remove intercept
 # like the variance across betas (variance of random effects)
 cMat <- cov(t(betas[-1,]))
 
+# random sample
 indxStar <- sample.int(nrow(betaStar), L, replace = FALSE) # random sample of indices
 
 betaStar <- betaStar[indxStar, ] # 
@@ -217,7 +218,7 @@ betaDensity5 <-
     ylab( "" ) +
     theme( legend.position = "none",
            panel.grid.major.x = element_blank() ,
-           axis.text.y =element_text(face="bold",color="black", size=rel(1)),
+           axis.text.y =element_text(face="bold",color="black", size=rel(1.5)),
            axis.text.x =element_text(face="bold",color="black", size=rel(2)),
            axis.title = element_text(color="black", size=rel(2.75))
     ) +
