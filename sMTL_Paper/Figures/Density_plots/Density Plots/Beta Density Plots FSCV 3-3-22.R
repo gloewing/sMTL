@@ -79,29 +79,6 @@ betaDensity <-
 betaDensity$Feature <- factor( betaDensity$Feature,
                                levels = paste0("Coefficient ", 1:ncol(betaStar)))
 
-betaDensity2 <-
-    betaDensity %>%
-    ggplot(aes(x = value, y = Feature, fill = Feature)) +
-    geom_density_ridges() +
-    theme_ridges() + 
-    geom_vline( xintercept = 0, linetype="dotted", size = 1 ) +
-    xlab(TeX('Coefficient Estimate Magnitude ($\\hat{\\mathbf{\\beta}}^{(j)}$)') ) +
-    ylab( "" ) +
-    theme( legend.position = "none",
-           panel.grid.major.x = element_blank() ,
-           axis.text=element_text(face="bold",color="black", size=rel(2)),
-           axis.title = element_text(color="black", size=rel(3))
-    ) 
-    
-betaDensity2
-
-ggsave( paste0("~/Desktop/Research Final/Sparse Multi-Study/Figures/Density Plots/fscv_betas_density.pdf"),
-        plot = betaDensity2,
-        width = 15,
-        height = 10
-)
-
-
 # rug plot
 betaDensity3 <-
     betaDensity %>%
@@ -132,7 +109,7 @@ ggsave( paste0("~/Desktop/Research Final/Sparse Multi-Study/Figures/Density Plot
 )
 
 ####################################################
-# rug plot with 100 most important coefficients
+# rug plot with 50 most important coefficients
 ####################################################
 L <- 50
 

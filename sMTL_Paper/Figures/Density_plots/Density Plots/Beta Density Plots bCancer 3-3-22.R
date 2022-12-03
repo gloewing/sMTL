@@ -75,34 +75,11 @@ colnames(betaStar) <- paste0("Coefficient ", 1:ncol(betaStar))
 betaDensity <-
     betaStar %>% 
     as_tibble() %>%
-    gather(key = "Feature") 
+    tidyr::gather(key = "Feature") 
 
 # factor levels
 betaDensity$Feature <- factor( betaDensity$Feature,
                                levels = paste0("Coefficient ", 1:ncol(betaStar)))
-
-betaDensity2 <-
-    betaDensity %>%
-    ggplot(aes(x = value, y = Feature, fill = Feature)) +
-    geom_density_ridges() +
-    theme_ridges() + 
-    geom_vline( xintercept = 0, linetype="dotted", size = 1 ) +
-    xlab(TeX('Coefficient Estimate Magnitude ($\\hat{\\mathbf{\\beta}}^{(j)}$)') ) +
-    ylab( "" ) +
-    theme( legend.position = "none",
-           panel.grid.major.x = element_blank() ,
-           axis.text=element_text(face="bold",color="black", size=rel(2)),
-           axis.title = element_text(color="black", size=rel(3))
-            ) 
-
-betaDensity2
-
-
-ggsave( paste0("~/Desktop/Research Final/Sparse Multi-Study/Figures/Density Plots/bCancer_betas_density.pdf"),
-        plot = betaDensity2,
-        width = 15,
-        height = 10
-)
 
 # rug plot
 betaDensity3 <-
@@ -134,3 +111,68 @@ ggsave( paste0("~/Desktop/Research Final/Sparse Multi-Study/Figures/Density Plot
         height = 8
 )
 
+####################################################
+# rug plot with 50 most important coefficients
+####################################################
+L <- 50
+
+# read back in (remove row.numbers)
+betas <- read.csv(  "~/Desktop/Research Final/Sparse Multi-Study/Figures/Density Plots/fscv_density_betas" )[,-1]
+betaStar <- betas[-1,] # remove intercept
+
+# like the variance across betas (variance of random effects)
+cMat <- cov(t(betas[-1,]))
+mean(diag(cMat))
+
+# find most important
+indxMax <- sort( rowMeans(abs(betaStar) ),
+                 decreasing = TRUE,
+                 index.return = TRUE )
+
+indxStar <- indxMax$ix[1:L] # top L most important features
+
+betaStar <- betaStar[indxStar, ] # 
+
+
+betaStar <- t(betaStar)
+colnames(betaStar) <- paste0("Coefficient ", 1:ncol(betaStar))
+betaDensity <-
+    betaStar %>% 
+    as_tibble() %>%
+    tidyr::gather(key = "Feature") 
+
+# factor levels
+betaDensity$Feature <- factor( betaDensity$Feature,
+                               levels = paste0("Coefficient ", 1:ncol(betaStar)))
+
+
+# rug plot
+betaDensity4 <-
+    betaDensity %>%
+    ggplot(aes(x = value, y = Feature)) +
+    theme_ridges() + 
+    geom_vline( xintercept = 0, linetype="dotted", size = 1 ) +
+    xlab(TeX('Coefficient Estimate Magnitude ($\\hat{\\mathbf{\\beta}}^{(j)}$)') ) +
+    ylab( "" ) +
+    theme( legend.position = "none",
+           panel.grid.major.x = element_blank() ,
+           axis.text.y =element_text(face="bold",color="black", size=rel(1.5)),
+           axis.text.x =element_text(face="bold",color="black", size=rel(2)),
+           axis.title = element_text(color="black", size=rel(2.75))
+    ) +
+    geom_density_ridges(
+        fill = NA,
+        color = NA,
+        aes(point_color = Feature, point_fill = Feature, point_shape = Feature),
+        jittered_points = TRUE,
+        position = position_points_jitter(width = 0, height = 0),
+        point_shape = '|', point_size = 6, point_alpha = 1, alpha = 0
+    ) + 
+    scale_point_color_hue(l = 40)
+
+betaDensity4
+
+ggsave( paste0("~/Desktop/Research Final/Sparse Multi-Study/Figures/Density Plots/bCancer_betas_50rug.pdf"),
+        plot = betaDensity4,
+        width = 14,
+        height = 20)
