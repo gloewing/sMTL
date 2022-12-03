@@ -1,25 +1,30 @@
 library(MASS)
 library(JuliaConnectoR)
 library(ggpubr)
+library(here)
 
-setwd("~/Desktop/Research")
+# function paths
+savePath <- here() # path to save files and figures -- set based on where this saved
+R_fn_path <- paste0(savePath, "/Rcode") # R functions path
 
-# Figures and Tables
-f1score <- function(data, name){
-    tp <- data[ paste0(name, "_tp") ]
-    fp <- data[ paste0(name, "_fp") ]
-    
-    return( tp / (tp + 0.5 * (fp + 1 - tp ) ) ) # f1 score
-}
+# set wd and read in R functions for tuning
+setwd(R_fn_path)
+source("sparseFn_iht_test_MT.R") 
+sparseCV_iht_par <- sparseCV_iht
 
-LSitr <- 50 #50 #5 #ifelse(is.null(sims6$lit)[runNum], 50, sims6$lit[runNum] ) # number of iterations of local search to do while tuning (for iterations where we do actually use local search)
-LSspc <- 1 #1#1 #5 #ifelse(is.null(sims6$lspc)[runNum], 1, sims6$lspc[runNum] ) # when tuning, do local search every <LSspc> number of tuning parameters (like every fifth value)
-localIters <- 50 # 0 # number of LS iterations for actually fitting models
+# Julia paths for multi-task algorithms
+juliaPath <- "/Applications/Julia-1.5.app/Contents/Resources/julia/bin" # path to julia binary
+juliaFnPath_MT <- juliaFnPath <- paste0(savePath, "/Julia_code/")
+Sys.setenv(JULIA_BINDIR = juliaPath)
+
+# parameters for model fitting and tuning
+LSitr <- 50  # number of iterations of local search to do while tuning (for iterations where we do actually use local search)
+LSspc <- 1  # when tuning, do local search every <LSspc> number of tuning parameters (like every fifth value)
+localIters <- 50 # # number of LS iterations for actually fitting models
 tuneThreads <- 1 # number of threads to use for tuning
-lambdaZmax <- 5 # make sure lambda_z are smaller than this to pervent numerical instability
+lambdaZmax <- 5 # make sure lambda_z are smaller than this to prevent numerical instability
 maxIter_train <- 5000
 maxIter_cv <- 1000
-
 tuneInd <- TRUE
 WSmethod <- 2 
 ASpass <- TRUE 
@@ -31,15 +36,15 @@ MSTn <- "multiTask"
 set.seed(1)
 num.studies <- K <- 2
 nfold <- 5
-n <- 25 # n = 50
+n <- 25 
 numCovs <- p <- 50
 s <- 0
-r <- 14 # r = 10
+r <- 14 
 r_card <- 2 * r
 r_p <- 0.5 # probability of inclusion
 corr_rho <- 0.5
 sigma2 <- 1 # residual variance
-zeroCovs <- c() #seq(2, numCovs + 1)[-seq(2, 2 * s, by = 2)] # alternate because of exponential correlation structure
+zeroCovs <- c() 
 
 Sigma <- matrix(1, ncol = numCovs, nrow = numCovs)
 
@@ -58,7 +63,7 @@ X <-  mvrnorm(n,
 # support matrix
 Z <- matrix(0, nrow = p, ncol = K)
 
-suppSeq <- seq(2, 4 * round(r * r_p) + 1, by = 2) #seq(2*s + 3, 2*(s + r) + 1, by = 2) # alternating sequence of covariate indices starting after common support that is "r" long
+suppSeq <- seq(2, 4 * round(r * r_p) + 1, by = 2)
 
 for(j in 1:K){
     
@@ -93,25 +98,17 @@ lambda <- sort( unique( c(1e-6, 1e-5, 0.0001, 0.001, 0.01, 5,10, 50, 100,
 lambdaZ <- sort( unique( c(0, c( 10^c(-(6:3)), 5 * 10^c(-(6:3))),
                            exp(-seq(0,5, length = 8)),
                            1:3) ),
-                 decreasing = TRUE ) # 2:100
+                 decreasing = TRUE )
 
-# Julia paths
-source("sparseFn_iht_test_MT.R") # USE TEST VERSION HERE
-sparseCV_iht_par <- sparseCV_iht
 
-juliaPath <- "/Applications/Julia-1.5.app/Contents/Resources/julia/bin"
-juliaFnPath_MT <- juliaFnPath <- "/Users/gabeloewinger/Desktop/Research Final/Sparse Multi-Study/IHT/Tune MT/"
-Sys.setenv(JULIA_BINDIR = juliaPath)
-
-##############
-# MT versions
-##############
-L0_reg <- juliaCall("include", paste0(juliaFnPath_MT, "l0_IHT_tune.jl") ) # sparseReg # MT: doesnt make sense
-L0_MS <- juliaCall("include", paste0(juliaFnPath_MT, "BlockIHT_tune_MT.jl") ) # MT: Need to check it works
-L0_MS2 <- juliaCall("include", paste0(juliaFnPath_MT, "BlockComIHT_tune_MT.jl") ) # MT: Need to check it works;   multi study with beta-bar penalty
-L0_MS_z <- juliaCall("include", paste0(juliaFnPath_MT, "BlockComIHT_inexactAS_tune_old_MT.jl") ) # MT: Need to check it works;  "_tune_old.jl" version gives the original active set version that performs better #\beta - \betaBar penalty
-L0_MS_z2 <- juliaCall("include", paste0(juliaFnPath_MT, "BlockComIHT_inexact_tuneTest_MT.jl") ) # MT: Need to check it works; no active set but NO common support (it does have Z - zbar and beta - betabar)
-L0_MS_z3 <- juliaCall("include", paste0(juliaFnPath_MT, "BlockComIHT_inexact_diffAS_tuneTest_MT.jl") ) # sepratae active sets for each study
+##########################################
+# Create R Functions from Julia Code 
+##########################################
+L0_reg <- juliaCall("include", paste0(juliaFnPath_MT, "l0_IHT_tune.jl") ) 
+L0_MS <- juliaCall("include", paste0(juliaFnPath_MT, "BlockIHT_tune_MT.jl") )
+L0_MS2 <- juliaCall("include", paste0(juliaFnPath_MT, "BlockComIHT_tune_MT.jl") )
+L0_MS_z <- juliaCall("include", paste0(juliaFnPath_MT, "BlockComIHT_inexactAS_tune_old_MT.jl") ) 
+L0_MS_z3 <- juliaCall("include", paste0(juliaFnPath_MT, "BlockComIHT_inexact_diffAS_tuneTest_MT.jl") ) 
 ####################################################
 
 
@@ -147,29 +144,33 @@ betaEst <- do.call(cbind, as.list( coef(tune.mod, exact = TRUE, s = "lambda.min"
 
 gLasso <- as.matrix(betaEst)
 
-############
-# OSE L0
-############
+####################################################################################
+# OSE L0: TS-SR -- Task-Specific Sparse Regression (Separate L0 on each Task)
+####################################################################################
+# read in again to ensure no JuliaConnectoR issues
+rm(L0_MS_z3)
+L0_MS_z3 <- juliaCall("include", paste0(juliaFnPath_MT, "BlockComIHT_inexact_diffAS_tuneTest_MT.jl") ) 
+
 timeStart1 <- Sys.time()
 b <- matrix(0, ncol = K, nrow = numCovs + 1)
 tune.grid <- as.data.frame(  expand.grid(
-    c(lambda) , # 0 # add 0 but not to glmnet because that will cause problems
-    rho)
-) # tuning parameters to consider
+                          c(lambda) , 
+                          rho)) # tuning parameters to consider
 colnames(tune.grid) <- c("lambda", "rho")
 
 tune.grid_OSE <- data.frame(lambda1 = unique(lambda),
                             lambda2 = 0,
                             lambda_z = 0,
                             #rho = numCovs
-                            rho = tune.grid$rho)
+                            rho = as.integer(tune.grid$rho)
+                            )
 
 tune.grid_OSE <- unique( tune.grid_OSE )
 
 L0_tune <- sparseCV_iht_par(data = full,
                             tune.grid = tune.grid_OSE,
-                            hoso = MSTn, # could balancedCV (study balanced CV necessary if K =2)
-                            method = "MS_z3", #"MS_z_fast", # this does not borrow information across the active sets
+                            hoso = MSTn, 
+                            method = "MS_z3", 
                             nfolds = nfold,
                             cvFolds = 5,
                             juliaPath = juliaPath,
@@ -183,12 +184,9 @@ L0_tune <- sparseCV_iht_par(data = full,
                             ASpass = ASpass
                             )
 
-L0_tune <- L0_tune$best # parameters
+L0_tune <- L0_tune$best 
 ridgeLambda <- L0_tune$lambda1 
 ridgeRho <- L0_tune$rho
-
-rm(L0_MS_z3)
-L0_MS_z3 <- juliaCall("include", paste0(juliaFnPath_MT, "BlockComIHT_inexact_diffAS_tuneTest_MT.jl") ) # sepratae active sets for each study
 
 # warm start
 warmStart = L0_MS_z3(X = as.matrix( full[ , Xindx ]) ,
@@ -220,14 +218,13 @@ betas = L0_MS_z3(X = as.matrix( full[ , Xindx ]) ,
                  ASpass = ASpass
                 )
 
-
+# save betas
 oseL0 <- betas
 
 ###################
 # Zbar + L2
 ###################
 tune.grid_MSZ_5 <- as.data.frame(  expand.grid( lambda, 0, lambdaZ, rho) )
-# ridgeLambda * (rho / ridgeRho)
 colnames(tune.grid_MSZ_5) <- c("lambda1", "lambda2", "lambda_z","rho")
 
 # order correctly
@@ -237,6 +234,7 @@ tune.grid_MSZ_5 <- tune.grid_MSZ_5[  order(-tune.grid_MSZ_5$rho,
 
 tune.grid_MSZ_5 <- unique(tune.grid_MSZ_5)
 
+# scale the magnitude of the tuning parameter for the Zbar penalty based on the sparsity level
 lambdaZScale <- rhoScale(K = K, 
                          p = numCovs, 
                          rhoVec = tune.grid_MSZ_5$rho, 
@@ -250,8 +248,8 @@ tune.grid_MSZ_5 <- tuneZscale(tune.grid = tune.grid_MSZ_5,
 # tune multi-study with l0 penalty with z - zbar and beta - betaBar penalties
 tuneMS <- sparseCV_iht_par(data = full,
                            tune.grid = tune.grid_MSZ_5,
-                           hoso = MSTn, # could balancedCV (study balanced CV necessary if K =2)
-                           method = "MS_z", # could be L0 for sparse regression or MS # for multi study
+                           hoso = MSTn, 
+                           method = "MS_z", 
                            nfolds = nfold,
                            cvFolds = 5,
                            juliaPath = juliaPath,
@@ -265,6 +263,7 @@ tuneMS <- sparseCV_iht_par(data = full,
                            ASpass = ASpass
 )
 
+# save initial selected tuning parameters for a second stage of cross validated tuning
 MSparams <- tuneMS$best # parameters
 rhoStar <- MSparams$rho
 lambdaZstar <- MSparams$lambda_z
@@ -293,10 +292,11 @@ lambdaZScale <- rhoScale(K = K,
 gridUpdate <- tuneZscale(tune.grid = gridUpdate, 
                          rhoScale = lambdaZScale)
 
+# tune in neighborhood around initialy tuning values
 tuneMS <- sparseCV_iht_par(data = full,
                            tune.grid = gridUpdate,
-                           hoso = MSTn, # could balancedCV (study balanced CV necessary if K =2)
-                           method = "MS_z", # could be L0 for sparse regression or MS # for multi study
+                           hoso = MSTn, 
+                           method = "MS_z", 
                            nfolds = nfold,
                            cvFolds = 5,
                            juliaPath = juliaPath,
@@ -310,10 +310,12 @@ tuneMS <- sparseCV_iht_par(data = full,
                            ASpass = ASpass
 )
 
+# selected hyperparameters
 MSparams <- tuneMS$best # parameters
 
+# read Julia code again to ensure no JuliaConnectoR issues
 rm(L0_MS_z)
-L0_MS_z <- juliaCall("include", paste0(juliaFnPath_MT, "BlockComIHT_inexactAS_tune_old_MT.jl") ) # MT: Need to check it works;  "_tune_old.jl" version gives the original active set version that performs better #\beta - \betaBar penalty
+L0_MS_z <- juliaCall("include", paste0(juliaFnPath_MT, "BlockComIHT_inexactAS_tune_old_MT.jl") ) 
 
 # warm start with OSE L0 (i.e., lambda_z = 0 and tuned lambda1/lambda2)
 warmStart = L0_MS_z(X = as.matrix( full[ , Xindx ]) ,
@@ -321,7 +323,7 @@ warmStart = L0_MS_z(X = as.matrix( full[ , Xindx ]) ,
                     rho = min( c(MSparams$rho * 4, numCovs - 1) ),
                     beta = b,
                     lambda1 = max(MSparams$lambda1, 1e-6), # ensure theres some regularization given higher rho for WS
-                    lambda2 = 0, #MSparams$lambda2,
+                    lambda2 = 0, 
                     lambda_z = 0,
                     scale = TRUE,
                     maxIter = maxIter_train,
@@ -330,7 +332,7 @@ warmStart = L0_MS_z(X = as.matrix( full[ , Xindx ]) ,
                     ASpass = ASpass
 )
 
-# final model # optimal lambda = 0.05744622
+# full model
 beta_zbar = L0_MS_z(X = as.matrix( full[ , Xindx ]) ,
                   y = as.matrix( full[, Yindx] ),
                   rho = MSparams$rho,
@@ -345,14 +347,20 @@ beta_zbar = L0_MS_z(X = as.matrix( full[ , Xindx ]) ,
                   ASpass = ASpass
 )
 
-################
-# lambda_z= 0
-################
+############################################################################################################################################################################################################
+####################################################################
+# Zbar + L2: for different tuning values of Zbar hyperparameter
+####################################################################
+
+##################################
+# Zbar + L2: lambda = 0
+##################################
+# lambda_z = 0 is equivalent to a Task-specific Sparse Regression (TS-SR)
 beta_lamba0 = oseL0
 
-#################
-# lambda = 0.05
-#################
+##################################
+# Zbar + L2: lambda = 0.05
+##################################
 lamb = 0.05
 b <- matrix(0, ncol = K, nrow = numCovs + 1)
 
@@ -364,11 +372,12 @@ tune.grid_MSZ_5 <- tune.grid_MSZ_5[  order(tune.grid_MSZ_5$rho,
                                            tune.grid_MSZ_5$lambda1,
                                            -tune.grid_MSZ_5$lambda_z,
                                            decreasing=TRUE),     ]
-# tune
+
+# tune the ridge penalty 
 tuneMS <- sparseCV_iht_par(data = full,
                            tune.grid = tune.grid_MSZ_5,
-                           hoso = MSTn, # could balancedCV (study balanced CV necessary if K =2)
-                           method = "MS_z", # could be L0 for sparse regression or MS # for multi study
+                           hoso = MSTn, 
+                           method = "MS_z",
                            nfolds = nfold,
                            cvFolds = 5,
                            juliaPath = juliaPath,
@@ -388,7 +397,7 @@ warmStart = L0_MS_z(X = as.matrix( full[ , Xindx ]) ,
                     rho = min( c(MSparams$rho * 4, numCovs - 1) ),
                     beta = b,
                     lambda1 = max(MSparams$lambda1, 1e-6), # ensure theres some regularization given higher rho for WS
-                    lambda2 = 0, #MSparams$lambda2,
+                    lambda2 = 0, 
                     lambda_z = 0,
                     scale = TRUE,
                     maxIter = maxIter_train,
@@ -411,10 +420,10 @@ beta_lamba01 = L0_MS_z(X = as.matrix( full[ , Xindx ]) ,
                       ASpass = ASpass
 )
 
-# lambda = 1
-#################
-# lambda = 0.005
-#################
+
+##################################
+# Zbar + L2: lambda = 0.005
+##################################
 
 tune.grid_MSZ_5 <- as.data.frame(  expand.grid( lambda, 0, 1, rho) )
 colnames(tune.grid_MSZ_5) <- c("lambda1", "lambda2", "lambda_z", "rho")
@@ -425,11 +434,11 @@ tune.grid_MSZ_5 <- tune.grid_MSZ_5[  order(tune.grid_MSZ_5$rho,
                                            -tune.grid_MSZ_5$lambda_z,
                                            decreasing=TRUE),     ]
 
-# tune
+# tune the ridge Penalty
 tuneMS <- sparseCV_iht_par(data = full,
                            tune.grid = tune.grid_MSZ_5,
-                           hoso = MSTn, # could balancedCV (study balanced CV necessary if K =2)
-                           method = "MS_z", # could be L0 for sparse regression or MS # for multi study
+                           hoso = MSTn, 
+                           method = "MS_z", 
                            nfolds = nfold,
                            cvFolds = 5,
                            juliaPath = juliaPath,
@@ -448,8 +457,8 @@ warmStart = L0_MS_z(X = as.matrix( full[ , Xindx ]) ,
                     y = as.matrix( full[, Yindx] ),
                     rho = min( c(MSparams$rho * 4, numCovs - 1) ),
                     beta = b,
-                    lambda1 = max(MSparams$lambda1, 1e-6), # ensure theres some regularization given higher rho for WS
-                    lambda2 = 0, #MSparams$lambda2,
+                    lambda1 = max(MSparams$lambda1, 1e-6),
+                    lambda2 = 0, 
                     lambda_z = 0,
                     scale = TRUE,
                     maxIter = maxIter_train,
@@ -484,11 +493,12 @@ tune.grid_beta <- tune.grid_beta[  order(-tune.grid_beta$rho,
                                          decreasing=TRUE),     ]
 
 tune.grid_beta <- unique(tune.grid_beta)
-# if tune in two stages
+
+# tune in two stages
 tuneMS <- sparseCV_iht_par(data = full,
                            tune.grid = tune.grid_beta,
-                           hoso = MSTn, # could balancedCV (study balanced CV necessary if K =2)
-                           method = "MS_z", # could be L0 for sparse regression or MS # for multi study
+                           hoso = MSTn, 
+                           method = "MS_z", 
                            nfolds = nfold,
                            cvFolds = 5,
                            juliaPath = juliaPath,
@@ -520,8 +530,8 @@ gridUpdate <- unique(gridUpdate)
 
 tuneMS <- sparseCV_iht_par(data = full,
                            tune.grid = gridUpdate,
-                           hoso = MSTn, # could balancedCV (study balanced CV necessary if K =2)
-                           method = "MS_z", # could be L0 for sparse regression or MS # for multi study
+                           hoso = MSTn, 
+                           method = "MS_z", 
                            nfolds = nfold,
                            cvFolds = 5,
                            juliaPath = juliaPath,
@@ -537,8 +547,9 @@ tuneMS <- sparseCV_iht_par(data = full,
   
 MSparams <- tuneMS$best # tuned parameters
 
+# reload Julia functions to avoid any JuliaConnectoR issues
 rm(L0_MS_z)
-L0_MS_z <- juliaCall("include", paste0(juliaFnPath_MT, "BlockComIHT_inexactAS_tune_old_MT.jl") ) # MT: Need to check it works;  "_tune_old.jl" version gives the original active set version that performs better #\beta - \betaBar penalty
+L0_MS_z <- juliaCall("include", paste0(juliaFnPath_MT, "BlockComIHT_inexactAS_tune_old_MT.jl") ) 
 
 # warm start
 warmStart = L0_MS_z(X = as.matrix( full[ , Xindx ]) ,
@@ -546,8 +557,8 @@ warmStart = L0_MS_z(X = as.matrix( full[ , Xindx ]) ,
                     rho = min( c(MSparams$rho * 4, numCovs - 1) ),
                     beta = b,
                     lambda1 = max(MSparams$lambda1, 1e-5),
-                    lambda2 = 0, #MSparams$lambda2,
-                    lambda_z = 0, #MSparams$lambda_z,
+                    lambda2 = 0, 
+                    lambda_z = 0,
                     scale = TRUE,
                     maxIter = maxIter_train,
                     localIter = 0,
@@ -571,14 +582,14 @@ bbar = L0_MS_z(X = as.matrix( full[ , Xindx ]) ,
 )
 
 
-########################
-# common support
-########################
+#########################
+# common support: CS+L2
+#########################
 
 tuneMS <- sparseCV_iht_par(data = full,
                            tune.grid = tune.grid,
-                           hoso = MSTn, # could balancedCV (study balanced CV necessary if K =2)
-                           method = "MS", # could be L0 for sparse regression or MS # for multi study
+                           hoso = MSTn, 
+                           method = "MS", 
                            nfolds = nfold,
                            cvFolds = 5,
                            juliaPath = juliaPath,
@@ -592,8 +603,9 @@ tuneMS <- sparseCV_iht_par(data = full,
 
 MSparams <- tuneMS$best # parameters
 
+# reload Julia functions to avoid any JuliaConnectoR issues
 rm(L0_MS)
-L0_MS <- juliaCall("include", paste0(juliaFnPath_MT, "BlockIHT_tune_MT.jl") ) # MT: Need to check it works
+L0_MS <- juliaCall("include", paste0(juliaFnPath_MT, "BlockIHT_tune_MT.jl") )
 
 # warm start
 warmStart = L0_MS(X = as.matrix( full[ , Xindx ]) ,
@@ -618,6 +630,12 @@ beta_cs = L0_MS(X = as.matrix( full[ , Xindx ]) ,
                 )
 
 
+
+
+############################################################################
+# save betas estimated with the methods above to make figures
+############################################################################
+
 betas <- list("CS+L2" = beta_cs,
               "Zbar+L2" = beta_zbar,
               "Bbar" = bbar,
@@ -627,18 +645,20 @@ betas <- list("CS+L2" = beta_cs,
               )
 
 saveRDS(betas, 
-        "~/Desktop/Research Final/Sparse Multi-Study/Figures/Intro Support Figure/betas")
+        paste0(savePath, "/betas")) 
 
 
-betas <- readRDS("~/Desktop/Research Final/Sparse Multi-Study/Figures/Intro Support Figure/betas")
-
+###################
 # plots
+###################
 library(tidyverse)
 library(ggplot2)
 library(latex2exp)
 library(grid)
 library(ggpubr)
 
+# read betas
+betas <- readRDS(paste0(savePath, "/betas"))
 
 betas$Betas <- rbind(0, betas$Betas) # add on intercept to be consistent with estimates (removed below)
 for(j in 1:length(betas)){
@@ -657,9 +677,6 @@ for(j in 1:length(betas)){
 
 b <- do.call(rbind, betas)
 b$Task <- as.factor(b$Task)
-# 
-# p1 <- ggplot(b, aes(y = Beta, x = Index)) + geom_line() + theme_minimal() + 
-#     theme(axis.title.x = element_blank(), axis.text.x = element_blank())
 
 
 for(j in 1:length(unique(b$Method)) ){
@@ -672,13 +689,13 @@ for(j in 1:length(unique(b$Method)) ){
         assign(paste0("p", j),
                b %>% as_tibble() %>%
                    filter(Method == method) %>%
-                   ggplot(aes(x = Index, y = Beta, color= Task)) +  # , group=Price+
+                   ggplot(aes(x = Index, y = Beta, color= Task)) +  
                    geom_point(alpha = 0.5, data = ~filter(.x, Beta != 0), aes(shape = Task)) +
                    geom_segment(alpha = 0.5,  aes(x=Index, xend=Index, y=0, yend=Beta)) +
                    theme_bw() +
                    ylab(TeX('True $\\mathbf{\\beta}$') ) + 
                    theme_classic() + 
-                   theme(axis.title.x = element_blank(), axis.text.x = element_blank()) + # remove x-axis
+                   theme(axis.title.x = element_blank(), axis.text.x = element_blank()) + 
                    geom_hline(yintercept = 0, linetype = "dashed") +
                    scale_y_continuous(breaks = c(-1, 0, 1), limits = c(-1.5, 1.5) ) +
                    scale_color_manual(values=c("blue", "red")) +
@@ -686,8 +703,8 @@ for(j in 1:length(unique(b$Method)) ){
                     plot.title = element_text(hjust = 0.5, color="black", size=rel(1), face="bold"),
                     axis.text=element_text(face="bold",color="black", size=rel(1)),
                     axis.title = element_text(face="bold", color="black", size=rel(1)),
-                    legend.key.size = unit(2, "line"), # added in to increase size
-                    legend.text = element_text(face="bold", color="black", size = rel(1)), # 3 GCL
+                    legend.key.size = unit(2, "line"), 
+                    legend.text = element_text(face="bold", color="black", size = rel(1)), 
                     legend.title = element_text(face="bold", color="black", size = rel(1)),
                     strip.text.x = element_text(face="bold", color="black", size = rel(1))
                     )
@@ -699,7 +716,7 @@ for(j in 1:length(unique(b$Method)) ){
       assign(paste0("p", j),
              b %>% as_tibble() %>%
                filter(Method == method) %>%
-               ggplot(aes(x = Index, y = Beta, color= Task)) +  # , group=Price+
+               ggplot(aes(x = Index, y = Beta, color= Task)) + 
                # geom_point() +
                geom_point(alpha = 0.5, data = ~filter(.x, Beta != 0), aes(shape = Task)) +
                geom_segment(alpha = 0.5,  aes(x=Index, xend=Index, y=0, yend=Beta)) +
@@ -714,74 +731,15 @@ for(j in 1:length(unique(b$Method)) ){
                theme(plot.title = element_text(hjust = 0.5, color="black", size=rel(1), face="bold"),
                       axis.text=element_text(face="bold",color="black", size=rel(1)),
                       axis.title = element_text(face="bold", color="black", size=rel(1)),
-                      legend.key.size = unit(2, "line"), # added in to increase size
-                      legend.text = element_text(face="bold", color="black", size = rel(1)), # 3 GCL
+                      legend.key.size = unit(2, "line"), 
+                      legend.text = element_text(face="bold", color="black", size = rel(1)), 
                       legend.title = element_text(face="bold", color="black", size = rel(1)),
                       strip.text.x = element_text(face="bold", color="black", size = rel(1)),
                       legend.position="bottom",
-                      # legend.justification="right",
                       legend.margin=margin(0,0,0,0),
                       legend.box.margin=margin(-10,-10,-10,-10)
                )
       )
-      
-      
-      
-    }else if(j == 2  ){
-      # make the legend at the bottom here because we use it as the last figure
-      assign(paste0("p2", j),
-             b %>% as_tibble() %>%
-               filter(Method == method) %>%
-               ggplot(aes(x = Index, y = Beta, color= Task)) +  # , group=Price+
-               # geom_point() +
-               geom_point(alpha = 0.5, data = ~filter(.x, Beta != 0), aes(shape = Task)) +
-               geom_segment(alpha = 0.5,  aes(x=Index, xend=Index, y=0, yend=Beta)) +
-               theme_bw() +
-               ylab(TeX(paste0(method, ' $\\hat{\\mathbf{\\beta}}$') )) + 
-               xlab("Coefficient Index") + 
-               theme_classic() +
-               geom_hline(yintercept = 0, linetype = "dashed") +
-               scale_y_continuous(breaks = c(-1, 0, 1), limits = c(-1.5, 1.5)) + 
-               scale_x_continuous(breaks = c(1, 10, 20, 30, 40, 50)) + 
-               scale_color_manual(values = c("blue", "red")) +
-               theme(plot.title = element_text(hjust = 0.5, color="black", size=rel(1), face="bold"),
-                     axis.text=element_text(face="bold",color="black", size=rel(1)),
-                     axis.title = element_text(face="bold", color="black", size=rel(1)),
-                     legend.key.size = unit(2, "line"), # added in to increase size
-                     legend.text = element_text(face="bold", color="black", size = rel(1)), # 3 GCL
-                     legend.title = element_text(face="bold", color="black", size = rel(1)),
-                     strip.text.x = element_text(face="bold", color="black", size = rel(1)),
-                     legend.position="bottom",
-                     # legend.justification="right",
-                     legend.margin=margin(0,0,0,0),
-                     legend.box.margin=margin(-10,-10,-10,-10)
-               )
-      )
-      
-      # make the legend at the bottom here because we use it as the last figure
-      assign(paste0("p", j),
-             b %>% as_tibble() %>%
-               filter(Method == method) %>%
-               ggplot(aes(x = Index, y = Beta, color= Task)) +  # , group=Price+
-               geom_point(alpha = 0.5, data = ~filter(.x, Beta != 0), aes(shape = Task)) +
-               geom_segment(alpha = 0.5,  aes(x=Index, xend=Index, y=0, yend=Beta)) +
-               theme_bw() +
-               ylab(TeX('True $\\mathbf{\\beta}$') ) + 
-               theme_classic() + 
-               theme(axis.title.x = element_blank(), axis.text.x = element_blank()) + # remove x-axis
-               geom_hline(yintercept = 0, linetype = "dashed") +
-               scale_y_continuous(breaks = c(-1, 0, 1), limits = c(-1.5, 1.5) ) +
-               scale_color_manual(values=c("blue", "red")) +
-               theme(legend.position="none",
-                     plot.title = element_text(hjust = 0.5, color="black", size=rel(1), face="bold"),
-                     axis.text=element_text(face="bold",color="black", size=rel(1)),
-                     axis.title = element_text(face="bold", color="black", size=rel(1)),
-                     legend.key.size = unit(2, "line"), # added in to increase size
-                     legend.text = element_text(face="bold", color="black", size = rel(1)), # 3 GCL
-                     legend.title = element_text(face="bold", color="black", size = rel(1)),
-                     strip.text.x = element_text(face="bold", color="black", size = rel(1))
-               )
-      )  
       
       
       
@@ -790,14 +748,13 @@ for(j in 1:length(unique(b$Method)) ){
         assign(paste0("p", j),
                b %>% as_tibble() %>%
                    filter(Method == method) %>%
-                   ggplot(aes(x = Index, y = Beta, color= Task)) +  # , group=Price+
-                   # geom_point() +
+                   ggplot(aes(x = Index, y = Beta, color= Task)) +  
                    geom_point(alpha = 0.5, data = ~filter(.x, Beta != 0), aes(shape = Task)) +
                    geom_segment(alpha = 0.5,  aes(x=Index, xend=Index, y=0, yend=Beta)) +
                    theme_bw() +
                    ylab(TeX(paste0(method, ' $\\hat{\\mathbf{\\beta}}$') )) + 
                    theme_classic() +
-                   theme(axis.title.x = element_blank(), axis.text.x = element_blank()) + # remove x-axis
+                   theme(axis.title.x = element_blank(), axis.text.x = element_blank()) + 
                    geom_hline(yintercept = 0, linetype = "dashed") +
                    scale_y_continuous(breaks = c(-1, 0, 1), limits = c(-1.5, 1.5)) + 
                    scale_color_manual(values = c("blue", "red")) +
@@ -805,8 +762,8 @@ for(j in 1:length(unique(b$Method)) ){
                        plot.title = element_text(hjust = 0.5, color="black", size=rel(1), face="bold"),
                        axis.text=element_text(face="bold",color="black", size=rel(1)),
                        axis.title = element_text(face="bold", color="black", size=rel(1)),
-                       legend.key.size = unit(2, "line"), # added in to increase size
-                       legend.text = element_text(face="bold", color="black", size = rel(1)), # 3 GCL
+                       legend.key.size = unit(2, "line"), 
+                       legend.text = element_text(face="bold", color="black", size = rel(1)),
                        legend.title = element_text(face="bold", color="black", size = rel(1)),
                        strip.text.x = element_text(face="bold", color="black", size = rel(1))
                  )
@@ -816,20 +773,10 @@ for(j in 1:length(unique(b$Method)) ){
     
 }
 
-setwd("~/Desktop/Research Final/Sparse Multi-Study/Figures/Intro Support Figure")
-ggsave( "Intro_n25_r14_p25_s5.pdf",
-        plot = grid.draw(rbind(ggplotGrob(p6),
-                               ggplotGrob(p4),
-                               ggplotGrob(p2),
-                               ggplotGrob(p1),
-                               ggplotGrob(p3),
-                               ggplotGrob(p5),
-                               size = "last") ),
-        width = 6,
-        height = 6
-)
 
-#################
+###################
+# figure 3 [Left]
+###################
 grid.newpage()
 plt <- rbind(ggplotGrob(p6),
              ggplotGrob(p4),
@@ -837,13 +784,16 @@ plt <- rbind(ggplotGrob(p6),
              size = "last")
 
 
-setwd("~/Desktop/Research Final/Sparse Multi-Study/Figures/Intro Support Figure")
-ggsave( "Intro_n25_r14_p25_s5_a.pdf",
+setwd(savePath)
+ggsave( "Intro_3_left.pdf",
         plot = plt,
         width = 4.5,
         height = 4.5
 )
-# ####################
+
+#################
+# figure 3 [Right]
+#################
 grid.newpage()
 plt <- rbind(ggplotGrob(p1),
              ggplotGrob(p3),
@@ -851,34 +801,29 @@ plt <- rbind(ggplotGrob(p1),
              size = "last")
 
 
-setwd("~/Desktop/Research Final/Sparse Multi-Study/Figures/Intro Support Figure")
-ggsave( "Intro_n25_r14_p25_s5_b.pdf",
+setwd(savePath)
+ggsave( "Intro_3_right.pdf",
         plot = plt,
         width = 4.5,
         height = 4.5
 )
 # ####################
 
-setwd("~/Desktop/Research Final/Sparse Multi-Study/Figures/Intro Support Figure")
-plt <- grid.draw(rbind(ggplotGrob(p6),
+#################
+# figure 1 [Left]
+#################
+grid.newpage()
+setwd(savePath)
+plt <- rbind(ggplotGrob(p6),
                        ggplotGrob(p2),
                        ggplotGrob(p5),
-                       size = "last") )
+                       size = "last") 
 
-ggsave( "Intro_reduced_n25_r14_p25_s5.pdf",
+
+ggsave( "Intro_1_left.pdf",
         plot = plt,
-        width = 4.5, # 5.5
-        height = 4.5 # 3.5
-)
-
-
-
-plt <- ggarrange(p6,p1,p4,p3,p22,p5, ncol=2, nrow=3, common.legend = TRUE, legend="bottom")
-setwd("~/Desktop/Research Final/Sparse Multi-Study/Figures/Intro Support Figure")
-ggsave( "Intro_reduced_n25_r14_p25_s5_combined.pdf",
-        plot = plt,
-        width = 8,
-        height = 4
+        width = 4.5, 
+        height = 4.5 
 )
 
 #######################################
@@ -910,10 +855,6 @@ for(j in 1:length(betas)){
 
 b <- do.call(rbind, betas)
 b$Task <- as.factor(b$Task)
-# 
-# p1 <- ggplot(b, aes(y = Beta, x = Index)) + geom_line() + theme_minimal() + 
-#     theme(axis.title.x = element_blank(), axis.text.x = element_blank())
-
 
 for(j in 1:length(unique(b$Method)) ){
   
@@ -925,8 +866,7 @@ for(j in 1:length(unique(b$Method)) ){
     assign(paste0("p", j),
            b %>% as_tibble() %>%
              filter(Method == method) %>%
-             ggplot(aes(x = Index, y = Beta, color= Task)) +  # , group=Price+
-             # geom_point() +
+             ggplot(aes(x = Index, y = Beta, color= Task)) +  
              geom_point(alpha = 0.5, data = ~filter(.x, Beta != 0), aes(shape = Task)) +
              geom_segment(alpha = 0.5,  aes(x=Index, xend=Index, y=0, yend=Beta)) +
              theme_bw() +
@@ -940,12 +880,11 @@ for(j in 1:length(unique(b$Method)) ){
              theme(plot.title = element_text(hjust = 0.5, color="black", size=rel(1), face="bold"),
                    axis.text=element_text(face="bold",color="black", size=rel(1)),
                    axis.title = element_text(face="bold", color="black", size=rel(1)),
-                   legend.key.size = unit(2, "line"), # added in to increase size
-                   legend.text = element_text(face="bold", color="black", size = rel(1)), # 3 GCL
+                   legend.key.size = unit(2, "line"), 
+                   legend.text = element_text(face="bold", color="black", size = rel(1)),
                    legend.title = element_text(face="bold", color="black", size = rel(1)),
                    strip.text.x = element_text(face="bold", color="black", size = rel(1)),
                    legend.position="bottom",
-                   # legend.justification="right",
                    legend.margin=margin(0,0,0,0),
                    legend.box.margin=margin(-10,-10,-10,-10)
              )
@@ -958,14 +897,13 @@ for(j in 1:length(unique(b$Method)) ){
     assign(paste0("p", j),
            b %>% as_tibble() %>%
              filter(Method == method) %>%
-             ggplot(aes(x = Index, y = Beta, color= Task)) +  # , group=Price+
-             # geom_point() +
+             ggplot(aes(x = Index, y = Beta, color= Task)) +  
              geom_point(alpha = 0.5, data = ~filter(.x, Beta != 0), aes(shape = Task)) +
              geom_segment(alpha = 0.5,  aes(x=Index, xend=Index, y=0, yend=Beta)) +
              theme_bw() +
              ylab(TeX(paste0(' $\\delta =$', method) )) + 
              theme_classic() +
-             theme(axis.title.x = element_blank(), axis.text.x = element_blank()) + # remove x-axis
+             theme(axis.title.x = element_blank(), axis.text.x = element_blank()) + 
              geom_hline(yintercept = 0, linetype = "dashed") +
              scale_y_continuous(breaks = c(-1, 0, 1), limits = c(-1.5, 1.5)) + 
              scale_color_manual(values = c("blue", "red")) +
@@ -973,8 +911,8 @@ for(j in 1:length(unique(b$Method)) ){
                    plot.title = element_text(hjust = 0.5, color="black", size=rel(1), face="bold"),
                    axis.text=element_text(face="bold",color="black", size=rel(1)),
                    axis.title = element_text(face="bold", color="black", size=rel(1)),
-                   legend.key.size = unit(2, "line"), # added in to increase size
-                   legend.text = element_text(face="bold", color="black", size = rel(1)), # 3 GCL
+                   legend.key.size = unit(2, "line"), 
+                   legend.text = element_text(face="bold", color="black", size = rel(1)),
                    legend.title = element_text(face="bold", color="black", size = rel(1)),
                    strip.text.x = element_text(face="bold", color="black", size = rel(1))
              )
@@ -984,27 +922,19 @@ for(j in 1:length(unique(b$Method)) ){
   
 }
 
+###################
+# figure 1 [Right]
+###################
 grid.newpage()
 plt <- rbind(ggplotGrob(p1),
                 ggplotGrob(p2),
                 ggplotGrob(p3),
                 size = "last")
                 
-
-setwd("~/Desktop/Research Final/Sparse Multi-Study/Figures/Intro Support Figure")
-ggsave( "Intro_delta_support.pdf",
+setwd(savePath)
+ggsave( "Intro_1_right.pdf",
         plot = plt,
         width = 4.5,
         height = 4.5
-)
-
-
-
-plt <- ggarrange(p6,p1,p5,p2,p22,p3, ncol=2, nrow=3, common.legend = TRUE, legend="bottom")
-setwd("~/Desktop/Research Final/Sparse Multi-Study/Figures/Intro Support Figure")
-ggsave( "Intro_support_combined.pdf",
-        plot = plt,
-        width = 8,
-        height = 4
 )
 
