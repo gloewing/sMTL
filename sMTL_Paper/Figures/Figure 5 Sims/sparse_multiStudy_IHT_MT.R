@@ -9,150 +9,9 @@ library(L0Learn)
 
 source("SimFn.R")
 
-###############
-# grid expand
-###############
-# sims <- cbind(1, expand.grid(c(10),
-#                 c(1e-10),
-#                 c(50), # 50
-#                 c(3,5,7), #c(3, 5, 7), #c(3, 8),
-#                 c(0.1, 1, 10), # 0.01, 0.5, 1  # , 0.5, 1
-#                 c("exponential"),
-#                 c(0.5), # 0.5
-#                 c(0.2), # 0.2
-#                 c(0.5),# 0.5
-#                 c(250),
-#                 c(10), # s
-#               c(5), # r
-#                    c(0.5), # r_p # , 3/5
-#               c(2), # error multiplier
-#               c("multiTask"), #"multiTask"
-#               c(TRUE) # tuneInd
-#                    )
-#                 )#
-# 
-# ###############
-# # sample size
-# ###############
-# sims1 <- cbind(1, expand.grid(c(10),
-#                               c(1e-10),
-#                               c(50, 100, 200, 400), # 50
-#                               c(7), #c(3, 5, 7), #c(3, 8),
-#                               c(10), # 0.01, 0.5, 1  # , 0.5, 1
-#                               c("exponential"),
-#                               c(0.5), # 0.5
-#                               c(0.2), # 0.2
-#                               c(0.5),# 0.5
-#                               c(250),
-#                 c(10), # s
-#               c(5), # r
-#                               c(0.5), # r_p # , 3/5
-#                               c(2), # error multiplier
-#                               c("multiTask"), #"multiTask"
-#                               c(TRUE) # tuneInd
-# )
-# )#
-# 
-# ###############
-# # tasks
-# ###############
-# sims2 <- cbind(1, expand.grid(c(10),
-#                               c(1e-10),
-#                               c(50), # 50
-#                               c(9, 11), #c(3, 5, 7), #c(3, 8),
-#                               c(10), # 0.01, 0.5, 1  # , 0.5, 1
-#                               c("exponential"),
-#                               c(0.5), # 0.5
-#                               c(0.2), # 0.2
-#                               c(0.5),# 0.5
-#                               c(250),
-#                 c(10), # s
-#               c(5), # r
-#                               c(0.5), # r_p # , 3/5
-#                               c(2), # error multiplier
-#                               c("multiTask"), #"multiTask"
-#                               c(TRUE) # tuneInd
-# )
-# )#
-# 
-# ###############
-# # error
-# ###############
-# sims3 <- cbind(1, expand.grid(c(10),
-#                               c(1e-10),
-#                               c(50), # 50
-#                               c(7), #c(3, 5, 7), #c(3, 8),
-#                               c(0.01, 100), # 0.01, 0.5, 1  # , 0.5, 1
-#                               c("exponential"),
-#                               c(0.5), # 0.5
-#                               c(0.2), # 0.2
-#                               c(0.5),# 0.5
-#                               c(250),
-#                 c(10), # s
-#               c(5), # r
-#                               c(0.5), # r_p # , 3/5
-#                               c(2), # error multiplier
-#                               c("multiTask"), #"multiTask"
-#                               c(TRUE) # tuneInd
-# )
-# )#
-
-# ###############
-# # s
-# ###############
-# sims4 <- cbind(1, expand.grid(c(10),
-#                               c(1e-10),
-#                               c(50), # 50
-#                               c(7), #c(3, 5, 7), #c(3, 8),
-#                               c( 10 ), # 0.01, 0.5, 1  # , 0.5, 1
-#                               c("exponential"),
-#                               c(0.5), # 0.5
-#                               c(0.2), # 0.2
-#                               c(0.5),# 0.5
-#                               c(250),
-#                               c(20), #
-#                               c(5, 20, 40), # r
-#                               c(0.5), # r_p # , 3/5
-#                               c(2), # error multiplier
-#                               c("multiTask"), #"multiTask"
-#                               c(TRUE) # tuneInd
-# )
-# )#
-# 
-# 
-# ###############
-# # r
-# ###############
-# sims5 <- cbind(1, expand.grid(c(10),
-#                               c(1e-10),
-#                               c(50), # 50
-#                               c(7), #c(3, 5, 7), #c(3, 8),
-#                               c( 10 ), # 0.01, 0.5, 1  # , 0.5, 1
-#                               c("exponential"),
-#                               c(0.5), # 0.5
-#                               c(0.2), # 0.2
-#                               c(0.5),# 0.5
-#                               c(250),
-#                               c(10, 30, 40), #
-#                               c(5), # r
-#                               c(0.5), # r_p # , 3/5
-#                               c(2), # error multiplier
-#                               c("multiTask"), #"multiTask"
-#                               c(TRUE) # tuneInd
-# )
-# )#
-# 
-# sims5$Var12 <- c(5, 15, 20) # keep r/s fixed
-# 
-# sims <- rbind(sims, sims1, sims2, sims3, sims4, sims5)
-# colnames(sims) <- c("simNum", "betaVar", "xVar", "nLow",
-#                         "K", "tau", "cov", "rho",
-#                         "betaRangeLow", "betaRangeHigh", "p", "s", "r", "r_p", "errorMult", "multiTask", "tuneInd")
-
 # # # s is true number of non-zeros
 # # r is number of covariates that are potentially divergent support (set of covariates that are randomly selected to be include)
 # # r_p is the probability of inclusion for a given study (i..e, each of the K studies selects each of the r covariates for inclusion ~ i.i.d. Ber(r_p) )
-# write.csv(sims, "~/Desktop/Research/sparseParam_test", row.names = FALSE)
 
 sims6 <- read.csv("sparseParam_test")
 cluserInd <- TRUE # whether running on computer or on cluster
@@ -205,7 +64,8 @@ s <- sims6$s[runNum] #
 r <- sims6$r[runNum]
 r_p <- sims6$r_p[runNum]
 zeroCovs <- seq(2, numCovs + 1)[-seq(2, 2 * s, by = 2)] # alternate because of exponential correlation structure
-# Study Strap and Model fitting parameters
+
+#  Model fitting parameters
 test_study <- max(trainStudies) + 1 # arbitrarily set to study but any of the non-training studies is fine (11-24 are all random test studies)
 scaleInd <- TRUE
 betaMeanRange <- c(sims6$betaRangeLow[runNum],   sims6$betaRangeHigh[runNum])
@@ -231,8 +91,6 @@ epsHigh <- tau * errorMult# noise lower/upper
 epsLow <- tau / errorMult# noise lower/upper
 nLow <- nHigh <- sims6$nLow[runNum]  # multiply by 2 because of multi-task test set  # samp size lower/upper
 tuneInd <- sims6$tuneInd[runNum]
-# nHigh <- sims6$nLow[runNum] * errorMult # multiply by 2 because of multi-task test set  # samp size lower/upper
-# nLow <- sims6$nLow[runNum] / errorMult
 WSmethod = 2 # sims6$WSmethod[runNum]
 ASpass = TRUE # sims6$ASpass[runNum]
 
@@ -241,7 +99,6 @@ if(tuneThreads == 1){
     source("sparseFn_iht_test_MT.R") # USE TEST VERSION HERE
     sparseCV_iht_par <- sparseCV_iht
 }else{
-    # source("sparseFn_iht_par.R")
     source("sparseFn_iht_test_MT.R") # USE TEST VERSION HERE
     sparseCV_iht_par <- sparseCV_iht
 }
@@ -324,7 +181,7 @@ tune.grid_MSZ_3 <- tune.grid_MSZ_3[  order(-tune.grid_MSZ_3$rho,
                                            decreasing=TRUE),     ]
 
 tune.grid <- as.data.frame(  expand.grid(
-                                            c(lambda) , # 0 # add 0 but not to glmnet because that will cause problems
+                                            c(lambda) , 
                                             rho)
                              ) # tuning parameters to consider
 colnames(tune.grid) <- c("lambda", "rho")
@@ -435,7 +292,6 @@ print(paste0("start: ", iterNum))
 
 
         # save results
-        #setwd(save.folder)
         studyNum <- test_study
         cnt <- seedSet <- iterNum # ensures no repeats
         set.seed(seedSet)
@@ -508,7 +364,6 @@ print(paste0("start: ", iterNum))
                                clusters_mu = NULL, # vector of cluster where each element indicates which cluster that study is in (i.e., study is index of vector)
                                clusters_beta = NULL, # vector of cluster where each element indicates which cluster that study is in (i.e., study is index of vector)
                                num.covariates = numCovs,
-                               # zero_covs = zeroCovs, # indices of covariates which are 0
                                fixed.effects = NULL, # all random effects if NA #0:p, # indices of fixed effects -- 1 is the intercept
                                fixed.effectsX = c(), # indices of "fixed covariates" across studies
                                fixB = fixB, # boolean of whether there is "fixed effects" (this basically means whether there is random variation in means of betas marginally)
@@ -532,7 +387,7 @@ print(paste0("start: ", iterNum))
         ### SNR
         #-----------------------------
         trueZ <- I(full$betas != 0) * 1
-        trueB <- t( full$betas )# [,-test_study] # true betas
+        trueB <- t( full$betas )# 
         #-----------------------------
 
         full <- as.data.frame( full$data )
@@ -617,7 +472,6 @@ print(paste0("start: ", iterNum))
         tune.mod <- cv.glmnet(y = as.matrix(full[,Yindx]),
                               x = as.matrix(full[,Xindx]),
                               alpha = 0,# tune.gridGLM$alpha,
-                              # lambda = tune.gridGLM$lambda,
                               intercept = TRUE,
                               foldid = foldID,
                               family = "mgaussian")
@@ -635,7 +489,6 @@ print(paste0("start: ", iterNum))
         ##############
         # GLMNET Lasso - MultiTask
         ##############
-        # print(paste0("Merge: ", iterNum))
         tune.mod <- cv.glmnet(y = as.matrix(full[,Yindx]),
                               x = as.matrix(full[,Xindx]),
                               alpha = 1,# tune.gridGLM$alpha,
@@ -659,7 +512,7 @@ print(paste0("start: ", iterNum))
             supMat[j,] <- suppStat( response = trueZ[j, -1], predictor = zAvg )
         }
 
-        resMat[iterNum, 103:106] <- colMeans(supMat) # suppStat(response = z, predictor = lassoSupp[-1])
+        resMat[iterNum, 103:106] <- colMeans(supMat) # 
         rm(betaEst, tune.mod, supMat)
         
         resMat[iterNum, 162] <-  sum(zAvg) # size of xupport
@@ -964,7 +817,6 @@ print(paste0("start: ", iterNum))
 
 
         # support stats
-        # zStack <- I( betasMS %*% w[-1] != 0)[-1] * 1 # stacking
         zAvg <- I( betasMS[-1,] != 0) * 1 # avg
 
         supMat <- supMatS <- matrix(NA, nrow = K, ncol = 4)
