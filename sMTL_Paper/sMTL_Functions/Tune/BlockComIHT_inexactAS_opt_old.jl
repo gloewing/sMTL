@@ -1,12 +1,4 @@
 # Optimization Code
-## Block IHT for the common support problem with strength sharing (problem (3) in the write-up)
-## b: n*K observation matrix
-## A: n*p*K data tensor
-## s: Sparsity level (integer)
-## x0: p*K initial solution
-## lambda1>=0 the ridge coefficient
-## lambda2>=0 the strength sharing coefficient
-
 #### Active set
 # sparse regression with IHT
 function BlockComIHT_inexactAS_opt_old(; X::Matrix,
@@ -33,21 +25,18 @@ function BlockComIHT_inexactAS_opt_old(; X::Matrix,
     ncol = p + 1
 
     # initialize
-    # B = beta
-    # beta = 0 # delete to save memory
     z = zeros(p, K)
     B_bar = zeros(ncol)
     z_bar = zeros(p)
     Z_bar = zeros(p, K)
 
-    r = [ zeros( nVec[i] ) for i in 1:K]; #[Vector{Any}() for i in 1:K]#[ zeros( nVec[i] ) for i in 1:K]; # list of vectors of indices of studies # [Vector{Any}() for i in 1:K]
+    r = [ zeros( nVec[i] ) for i in 1:K]; # list of vectors of indices of studies # [Vector{Any}() for i in 1:K]
     g = zeros(ncol, K);
 
     obj = 1e20;
     iter_in = 1
     iter_out = 1
 
-    #idx = findall(x-> x.>1e-9, abs.(B[2:end,:]) ) # do not calculate for intercept -- initialize based on beta warm start
     B_summed = sum( B.^2, dims = 2)
     B_summed = B_summed[:]
 
@@ -78,7 +67,6 @@ function BlockComIHT_inexactAS_opt_old(; X::Matrix,
             end
 
             L_active = L_active^2 * sqrt(K) / maximum(nVec) + lambda1 + lambda2
-            #println(L_active)
             idxFlag = false # default to see if we need to recalculate eigenvalues
 
         end
@@ -124,8 +112,6 @@ function BlockComIHT_inexactAS_opt_old(; X::Matrix,
             z_active = zeros(length(idx), K)
             idx_active = findall(x-> x.>1e-9, abs.(B_temp_active[2:end,:]) )
             z_active[idx_active] = ones(size(idx_active))
-            # cost_active = lambda_z * Z_bar_active.^2 / L_active +
-            #               B_temp_active[2:end,:].^2 - lambda_z * (z_active-Z_bar_active).^2 / L_active
             cost_active = lambda_z / L_active * ( Z_bar_active.^2  - (z_active-Z_bar_active).^2 ) # part of cost vector, rest in for loop below
             z_active = zeros(length(idx), K)
 
@@ -177,7 +163,6 @@ function BlockComIHT_inexactAS_opt_old(; X::Matrix,
         z = zeros(p, K)
         idx1 = findall(x-> x.>1e-9, abs.(B_temp[2:end,:]) )
         z[idx1] = ones(size(idx1))
-        # cost =  lambda_z * Z_bar.^2/L + B_temp[2:end,:].^2 - lambda_z * (z-Z_bar).^2 / L
         cost =  lambda_z / L * (Z_bar.^2 - (z-Z_bar).^2) # scale by nVec (below) since our objective is altered
         z = zeros(p, K)
         flag = 0
@@ -214,18 +199,3 @@ function BlockComIHT_inexactAS_opt_old(; X::Matrix,
     return B
 
 end
-
-#
-# using CSV, DataFrames
-# dat = CSV.read("/Users/gabeloewinger/Desktop/Research/dat_ms", DataFrame);
-# X = Matrix(dat[:,3:end]);
-# y = (dat[:,2]);
-# fit = BlockComIHT(X = X,
-#         y = y,
-#         study = dat[:,1],
-#                     beta =  ones(51, 2),#beta;#
-#                     rho = 9,
-#                     lambda1 = 0.3,
-#                     lambda2 = 0.2,
-#                     scale = false,
-#                     eig = nothing)
