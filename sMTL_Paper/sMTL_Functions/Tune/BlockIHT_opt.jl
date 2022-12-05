@@ -1,9 +1,3 @@
-## y: N x K outcome
-## X: N x p design matrix
-## rho: Sparsity level (integer)
-## beta: p*K initial solution
-## lambda>=0 the ridge coefficient
-
 
 # sparse regression with IHT -- Block IHT
 function BlockIHT_opt(; X::Matrix,
@@ -105,16 +99,3 @@ function BlockIHT_opt(; X::Matrix,
     return βhat;
 
 end
-
-# #
-# dat = CSV.read("/Users/gabeloewinger/Desktop/Research/dat_ms", DataFrame);
-# X = Matrix(dat[:,3:end]);
-# y = (dat[:,2]);
-# fit = BlockIHT(X = X,
-#         y = y,
-#         study = dat[:,1],
-#                     beta =  ones(51, 2),#beta;#
-#                     rho = 9,
-#                     lambda = 0.3,
-#                     scale = false,
-#                     eig = nothing)
