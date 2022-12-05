@@ -7,7 +7,6 @@ colnames(full)[1] <- "Study"
 colnames(full)[2] <- "Y"
 
 # just choose the first 4 arbitrarily for demonstration
-#full <- full[full$Study %in% seq(1,4), ]
 K <- length(unique(full$Study))
 Xindx <- seq(1, ncol(full))[-c(1,2)]
 Yindx <- which(colnames(full) == "Y")
@@ -41,11 +40,7 @@ set.seed(5)
 betaStar <- betas[-1,] # remove intercept
 
 # find most important
-# indxMax <- sort( rowMeans(abs(betaStar) ), 
-#                  decreasing = TRUE, 
-#                  index.return = TRUE )
-# 
-# indxStar <- indxMax$ix[1:L] # top L most important features
+
 
 indxStar <- sample(1:1000, 10)
 betaStar <- betaStar[indxStar, ] # 
