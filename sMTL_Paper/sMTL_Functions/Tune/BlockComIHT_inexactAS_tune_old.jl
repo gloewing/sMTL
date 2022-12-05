@@ -1,11 +1,3 @@
-## Block IHT INEXACT for the common support problem with strength sharing (problem (3) in the write-up)
-## b: n*K observation matrix
-## A: n*p*K data tensor
-## s: Sparsity level (integer)
-## x0: p*K initial solution
-## lambda1>=0 the ridge coefficient
-## lambda2>=0 the strength sharing coefficient
-## lambda_z>=0 the strength sharing coefficient for support
 
 using TSVD, Statistics #, LinearAlgebra, Statistics
 
@@ -38,7 +30,8 @@ function BlockComIHT_inexactAS_old(; X,
     # maxIter is maximum number of iterations
     # max eigenvalue for Lipschitz constant
     # localIter is a vector as long as lambda1/lambda2 and specifies the number of local search iterations for each lambda
-    # eigenVec, WSmethod, ASpass are all dummy variables to make this version "_tune_old.jl" work with the "_tuneTest.jl" versions
+    # eigenVec, WSmethod, ASpass are all dummy variables 
+  
     y = Array(y);
     X = Matrix(X);
     n, p = size(X); # number of covaraites
@@ -47,8 +40,7 @@ function BlockComIHT_inexactAS_old(; X,
     study = Int.(study);
     K = length( unique(study) ); # number of studies
     indxList = [Vector{Any}() for i in 1:K]; # list of vectors of indices of studies
-    #nVec = zeros(K); # vector of sample sizes of studies
-    nVec = Vector{Int64}(undef, K) #nVec = zeros(K); # vector of sample sizes of studies
+    nVec = Vector{Int64}(undef, K)# vector of sample sizes of studies
 
     if isnothing(maxIter_in)
         maxIter_in = maxIter
@@ -72,19 +64,16 @@ function BlockComIHT_inexactAS_old(; X,
             Xsd = std(X[indx,:], dims=1) .* (n_k - 1) / n_k; # glmnet style MLE of sd
             sdMat[:,i] = Xsd[1,:]; # save std of covariates of ith study in ith row of matrix
             X[indx,:] .= X[indx,:] ./ Xsd; # standardize ith study's covariates
-            # Ysd[i] = std(y[indx]) * (n_k - 1) / n_k; # glmnet style MLE of sd of y_k
 
         end
 
         sdMat = vcat(1, sdMat); # add row of ones so standardize intercept by ones
         beta = beta .* sdMat; # scale warm start solution
 
-        # lambda1 = lambda1 / mean(Ysd); # scale tuning parameter for L2 norm by average std of y_k
 
     else
         # otherwise just make this a vector of ones for multiplication
         # by coefficient estimates later
-        # sdMat = ones(p, K); # K x p matrix to save std of covariates of each study
 
         for i = 1:K
             indxList[i] = findall(x -> x == i, study); # indices of rows for ith study
@@ -180,46 +169,3 @@ function BlockComIHT_inexactAS_old(; X,
     end
 
 end
-#
-# using CSV, DataFrames
-# #
-# # # # # #
-# dat = CSV.read("/Users/gabeloewinger/Desktop/Research/dat_ms", DataFrame);
-# X = Matrix(dat[:,3:end]);
-# y = (dat[:,2]);
-#
-# itrs = 4
-# lambda1 = 0 #ones(itrs)
-# lambda2 = 0 #ones(itrs)
-# lambda_z = 0.01 #ones(itrs) * 0.01
-# fit = BlockComIHT_inexactAS_old(X = X,
-#         y = y,
-#         study = dat[:,1],
-#                     beta =  ones(51, 2),#beta;#
-#                     rho = 5,
-#                     lambda1 = lambda1,
-#                     maxIter = 5000,
-#                     lambda2 = lambda2,
-#                     lambda_z = lambda_z,
-#                     localIter = [10],
-#                     scale = true,
-#                     eig = nothing
-# )
-
-# include("objFun.jl") # local search
-#
-# itr = 4
-# objFun( X = X,
-#         y = y,
-#         study = dat[:,1],
-#                     beta = fit[:,:, itr],
-#                     lambda1 = lambda1[ itr ],
-#                     lambda2 = lambda2[ itr ],
-#                     lambda_z = 0,
-#                     )
-#
-# # number of non-zeros per study (not including intercept)
-# size(findall(x -> x.> 1e-9, abs.(fit[2:end, :,1])))[1] / K
-
-# X2 = randn(size(X))
-# y2 = randn(size(y))
