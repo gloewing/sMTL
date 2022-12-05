@@ -74,17 +74,3 @@ function L0_iht_opt(; X::Matrix,
     return βhat;
 
 end
-
-# ###############################
-# using CSV, Random, DataFrames, Statistics
-# dat = CSV.read("/Users/gabeloewinger/Desktop/Research Final/Mas-o-Menos/dat", DataFrame);
-# X = Matrix(dat[:,2:end]);
-# y = (dat[:,1]);
-#
-# fit1 = L0_iht(X = X,
-#                     y = y,
-#                     rho = 5,
-#                     beta = ones(size(X,2) + 1),
-#                     scale = true,
-#                     lambda = 0.1
-#                     );
