@@ -8,7 +8,6 @@ library(dplyr)
 library(L0Learn)
 
 source("SimFn.R")
-source("OEC Functions.R")
 
 # # # s is true number of non-zeros
 # # r is number of covariates that are potentially divergent support (set of covariates that are randomly selected to be include)
