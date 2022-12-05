@@ -16,10 +16,7 @@ function BlockInexactLS(; X::Matrix,
                     maxIter = 50)
 
     # p is number of covariates not including intercept
-    #s = rho; #
-    # n, p, K = size(X)
     B = copy(beta)
-    #beta = 0; # save memory
     S = zeros(p, p ,K)
     Aq = zeros(s, p-s)
     Bq = zeros(s, p-s)
@@ -185,7 +182,6 @@ function BlockInexactLS(; X::Matrix,
                      # DOESNT MATCH -- ASK KAYHAN
                     Bq = Bq + ones(s) *
                         (2 * lambda2 * ( B_bar_cut * (K-1) - sum(beta_cut, dims=2) ) / K - 2 * lambda2 * (K-1) *  B_bar_cut / K )'
-                        # I got the equivalent of (2 * lambda2 * (K-1)/K) * ( B_cut - B_bar_cut)
                     # cost of beta - betaBar penalty BEFORE swap (only including fixed terms that do not depend on decision variable)
                     b_bar_temp = B_bar[idx1]
                     B_temp = B[idx1 .+ 1, :] # add one for intercept
@@ -197,7 +193,6 @@ function BlockInexactLS(; X::Matrix,
                     B_temp[:,k] = zeros( length(idx1) )
                     delta_cost = delta_cost + lambda2 * sum( (B_temp - b_bar_temp * ones(K)').^2, dims=2) * ones(length(idx2))'
 
-                     # ASK KAYHAN to confirm that we are just taking difference of cost before and cost after
                     Cq = Cq + delta_cost
                 end
 
@@ -237,7 +232,7 @@ function BlockInexactLS(; X::Matrix,
                     B[1 .+ idx1[idx_best[1]], k] = 0 # add 1 for intercept
                     B[1 .+ idx2[idx_best[2]], k] = betaq[idx_best]
                     z[idx1[idx_best[1]], k] = 0
-                    if abs(betaq[idx_best]) > 0 ############################################################################################# NEW
+                    if abs(betaq[idx_best]) > 0 ############################################################################################# 
                         z[idx2[idx_best[2]], k] = 1
                     end
                     B[2:end, k] = B[2:end, k] .* z[:,k]
