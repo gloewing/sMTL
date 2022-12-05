@@ -1,4 +1,4 @@
-using TSVD, Statistics # MatrixImpute, Ipopt, DataFrames,
+using TSVD, Statistics
 
 include("l0_IHT_opt.jl")
 include("SingleLS.jl") # local search
@@ -24,7 +24,6 @@ function L0_iht(; X,
     n, p = size(X); # number of covaraites
     beta = Array(beta[:,1]); # initial value
     y = Array(y);
-    #lambda = Array(lambda);
     rho = Int64(rho);
 
     # scale covariates
@@ -34,9 +33,6 @@ function L0_iht(; X,
         X = X ./ Xsd;
         Xsd = Xsd'; # transpose
         Xsd = Xsd[:,1]; # reformat dimensions
-        # Ysd = std(y) * (n - 1) / n; # glmnet style MLE of sd
-        # lambda = lambda / Ysd; # scale tuning parameter by std of y
-
         Xsd = vcat(1, Xsd); # add row of ones so standardize intercept by one
         beta .= beta .* Xsd; # rescale warm starts (if not scaled Xsd is a vector of ones)
 
@@ -110,20 +106,3 @@ function L0_iht(; X,
 
 
 end
-
-# ###############################
-# # # using CSV, Random, DataFrames, Statistics
-# dat = CSV.read("/Users/gabeloewinger/Desktop/Research Final/Mas-o-Menos/dat", DataFrame);
-# X = Matrix(dat[:,2:end]);
-# y = (dat[:,1]);
-# lambda = collect(0:.1:10)
-# LS = zeros( length(lambda) )
-# LS[ [1 3 5] ] .= 5
-# fit1 = L0_iht(X = X,
-#                     y = y,
-#                     rho = 5,
-#                     beta = ones(size(X,2) + 1),
-#                     scale = true,
-#                     lambda = lambda,
-#                     localIter = LS
-#                     );
