@@ -1,12 +1,3 @@
-## Block IHT INEXACT for NO common support problem with strength sharing (problem (3) in the write-up)
-## has different supports for active sets!!
-## b: n*K observation matrix
-## A: n*p*K data tensor
-## s: Sparsity level (integer)
-## x0: p*K initial solution
-## lambda1>=0 the ridge coefficient
-## lambda2>=0 the strength sharing coefficient
-## lambda_z>=0 the strength sharing coefficient for support
 
 using TSVD, Statistics #, LinearAlgebra, Statistics
 
@@ -81,19 +72,15 @@ function BlockComIHT_inexactAS_diff(; X,
             Xsd = std(X[indx,:], dims=1) .* (n_k - 1) / n_k; # glmnet style MLE of sd
             sdMat[:,i] = Xsd[1,:]; # save std of covariates of ith study in ith row of matrix
             X[indx,:] .= X[indx,:] ./ Xsd; # standardize ith study's covariates
-            # Ysd[i] = std(y[indx]) * (n_k - 1) / n_k; # glmnet style MLE of sd of y_k
 
         end
 
         sdMat = vcat(1, sdMat); # add row of ones so standardize intercept by ones
         beta = beta .* sdMat; # scale warm start solution
 
-        # lambda1 = lambda1 / mean(Ysd); # scale tuning parameter for L2 norm by average std of y_k
-
     else
         # otherwise just make this a vector of ones for multiplication
         # by coefficient estimates later
-        # sdMat = ones(p, K); # K x p matrix to save std of covariates of each study
 
         for i = 1:K
             indxList[i] = findall(x -> x == i, study); # indices of rows for ith study
@@ -115,7 +102,6 @@ function BlockComIHT_inexactAS_diff(; X,
         eigenVec = zeros(K) # store max eigenvalues
 
         for i = 1:K
-            # indx = findall(x -> x == i, study); # indices of rows for ith study
             if svdFlag
                 _, singVals, _ = svd( X[ indxList[i], :], alg = LinearAlgebra.QRIteration() ) #
                 eigenVec[i] = singVals[1] #svdvals( X[ indxList[i], :] )[1] #singVals[1]#svdvals( X[ indxList[i], :] )[1] #singVals[1]
@@ -124,30 +110,7 @@ function BlockComIHT_inexactAS_diff(; X,
             end
         end
 
-        # println(eigenVec)
-
-    #     eig = 0;
-    #     # if not provided by user
-    #     for i = 1:K
-    #         # indx = findall(x -> x == i, study); # indices of rows for ith study
-    #         eigenVec[i] = tsvd( X[ indxList[i], :] )[2][1]; # max eigenvalue of X^T X
-    #         if (eigenVec[i] > eig)
-    #             eig = eigenVec[i]
-    #         end
-    #     end
-    #
-    # else
-        #eig = Float64(eig)
-
-        # if isnothing(idx)
-        #     # if idx not given then we need the max singular values for the the individual regressions
-        #
-        #
-        # end
-
     end
-
-    # L = eig^2 * sqrt(K) / maximum(nVec) # L without regularization terms (updated in optimization fn below)
 
     # optimization
     vals = length(lambda1)
@@ -270,55 +233,3 @@ function BlockComIHT_inexactAS_diff(; X,
     end
 
 end
-#
-#  using CSV, DataFrames
-# # #
-# # # # # # # #
-# dat = CSV.read("/Users/gabeloewinger/Desktop/Research/dat_ms", DataFrame);
-# dat = CSV.read("/Users/gabeloewinger/Desktop/fscv_test", DataFrame)[:,2:end];
-#
-# # # dat = CSV.read("/Users/gabeloewinger/Desktop/Research/iht_error.csv", DataFrame);
-# #
-# X = Matrix(dat[:,3:end]);
-# y = (dat[:,2]);
-# # # # #
-# # # # # itrs = 4
-# lambda1 = [200, 100, 50] #ones(itrs)
-# lambda2 = zeros(3) #ones(itrs)
-# lambda_z = zeros(3) #ones(itrs) * 0.01
-# fit = BlockComIHT_inexactAS_diff(X = X,
-#         y = y,
-#         study = dat[:,1],
-#                     beta =  zeros(501, 4),#beta;#
-#                     rho = 25,
-#                     lambda1 = lambda1,
-#                     maxIter = 5000,
-#                     lambda2 = lambda2,
-#                     lambda_z = lambda_z,
-#                     localIter = [0],
-#                     scale = true,
-#                     idx = nothing,
-#                     #eig = 940.2205, #nothing
-#                     #eigenVec = [564.4096 581.0510 578.4483 510.3897], # nothing
-#                     #svdFlag = false,
-#                     WSmethod = 2,
-#                     ASpass = true
-# )
-
-# include("objFun.jl") # local search
-# #
-# itr = 1
-# objFun( X = X,
-#         y = y,
-#         study = dat[:,1],
-#                     beta = fit[:,:, itr],
-#                     lambda1 = lambda1[ itr ],
-#                     lambda2 = lambda2[ itr ],
-#                     lambda_z = 0,
-#                     )
-# #
-# # number of non-zeros per study (not including intercept)
-# size(findall(x -> x.> 1e-9, abs.(fit[2:end, :,1])))[1] / K
-
-# X2 = randn(size(X))
-# y2 = randn(size(y))
