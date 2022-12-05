@@ -1,12 +1,3 @@
-## Block IHT INEXACT for the NO common support problem with strength sharing (problem (3) in the write-up)
-## shared active set support
-## b: n*K observation matrix
-## A: n*p*K data tensor
-## s: Sparsity level (integer)
-## x0: p*K initial solution
-## lambda1>=0 the ridge coefficient
-## lambda2>=0 the strength sharing coefficient
-## lambda_z>=0 the strength sharing coefficient for support
 
 using TSVD, Statistics #, LinearAlgebra, Statistics
 
@@ -42,7 +33,7 @@ function BlockComIHT_inexactAS(; X,
     # localIter is a vector as long as lambda1/lambda2 and specifies the number of local search iterations for each lambda
     # idx -- if nothing then fit individual l0 regressions to find it
     # ASmultiplier is number that we multiple rho by to get size of initial active set for first lambda in path
-    # eigenVec is a dummy and is never used for this -- only used for diffAS version (different active sets for each study version)
+    # eigenVec is a dummy 
 
     y = Array(y);
     X = Matrix(X);
@@ -76,19 +67,15 @@ function BlockComIHT_inexactAS(; X,
             Xsd = std(X[indx,:], dims=1) .* (n_k - 1) / n_k; # glmnet style MLE of sd
             sdMat[:,i] = Xsd[1,:]; # save std of covariates of ith study in ith row of matrix
             X[indx,:] .= X[indx,:] ./ Xsd; # standardize ith study's covariates
-            # Ysd[i] = std(y[indx]) * (n_k - 1) / n_k; # glmnet style MLE of sd of y_k
 
         end
 
         sdMat = vcat(1, sdMat); # add row of ones so standardize intercept by ones
         beta = beta .* sdMat; # scale warm start solution
 
-        # lambda1 = lambda1 / mean(Ysd); # scale tuning parameter for L2 norm by average std of y_k
-
     else
         # otherwise just make this a vector of ones for multiplication
         # by coefficient estimates later
-        # sdMat = ones(p, K); # K x p matrix to save std of covariates of each study
 
         for i = 1:K
             indxList[i] = findall(x -> x == i, study); # indices of rows for ith study
@@ -112,7 +99,6 @@ function BlockComIHT_inexactAS(; X,
         eig = 0;
         # if not provided by user
         for i = 1:K
-            # indx = findall(x -> x == i, study); # indices of rows for ith study
             eigenVec[i] = tsvd( X[ indxList[i], :] )[2][1]; # max eigenvalue of X^T X
             if (eigenVec[i] > eig)
                 eig = eigenVec[i]
@@ -125,7 +111,6 @@ function BlockComIHT_inexactAS(; X,
         if isnothing(idx)
             # if idx not given then we need the max singular values for the the individual regressions
             for i = 1:K
-                # indx = findall(x -> x == i, study); # indices of rows for ith study
                 eigenVec[i] = tsvd( X[ indxList[i], :] )[2][1]; # max eigenvalue of X^T X
             end
 
@@ -166,7 +151,6 @@ function BlockComIHT_inexactAS(; X,
                                     p = p
                                     )
 
-            # idx[i] = findall(x-> x.>1e-9, abs.( beta[2:end, i] ) ) # save non-zero elements (not including intercept)
         end
 
         idx = Int.( partialsortperm( sum( abs.( beta[2:end,:] ), dims = 2)[:], 1:rhoStar, rev=true) )
@@ -230,47 +214,3 @@ function BlockComIHT_inexactAS(; X,
     end
 
 end
-# # #
-# using CSV, DataFrames
-# #
-# # # # # #
-# dat = CSV.read("/Users/gabeloewinger/Desktop/Research/dat_ms", DataFrame);
-# X = Matrix(dat[:,3:end]);
-# y = (dat[:,2]);
-#
-# itrs = 4
-# lambda1 = 1 #ones(itrs)
-# lambda2 = 0 #ones(itrs)
-# lambda_z = 0.01 #ones(itrs) * 0.01
-# fit = BlockComIHT_inexactAS(X = X,
-#         y = y,
-#         study = dat[:,1],
-#                     beta =  ones(51, 2),#beta;#
-#                     rho = 5,
-#                     lambda1 = lambda1,
-#                     maxIter = 5000,
-#                     lambda2 = lambda2,
-#                     lambda_z = lambda_z,
-#                     localIter = [50],
-#                     scale = true,
-#                     eig = nothing,
-#                     idx = nothing
-# )
-#
-# include("objFun.jl") # local search
-#
-# itr = 1
-# objFun( X = X,
-#         y = y,
-#         study = dat[:,1],
-#                     beta = fit[:,:, itr],
-#                     lambda1 = lambda1[ itr ],
-#                     lambda2 = lambda2[ itr ],
-#                     lambda_z = 0,
-#                     )
-
-# # number of non-zeros per study (not including intercept)
-# size(findall(x -> x.> 1e-9, abs.(fit[2:end, :,1])))[1] / K
-
-# X2 = randn(size(X))
-# y2 = randn(size(y))
