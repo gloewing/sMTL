@@ -11,7 +11,6 @@
 function BlockComIHT_opt_MT(; X::Matrix,
                     y,
                     rho,
-                    #indxList,
                     βhat,
                     K,
                     L,
@@ -26,10 +25,7 @@ function BlockComIHT_opt_MT(; X::Matrix,
     ncol = p + 1
 
     # initialize
-    #βhat = zeros(ncol, K) # initialize at 0
-    #βhat = beta; # current solution β
-    #beta = 0; # delete to save memory
-    r = zeros(n, K) #[Vector{Any}() for i in 1:K]; # list of vectors of indices of studies
+    r = zeros(n, K) # list of vectors of indices of studies
     g = zeros(ncol, K);
 
     t = 1;
@@ -44,7 +40,6 @@ function BlockComIHT_opt_MT(; X::Matrix,
 
     while (iter <= maxIter)
         objPrev = obj
-        # βprev = copy(βhat) # previous
         obj = 0
         bbar = sum(βhat[2:end, :], dims=2 ) / K
         bbar = bbar[:]
@@ -96,18 +91,3 @@ function BlockComIHT_opt_MT(; X::Matrix,
     return βhat;
 
 end
-
-#
-# using CSV, DataFrames
-# dat = CSV.read("/Users/gabeloewinger/Desktop/Research/dat_ms", DataFrame);
-# X = Matrix(dat[:,3:end]);
-# y = (dat[:,2]);
-# fit = BlockComIHT(X = X,
-#         y = y,
-#         study = dat[:,1],
-#                     beta =  ones(51, 2),#beta;#
-#                     rho = 9,
-#                     lambda1 = 0.3,
-#                     lambda2 = 0.2,
-#                     scale = false,
-#                     eig = nothing)

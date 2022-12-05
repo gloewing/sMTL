@@ -14,12 +14,7 @@ function BlockLS_MT(; X::Matrix,
                     n,
                     maxIter = 50)
 
-    # p is number of covariates not including intercept
-    s = rho; #
-    #n = size(X, 1)
-    #B = copy(beta)
-    #beta = 0; # save memory
-    #S = zeros(p, p ,K)
+    s = rho;
     Aq = zeros(s, p-s)
     Bq = zeros(s, p-s)
     Cq = zeros(s, p-s)
@@ -37,7 +32,7 @@ function BlockLS_MT(; X::Matrix,
     delta_cost = 0
 
     obj = 0
-    r0 = zeros(n, K) #[Vector{Any}() for i in 1:K]; # list of vectors of residuals # zeros(n,K)
+    r0 = zeros(n, K) # list of vectors of residuals # zeros(n,K)
 
     for k = 1:K
         r0[:,k] = y[:, k] - X * B[:,k]
@@ -64,7 +59,7 @@ function BlockLS_MT(; X::Matrix,
         sumB = sumB[:]
         idx1 = findall(x -> x .> 1e-5, sumB)
         idx2 = findall(x -> x .<= 1e-5, sumB)
-        B[1 .+ idx2, :] = zeros(length(idx2),K) ############################################################################################# NEW
+        B[1 .+ idx2, :] = zeros(length(idx2),K)
 
         flag = 0
 
@@ -87,8 +82,7 @@ function BlockLS_MT(; X::Matrix,
             costq2 = zeros(p-stilde, K)
 
             for k = 1:K
-                # y0 = y[ :, k ]
-                beta = B[2:end, k] # ask Kayhan -- residuals include contribution of interept but other terms below do now
+                beta = B[2:end, k] #
                 r = r0[k] # residuals include contribution of intercept
 
                 Aq2 = diag(S[idx2,idx2])./ n + lambda1*ones(p-stilde)
@@ -140,9 +134,7 @@ function BlockLS_MT(; X::Matrix,
             # ident
             for k = 1:K
 
-                # y0 = y[ :, k ]
-                #S0 = S[:,:,k]
-                beta = B[2:end, k] # ask Kayhan -- residuals include contribution of interept but other terms below do now
+                beta = B[2:end, k] 
                 r = r0[:,k] # residuals include contribution of intercept
 
                 # constant matrix in quadratic program (QP)

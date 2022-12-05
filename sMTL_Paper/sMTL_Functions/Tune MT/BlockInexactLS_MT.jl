@@ -9,27 +9,20 @@ function BlockInexactLS_MT(; X::Matrix,
     lambda1,
     lambda2,
     lambda_z,
-    #indxList,
     K,
     n,
     p,
     maxIter = 50)
 
     # p is number of covariates not including intercept
-    #s = rho; #
-    # n, p, K = size(X)
+
     B = copy(beta)
-    #beta = 0; # save memory
-    #S = zeros(p, p ,K)
     Aq = zeros(s, p-s)
     Bq = zeros(s, p-s)
     Cq = zeros(s, p-s)
     z = zeros(p, K)
 
     S = X[ :, 2:end]' * X[ :, 2:end]
-    # for k = 1:K
-    #     S[:,:,k] = X[ indxList[k], 2:end]' * X[ indxList[k], 2:end]
-    # end
 
     idx1 = findall(x -> x.> 1e-9, abs.(B[2:end, :]))
     z[idx1] = ones(size(idx1))
@@ -45,7 +38,7 @@ function BlockInexactLS_MT(; X::Matrix,
     B_bar = B_bar[:]
 
     obj = 0
-    r0 = zeros(n, K) #[ zeros( nVec[i] ) for i in 1:K]; # list of vectors of residuals # zeros(n,K)
+    r0 = zeros(n, K) # list of vectors of residuals # zeros(n,K)
 
     for k = 1:K
         r0[:, k] = y[ :, k ] - X * B[:,k]
@@ -74,21 +67,16 @@ function BlockInexactLS_MT(; X::Matrix,
 
     while(iter <= maxIter)
 
-        # sumB = sum( abs.( B[2:end, :] ), dims=2 )
-        # sumB = sumB[:]
-
         flag = 0
         X0 = X[ :, 2:end] # do not include intercept
 
         for k = 1:K
             idx1 = findall(x -> x.> 0.5, abs.(z[:,k]) )
             idx2 = findall(x -> x.<= 0.5, abs.(z[:,k]) )
-            B[1 .+ idx2, k] = zeros(length(idx2)) ############################################################################################# NEW
+            B[1 .+ idx2, k] = zeros(length(idx2))
 
-            # X0 = X[ :, 2:end] # do not include intercept
             y0 = y[ :, k ]
-            #S0 = S[:,:,k]
-            beta = B[2:end, k] # ask Kayhan -- residuals include contribution of interept but other terms below do now
+            beta = B[2:end, k]
             r = r0[:, k] # residuals include contribution of intercept
             ################################################################################################################## START OF NEW BLOCK
             if length(idx1) > s
@@ -187,7 +175,6 @@ function BlockInexactLS_MT(; X::Matrix,
                     # DOESNT MATCH -- ASK KAYHAN
                     Bq = Bq + ones(s) *
                     (2 * lambda2 * ( B_bar_cut * (K-1) - sum(beta_cut, dims=2) ) / K - 2 * lambda2 * (K-1) *  B_bar_cut / K )'
-                    # I got the equivalent of (2 * lambda2 * (K-1)/K) * ( B_cut - B_bar_cut)
                     # cost of beta - betaBar penalty BEFORE swap (only including fixed terms that do not depend on decision variable)
                     b_bar_temp = B_bar[idx1]
                     B_temp = B[idx1 .+ 1, :] # add one for intercept

@@ -1,13 +1,4 @@
-# Optimization Code
-## Block IHT for separate support and separate active sets (across studies)
-## b: n*K observation matrix
-## A: n*p*K data tensor
-## s: Sparsity level (integer)
-## x0: p*K initial solution
-## lambda1>=0 the ridge coefficient
-## lambda2>=0 the strength sharing coefficient
 
-#### Active set
 # sparse regression with IHT
 function BlockComIHT_inexactAS_diff_opt_MT(; X::Matrix,
                     y,
@@ -27,35 +18,28 @@ function BlockComIHT_inexactAS_diff_opt_MT(; X::Matrix,
                     maxIter_out = 1000
                     )
 
-    #eig = L # initialize for active set
-    #L = L + lambda1 + lambda2 # L for complete dataset for outer loop
+
     idxFlag = true # indicates whether indices have changed and whether we nee to recalculate eigenvalues
 
     ncol = p + 1
 
     # initialize
-    # B = beta
-    # beta = 0 # delete to save memory
-    #z = zeros(p, K)
     B_bar = zeros(ncol)
 
     iter_in = 1
     iter_out = 1
 
-    #idx = findall(x-> x.>1e-9, abs.(B[2:end,:]) ) # do not calculate for intercept -- initialize based on beta warm start
     B_summed = sum( B.^2, dims = 2)
     B_summed = B_summed[:]
-
-    # projection step # NOTE on change to active set: Comment this out and use idx as argument for _opt function -- can get this for good active set
 
 ################################################################################
     L = eig^2 / n + lambda1 + lambda2 # L for complete dataset for outer loop
 
     for k = 1:K
 
-        idxInt = Int.( [1; idx[k] .+ 1 ] ) # cat(1, idx[k] .+ 1, dims = 1) # add one for intercept # AS_Change - change to be matrix for each K
+        idxInt = Int.( [1; idx[k] .+ 1 ] )
 
-        r = zeros( n ); # list of vectors of indices of studies # [Vector{Any}() for i in 1:K]
+        r = zeros( n ); # list of vectors of indices of studies
         g = zeros(ncol);
 
         obj = 1e20;
@@ -70,14 +54,13 @@ function BlockComIHT_inexactAS_diff_opt_MT(; X::Matrix,
                 L_active = tsvd( X[ :, idxInt ]  )[2][1];
 
                 L_active = L_active^2 / n + lambda1 + lambda2
-                #println(L_active)
                 idxFlag = false # default to see if we need to recalculate eigenvalues
 
             end
 
             B_bar_active = zeros(length(idxInt))
-            r_active = zeros(n) #[Vector{Any}() for i in 1:K]
-            g_active = zeros(ncol) #zeros( length(idxInt ), K )
+            r_active = zeros(n)
+            g_active = zeros(ncol)
             B_active = B[idxInt, k]
 
             # inner while loop
@@ -172,18 +155,3 @@ function BlockComIHT_inexactAS_diff_opt_MT(; X::Matrix,
     return B, idx
 
 end
-
-#
-# using CSV, DataFrames
-# dat = CSV.read("/Users/gabeloewinger/Desktop/Research/dat_ms", DataFrame);
-# X = Matrix(dat[:,3:end]);
-# y = (dat[:,2]);
-# fit = BlockComIHT(X = X,
-#         y = y,
-#         study = dat[:,1],
-#                     beta =  ones(51, 2),#beta;#
-#                     rho = 9,
-#                     lambda1 = 0.3,
-#                     lambda2 = 0.2,
-#                     scale = false,
-#                     eig = nothing)

@@ -14,7 +14,7 @@ function BlockIHT_opt_MT(; X::Matrix,
                     L,
                     lambda,
                     p,
-                    n, 
+                    n,
                     indxList = nothing, # dummy variable
                     maxIter = 5000
                     )
@@ -25,7 +25,6 @@ function BlockIHT_opt_MT(; X::Matrix,
 
     L = L + lambda # update Lipschitz
     ncol = p + 1
-    #n = size(X, 1)
 
     # initialize at 0
     βhat = zeros(ncol, K)
@@ -106,16 +105,3 @@ function BlockIHT_opt_MT(; X::Matrix,
     return βhat;
 
 end
-
-# #
-# dat = CSV.read("/Users/gabeloewinger/Desktop/Research/dat_ms", DataFrame);
-# X = Matrix(dat[:,3:end]);
-# y = (dat[:,2]);
-# fit = BlockIHT(X = X,
-#         y = y,
-#         study = dat[:,1],
-#                     beta =  ones(51, 2),#beta;#
-#                     rho = 9,
-#                     lambda = 0.3,
-#                     scale = false,
-#                     eig = nothing)

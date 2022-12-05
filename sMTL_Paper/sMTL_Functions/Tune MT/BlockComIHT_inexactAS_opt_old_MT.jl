@@ -1,22 +1,11 @@
 # Optimization Code
-## Block IHT for the common support problem with strength sharing (problem (3) in the write-up)
-## b: n*K observation matrix
-## A: n*p*K data tensor
-## s: Sparsity level (integer)
-## x0: p*K initial solution
-## lambda1>=0 the ridge coefficient
-## lambda2>=0 the strength sharing coefficient
 
-#### Active set
-# sparse regression with IHT
 function BlockComIHT_inexactAS_opt_old_MT(; X::Matrix,
                     y,
                     rho,
-                    #indxList,
                     B,
                     K,
                     L,
-                    # idx,
                     n,
                     lambda1,
                     lambda2,
@@ -33,21 +22,18 @@ function BlockComIHT_inexactAS_opt_old_MT(; X::Matrix,
     ncol = p + 1
 
     # initialize
-    # B = beta
-    # beta = 0 # delete to save memory
     z = zeros(p, K)
     B_bar = zeros(ncol)
     z_bar = zeros(p)
     Z_bar = zeros(p, K)
 
-    r = zeros(n, K) #[Vector{Any}() for i in 1:K]; # list of vectors of indices of studies
+    r = zeros(n, K)  # list of vectors of indices of studies
     g = zeros(ncol, K);
 
     obj = 1e20;
     iter_in = 1
     iter_out = 1
 
-    #idx = findall(x-> x.>1e-9, abs.(B[2:end,:]) ) # do not calculate for intercept -- initialize based on beta warm start
     B_summed = sum( B.^2, dims = 2)
     B_summed = B_summed[:]
 
@@ -70,22 +56,14 @@ function BlockComIHT_inexactAS_opt_old_MT(; X::Matrix,
         if idxFlag
             # if active set has changed (or first round) recalculate svd
             L_active = tsvd( X[ :, idxInt] )[2][1]; # 0
-            # for k = 1:K
-            #     a2 = tsvd( X[ indxList[k], idxInt] )[2][1]
-            #     if (a2 > L_active)
-            #         L_active = a2
-            #     end
-            # end
-
             L_active = L_active^2 * sqrt(K) / n + lambda1 + lambda2
-            #println(L_active)
             idxFlag = false # default to see if we need to recalculate eigenvalues
 
         end
 
         B_bar_active = zeros(length(idxInt))
         z_bar_active = zeros(length(idx))
-        r_active = zeros(n, K) # Vector{Any}() for i in 1:K]
+        r_active = zeros(n, K)
         g_active = zeros(length(idxInt) ,K)
         B_active = B[idxInt,:]
         z_active = z[idx, :]
@@ -112,7 +90,6 @@ function BlockComIHT_inexactAS_opt_old_MT(; X::Matrix,
             end
 
             obj = f
-            # println(obj)
 
             if (abs(obj - objPrev)/objPrev < 1e-6)
                 break
@@ -124,13 +101,11 @@ function BlockComIHT_inexactAS_opt_old_MT(; X::Matrix,
             z_active = zeros(length(idx), K)
             idx_active = findall(x-> x.>1e-9, abs.(B_temp_active[2:end,:]) )
             z_active[idx_active] = ones(size(idx_active))
-            # cost_active = lambda_z * Z_bar_active.^2 / L_active +
-            #               B_temp_active[2:end,:].^2 - lambda_z * (z_active-Z_bar_active).^2 / L_active
             cost_active = lambda_z / L_active * ( Z_bar_active.^2  - (z_active-Z_bar_active).^2 ) # part of cost vector, rest in for loop below
             z_active = zeros(length(idx), K)
 
             for k=1:K
-                costAct_k = B_temp_active[2:end, k].^2 + n * cost_active[:,k] # nVec[k] * cost_active[:,k] **** removed the nVec on 10/7/21  # scale by nVec since our objective is altered
+                costAct_k = B_temp_active[2:end, k].^2 + n * cost_active[:,k] #
                 idx1 = partialsortperm(costAct_k, 1:rho, rev=true)
                 z_active[idx1, k] = ones(size(idx1))
             end
@@ -177,7 +152,6 @@ function BlockComIHT_inexactAS_opt_old_MT(; X::Matrix,
         z = zeros(p, K)
         idx1 = findall(x-> x.>1e-9, abs.(B_temp[2:end,:]) )
         z[idx1] = ones(size(idx1))
-        # cost =  lambda_z * Z_bar.^2/L + B_temp[2:end,:].^2 - lambda_z * (z-Z_bar).^2 / L
         cost =  lambda_z / L * (Z_bar.^2 - (z-Z_bar).^2) # scale by nVec (below) since our objective is altered
         z = zeros(p, K)
         flag = 0
@@ -214,18 +188,3 @@ function BlockComIHT_inexactAS_opt_old_MT(; X::Matrix,
     return B
 
 end
-
-#
-# using CSV, DataFrames
-# dat = CSV.read("/Users/gabeloewinger/Desktop/Research/dat_ms", DataFrame);
-# X = Matrix(dat[:,3:end]);
-# y = (dat[:,2]);
-# fit = BlockComIHT(X = X,
-#         y = y,
-#         study = dat[:,1],
-#                     beta =  ones(51, 2),#beta;#
-#                     rho = 9,
-#                     lambda1 = 0.3,
-#                     lambda2 = 0.2,
-#                     scale = false,
-#                     eig = nothing)

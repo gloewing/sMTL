@@ -1,12 +1,4 @@
-## Block IHT for the common support problem with strength sharing (problem (3) in the write-up)
-## b: n*K observation matrix
-## A: n*p*K data tensor
-## s: Sparsity level (integer)
-## x0: p*K initial solution
-## lambda1>=0 the ridge coefficient
-## lambda2>=0 the strength sharing coefficient
-
-using TSVD, Statistics #, LinearAlgebra, Statistics
+using TSVD, Statistics 
 
 include("BlockComIHT_opt_MT.jl") # IHT
 include("BlockLS_MT.jl") # local search
@@ -37,11 +29,9 @@ function BlockComIHT(; X,
     n, p = size(X); # number of covaraites
     beta = Matrix(beta); # initial value
     rho = Int64(rho);
-    #study = Int.(study);
     localIter = Int.(localIter);
     K = size(y, 2) #length( unique(study) ); # number of tasks
     indxList = [Vector{Any}() for i in 1:K]; # list of vectors of indices of studies
-    # nVec = zeros(K); # vector of sample sizes of studies
 
     # scale covariates
     if scale
@@ -52,20 +42,10 @@ function BlockComIHT(; X,
         Xsd = std(X, dims=1) .* (n - 1) / n; # glmnet style MLE of sd
         sdMat = Xsd; # save std of covariates of ith study in ith row of matrix
         X .= X ./ Xsd; # standardize ith study's covariates
-        #
-        # for i = 1:K
-        #     # indx = findall(x -> x == i, study); # indices of rows for ith study
-        #     # indxList[i] = indx; # save indices
-        #     # n_k = length(indx); # study k sample size
-        #     # nVec[i] = n_k; # save sample size
-        #
-        #     # Ysd[i] = std(y[indx]) * (n_k - 1) / n_k; # glmnet style MLE of sd of y_k
-        # end
 
         sdMat = hcat(1, sdMat); # add row of ones so standardize intercept by ones
         beta = beta .* sdMat'; # current solution β
 
-        # lambda = lambda / mean(Ysd); # scale tuning parameter for L2 norm by average std of y_k
     end
 
     ## intercept
@@ -81,7 +61,7 @@ function BlockComIHT(; X,
         eig = Float64(eig)
     end
 
-    L = eig^2 * K / n #maximum(nVec) # L without regularization terms (updated in optimization fn below)
+    L = eig^2 * K / n # L without regularization terms (updated in optimization fn below)
 
     # optimization
     vals = length(lambda1)
@@ -100,7 +80,6 @@ function BlockComIHT(; X,
         beta = BlockComIHT_opt_MT(X = X,
                                         y = y,
                                         rho = rho,
-                                        # indxList = indxList,
                                         βhat = beta,
                                         K = K,
                                         L = L,
@@ -146,53 +125,3 @@ function BlockComIHT(; X,
     end
 
 end
-
-# using CSV, DataFrames
-#
-# # # # #
-# dat = CSV.read("/Users/gabeloewinger/Desktop/Research/dat_ms", DataFrame);
-# X = Matrix(dat[:,4:end]);
-# y = (dat[:,2:3]);
-# lambda1 = [1 2 3]
-# lambda2 = [1 2 3]
-# fit = BlockComIHT(X = X,
-#         y = y,
-#         #study = dat[:,1],
-#                     beta =  zeros(50, 2),#beta;#
-#                     rho = 9,
-#                     lambda1 = lambda1,
-#                     lambda2 = lambda2,
-#                     scale = true,
-#                     eig = nothing,
-#                     localIter = [100 100 100])
-# #
-#
-# lambda1 =  ones(4)
-# lambda2 = ones(4) #ones(4)
-#
-# fit = BlockComIHT(X = X,
-#         y = y,
-#         study = dat[:,1],
-#                     beta =  zeros(51, 2),#beta;#
-#                     rho = 8,
-#                     lambda1 = lambda1,
-#                     lambda2 = lambda2,
-#                     maxIter = 10000,
-#                     scale = true,
-#                     eig = nothing,
-#                     localIter = [0 10 0 10])
-#
-# include("objFun.jl") # local search
-#
-# itr = 2
-# objFun( X = X,
-#         y = y,
-#         study = dat[:,1],
-#                     beta = fit[:,:, itr],
-#                     lambda1 = lambda1[ itr ],
-#                     lambda2 = lambda2[ itr ],
-#                     lambda_z = 0,
-#                     )
-#
-# # number of non-zeros per study (not including intercept)
-# size(findall(x -> x.> 1e-9, abs.(fit[2:end, :,1])))[1] / K
