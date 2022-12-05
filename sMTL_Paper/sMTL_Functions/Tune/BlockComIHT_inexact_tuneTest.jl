@@ -1,10 +1,4 @@
-## Block IHT INEXACT for the common support problem with strength sharing (problem (3) in the write-up)
-## b: n*K observation matrix
-## A: n*p*K data tensor
-## s: Sparsity level (integer)
-## x0: p*K initial solution
-## lambda1>=0 the ridge coefficient
-## lambda2>=0 the strength sharing coefficient
+
 
 using TSVD, Statistics #, LinearAlgebra, Statistics
 
@@ -60,19 +54,16 @@ function BlockComIHT_inexact(; X,
             Xsd = std(X[indx,:], dims=1) .* (n_k - 1) / n_k; # glmnet style MLE of sd
             sdMat[:,i] = Xsd[1,:]; # save std of covariates of ith study in ith row of matrix
             X[indx,:] .= X[indx,:] ./ Xsd; # standardize ith study's covariates
-            # Ysd[i] = std(y[indx]) * (n_k - 1) / n_k; # glmnet style MLE of sd of y_k
 
         end
 
         sdMat = vcat(1, sdMat); # add row of ones so standardize intercept by ones
         beta = beta .* sdMat; # scale warm start solution
 
-        # lambda1 = lambda1 / mean(Ysd); # scale tuning parameter for L2 norm by average std of y_k
 
     else
         # otherwise just make this a vector of ones for multiplication
         # by coefficient estimates later
-        # sdMat = ones(p, K); # K x p matrix to save std of covariates of each study
 
         for i = 1:K
             indxList[i] = findall(x -> x == i, study); # indices of rows for ith study
@@ -170,24 +161,3 @@ function BlockComIHT_inexact(; X,
     end
 
 end
-
-# using CSV, DataFrames
-#
-# # # # # #
-# dat = CSV.read("/Users/gabeloewinger/Desktop/Research/dat_ms", DataFrame);
-# X = Matrix(dat[:,3:end]);
-# y = (dat[:,2]);
-# lambda1 = [1 2 3]
-# lambda2 = [1 2 3]
-# lambda_z = [1 2 3]
-# fit = BlockComIHT_inexact(X = X,
-#         y = y,
-#         study = dat[:,1],
-#                     beta =  zeros(51, 2),#beta;#
-#                     rho = 9,
-#                     lambda1 = lambda1,
-#                     lambda2 = lambda2,
-#                     lambda_z = lambda_z,
-#                     scale = true,
-#                     localIter = 50,
-#                     eig = nothing)
