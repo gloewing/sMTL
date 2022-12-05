@@ -14,11 +14,7 @@ function BlockLS(; X::Matrix,
                     p,
                     maxIter = 50)
 
-    # p is number of covariates not including intercept
     s = rho; #
-    # n, p, K = size(X)
-    #B = copy(beta)
-    #beta = 0; # save memory
     S = zeros(p, p ,K)
     Aq = zeros(s, p-s)
     Bq = zeros(s, p-s)
