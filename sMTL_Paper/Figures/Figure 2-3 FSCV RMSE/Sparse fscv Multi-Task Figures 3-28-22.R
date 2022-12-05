@@ -29,9 +29,7 @@ for(r in rVec){
         for(n in nVec){
         for(k in Kvec){
             flNm <-  paste0("cfFSCV_MT_datPro_2_sclX_TRUE_rhoLen_5_totSims_100_L0sseTn_sse_rdgLmd_TRUE_MSTn_multiTask_Yscl_TRUE_rhoMax_", s, "_nFld_5_LSitr_NA_LSspc_NA_fitLocal_0_Zlen_14_wsMeth_2_asPass_TRUE_TnIn_TRUE_colSub_", r, "_n_k_", n, "_K_", k)
-                            # cfFSCV_MT_datPro_2_sclX_TRUE_rhoLen_5_totSims_30_L0sseTn_sse_rdgLmd_TRUE_MSTn_multiTask_Yscl_TRUE_rhoMax_25_nFld_3_LSitr_NA_LSspc_NA_fitLocal_0_Zlen_14_wsMeth_2_asPass_TRUE_TnIn_TRUE_colSub_1_n_k_250_K_4
-            # flNm <-  paste0("tungFSCV_MT_datPro_4_sclX_TRUE_rhoLen_5_totSims_10_L0sseTn_sse_rdgLmd_TRUE_MSTn_multiTask_Yscl_TRUE_rhoMax_", s, "_nFld_3_LSitr_NA_LSspc_NA_fitLocal_0_Zlen_14_wsMeth_2_asPass_TRUE_TnIn_TRUE_colSub_", r, "_n_k_", n, "_out_DA")
-                            #"tungFSCV_MT_datPro_4_sclX_TRUE_rhoLen_5_totSims_10_L0sseTn_sse_rdgLmd_TRUE_MSTn_multiTask_Yscl_TRUE_rhoMax_25_nFld_3_LSitr_NA_LSspc_NA_fitLocal_0_Zlen_14_wsMeth_2_asPass_TRUE_TnIn_TRUE_colSub_1_n_k_250_out_DA"              # 
+                            #""              # 
                     if(file.exists(flNm)){
                         # check to see if file exists
                         cnt <- cnt + 1
@@ -120,10 +118,7 @@ plt_rmse =
                color = "black", 
                size = rel(0.5),
                alpha = 0.7) + #
-    #ylim(0, 2) +
-    # ylab(TeX('$\\mathbf{RMSE_{Method}/RMSE_{\u2113_0}}$') ) + 
     ylab(TeX('$\\mathbf{RMSE_{Method}/RMSE_{TS-SR}$') )+ 
-    #xlab(TeX('$\\mathbf{p}$')) + 
     xlab("Number of Features (p)") + 
     scale_fill_manual(values = c("#ca0020", "lightgrey", "#0868ac", "darkgray", "#E69F00", "#525252") ) +
     scale_color_manual(values = c("#ca0020", "lightgrey", "#0868ac", "darkgray", "#E69F00", "#525252")) +
@@ -136,7 +131,7 @@ plt_rmse =
            legend.text = element_text(face="bold", color="black", size = rel(2)), # 3 GCL
            legend.title = element_text(face="bold", color="black", size = rel(2)),
            strip.text.x = element_text(face="bold", color="black", size = rel(2.5))
-    ) + guides(fill= guide_legend(title="Method"))  #guides(fill=guide_legend(title=TeX('$\\mathbf{\\sigma^2_{x}}$')))
+    ) + guides(fill= guide_legend(title="Method"))  
 
 setwd("~/Desktop/Research Final/Sparse Multi-Study/Figures/Figure 2-3 FSCV RMSE")
 ggsave( "multiTaskRMSE_fscv_L0.pdf",
@@ -160,10 +155,7 @@ plt_rmse =
                color = "black", 
                size = rel(0.5),
                alpha = 0.7) + #
-    #ylim(0, 2) +
-    # ylab(TeX('$\\mathbf{RMSE_{Method}/RMSE_{\u2113_0}}$') ) + 
     ylab(TeX('$\\mathbf{RMSE_{Method}/RMSE_{TS-SR}$') )+ 
-    # xlab(TeX('$\\mathbf{p}$')) +
     xlab("Number of Features (p)") + 
     scale_fill_manual(values = c("#ca0020", "lightgrey", "#0868ac", "darkgray", "#E69F00", "#525252") ) +
     scale_color_manual(values = c("#ca0020", "lightgrey", "#0868ac", "darkgray", "#E69F00", "#525252")) +
@@ -176,7 +168,7 @@ plt_rmse =
            legend.text = element_text(face="bold", color="black", size = rel(2)), # 3 GCL
            legend.title = element_text(face="bold", color="black", size = rel(2)),
            strip.text.x = element_text(face="bold", color="black", size = rel(2.5))
-    ) + guides(fill= guide_legend(title="Method"))  #guides(fill=guide_legend(title=TeX('$\\mathbf{\\sigma^2_{x}}$')))
+    ) + guides(fill= guide_legend(title="Method"))  
 
 setwd("~/Desktop/Research Final/Sparse Multi-Study/Figures/Figure 2-3 FSCV RMSE")
 ggsave( "multiTaskRMSE_fscv_L0_n1000.pdf",
@@ -205,8 +197,6 @@ plt_rmse =
                color = "black", 
                size = rel(0.5),
                alpha = 0.7) + #
-    #ylim(0, 2) +
-    # ylab(TeX('$\\mathbf{RMSE_{Method}/RMSE_{\u2113_0}}$') ) + 
     ylab(TeX('$\\mathbf{RMSE_{Method}/RMSE_{TS-SR}$') )+ 
     xlab(TeX('$\\mathbf{p}$')) + 
     scale_fill_manual(values = c("#ca0020", "lightgrey", "#0868ac", "darkgray", "#E69F00", "#525252") ) +
@@ -220,7 +210,7 @@ plt_rmse =
            legend.text = element_text(face="bold", color="black", size = rel(2)), # 3 GCL
            legend.title = element_text(face="bold", color="black", size = rel(2)),
            strip.text.x = element_text(face="bold", color="black", size = rel(2.5))
-    ) + guides(fill= guide_legend(title="Method"))  #guides(fill=guide_legend(title=TeX('$\\mathbf{\\sigma^2_{x}}$')))
+    ) + guides(fill= guide_legend(title="Method"))  
 
 setwd("~/Desktop/Research Final/Sparse Multi-Study/Figures/Figure 2-3 FSCV RMSE")
 ggsave( "multiTaskRMSE_fscv_all.pdf",
@@ -252,10 +242,8 @@ plt_supp =
     dplyr::summarize(my_mean = mean(value, na.rm = TRUE) ) %>% 
     arrange(r, n) %>% #print(n = Inf)
     ggplot(aes(y = my_mean, x = r, fill = key)) +
-    # y = value, x = e1, fill = key 
     facet_wrap( ~ n, nrow = 1) +
     geom_bar(stat="identity", position=position_dodge()) +
-    # coord_cartesian(ylim = c(-0.1, 0.5) ) + 
     ylab(TeX('$\\mathbf{\\rho_{Method} - \\rho_{\u2113_0}}$') )+ 
     xlab(TeX('$\\mathbf{p}$')) + 
     scale_fill_manual(values = c("#ca0020", "lightgrey", "#0868ac", "darkgray", "#E69F00", "#525252") ) +
@@ -269,8 +257,8 @@ plt_supp =
            legend.text = element_text(face="bold", color="black", size = rel(2)), # 3 GCL
            legend.title = element_text(face="bold", color="black", size = rel(2)),
            strip.text.x = element_text(face="bold", color="black", size = rel(2.5))
-    ) + guides(fill= guide_legend(title="Method"))#guides(fill=guide_legend(title=TeX('$\\mathbf{\\sigma^2_{x}}$')))
-
+    ) + guides(fill= guide_legend(title="Method"))
+                                     
 setwd("~/Desktop/Research Final/Sparse Multi-Study/Figures/Figure 2-3 FSCV RMSE")
 ggsave( "multiTaskSuppSize_fscv.pdf",
         plot = plt_supp,
@@ -291,10 +279,8 @@ plt_supp =
     dplyr::summarize(my_mean = mean(value) ) %>% 
     arrange(r, n) %>% #print(n = Inf)
     ggplot(aes(y = my_mean, x = r, fill = key)) +
-    # y = value, x = e1, fill = key 
     facet_wrap( ~ n, nrow = 1) +
     geom_bar(stat="identity", position=position_dodge()) +
-    # coord_cartesian(ylim = c(-0.1, 0.5) ) + 
     ylab(TeX('$\\mathbf{\\rho_{Method} - \\rho_{\u2113_0}}$') )+ 
     xlab(TeX('$\\mathbf{p}$')) + 
     scale_fill_manual(values = c("#ca0020", "lightgrey", "#0868ac", "darkgray", "#E69F00", "#525252") ) +
@@ -308,8 +294,8 @@ plt_supp =
            legend.text = element_text(face="bold", color="black", size = rel(2)), # 3 GCL
            legend.title = element_text(face="bold", color="black", size = rel(2)),
            strip.text.x = element_text(face="bold", color="black", size = rel(2.5))
-    ) + guides(fill= guide_legend(title="Method"))#guides(fill=guide_legend(title=TeX('$\\mathbf{\\sigma^2_{x}}$')))
-
+    ) + guides(fill= guide_legend(title="Method"))#
+                                     
 setwd("~/Desktop/Research Final/Sparse Multi-Study/Figures/Figure 2-3 FSCV RMSE")
 ggsave( "multiTaskSuppSize_fscv_noLasso.pdf",
         plot = plt_supp,
