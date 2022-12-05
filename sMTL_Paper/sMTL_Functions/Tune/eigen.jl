@@ -40,11 +40,3 @@ function maxEigen(; X::Matrix,
     return L;
 
 end
-
-#
-# dat = CSV.read("/Users/gabeloewinger/Desktop/Research/dat_ms", DataFrame);
-# X = Matrix(dat[:,3:end]);
-# study = Int.(dat[:,1]);
-# L = maxEigen(X = X,
-#              study = study, # nothing
-#              intercept = true)
