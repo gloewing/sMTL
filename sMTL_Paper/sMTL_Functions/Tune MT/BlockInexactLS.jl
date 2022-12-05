@@ -16,10 +16,7 @@ function BlockInexactLS(; X::Matrix,
                     maxIter = 50)
 
     # p is number of covariates not including intercept
-    #s = rho; #
-    # n, p, K = size(X)
     B = copy(beta)
-    #beta = 0; # save memory
     S = zeros(p, p ,K)
     Aq = zeros(s, p-s)
     Bq = zeros(s, p-s)
@@ -85,7 +82,7 @@ function BlockInexactLS(; X::Matrix,
             X0 = X[ indxList[k], 2:end] # do not include intercept
             y0 = y[ indxList[k] ]
             S0 = S[:,:,k]
-            beta = B[2:end, k] # ask Kayhan -- residuals include contribution of interept but other terms below do now
+            beta = B[2:end, k] 
             r = r0[k] # residuals include contribution of intercept
 
             # constant matrix in quadratic program (QP)
@@ -115,7 +112,6 @@ function BlockInexactLS(; X::Matrix,
                  # DOESNT MATCH -- ASK KAYHAN
                 Bq = Bq + ones(s) *
                     (2 * lambda2 * ( B_bar_cut * (K-1) - sum(beta_cut, dims=2) ) / K - 2 * lambda2 * (K-1) *  B_bar_cut / K )'
-                    # I got the equivalent of (2 * lambda2 * (K-1)/K) * ( B_cut - B_bar_cut)
                 # cost of beta - betaBar penalty BEFORE swap (only including fixed terms that do not depend on decision variable)
                 b_bar_temp = B_bar[idx1]
                 B_temp = B[idx1 .+ 1, :] # add one for intercept
