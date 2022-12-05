@@ -1,8 +1,3 @@
-## y: N x K outcome
-## X: N x p design matrix
-## rho: Sparsity level (integer)
-## beta: p*K initial solution
-## lambda>=0 the ridge coefficient
 
 using TSVD, Statistics
 include("BlockIHT_opt.jl")
@@ -52,13 +47,11 @@ function BlockIHT(; X,
             Xsd = std(X[indx,:], dims=1) .* (n_k - 1) / n_k; # glmnet style MLE of sd
             sdMat[:,i] = Xsd[1,:]; # save std of covariates of ith study in ith row of matrix
             X[indx,:] .= X[indx,:] ./ Xsd; # standardize ith study's covariates
-            # Ysd[i] = std(y[indx]) * (n_k - 1) / n_k; # glmnet style MLE of sd of y_k
         end
 
         sdMat = vcat(1, sdMat); # add row of ones so standardize intercept by ones
         beta = beta .* sdMat; # current solution β
 
-        # lambda = lambda / mean(Ysd); # scale tuning parameter for L2 norm by average std of y_k
 
     else
         # otherwise just make this a vector of ones for multiplication
@@ -159,18 +152,3 @@ function BlockIHT(; X,
     end
 
 end
-#
-# # # # # #
-# using CSV, DataFrames
-# dat = CSV.read("/Users/gabeloewinger/Desktop/Research/dat_ms", DataFrame);
-# X = Matrix(dat[:,3:end]);
-# y = (dat[:,2]);
-# fit = BlockIHT(X = X,
-#         y = y,
-#         study = dat[:,1],
-#                     beta =  ones(51, 2),#beta;#
-#                     rho = 5,
-#                     lambda = collect(0:.1:1),
-#                     scale = true,
-#                     localIter = 5,
-#                     eig = nothing)
