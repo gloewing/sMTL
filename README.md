@@ -1,2 +1,3 @@
 # sMTL
-sMTL CRAN Package
+Multi-Task Learning for Sparsity Pattern Heterogeneity
+sMTL R Package and paper
