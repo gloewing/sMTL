@@ -7,14 +7,7 @@ library(glmnet)
 library(dplyr)
 library(L0Learn)
 
-source("Study Strap Functions.R")
 source("SimFn.R")
-source("ss.ar.caret.mSSL.R")
-source("studyStrap.predict.caret.mSSL.R")
-source("fatTrim.R")
-source("SSE.caret.mSSL.R")
-source("merge.caret.mSSL.R")
-source("ss.caret.mSSL.R")
 source("OEC Functions.R")
 
 # # # s is true number of non-zeros
