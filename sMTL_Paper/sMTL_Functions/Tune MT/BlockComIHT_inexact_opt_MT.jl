@@ -1,12 +1,4 @@
 # Optimization Code
-## Block IHT for the common support problem with strength sharing (problem (3) in the write-up)
-## b: n*K observation matrix
-## A: n*p*K data tensor
-## s: Sparsity level (integer)
-## x0: p*K initial solution
-## lambda1>=0 the ridge coefficient
-## lambda2>=0 the strength sharing coefficient
-
 # sparse regression with IHT
 function BlockComIHT_inexact_opt_MT(; X::Matrix,
                     y,
@@ -28,14 +20,12 @@ function BlockComIHT_inexact_opt_MT(; X::Matrix,
     ncol = p + 1
 
     # initialize
-    #B = beta
-    #beta = 0 # delete to save memory
     z = zeros(p, K)
     B_bar = zeros(ncol)
     z_bar = zeros(p)
     Z_bar = zeros(p, K)
 
-    r = zeros(n, K) #[Vector{Any}() for i in 1:K]; # list of vectors of indices of studies
+    r = zeros(n, K)  # list of vectors of indices of studies
     g = zeros(ncol, K);
 
     obj = 1e20;
@@ -96,8 +86,8 @@ function BlockComIHT_inexact_opt_MT(; X::Matrix,
       z = zeros(p, K)
 
       for k=1:K
-          cost_k = B_temp[2:end, k].^2 + n * cost[:,k] # nVec[k] * cost[:,k] *** removed nVec[k] on 10/7/21 # scale lambda_z by nVec
-          idx = partialsortperm(cost_k, # removed cost[2:end,k] becasuse already not including intercept
+          cost_k = B_temp[2:end, k].^2 + n * cost[:,k] 
+          idx = partialsortperm(cost_k, 
                                 1:s,
                                 rev=true)
           z[idx, k] = ones(size(idx))
@@ -111,18 +101,3 @@ function BlockComIHT_inexact_opt_MT(; X::Matrix,
     return B
 
 end
-
-#
-# using CSV, DataFrames
-# dat = CSV.read("/Users/gabeloewinger/Desktop/Research/dat_ms", DataFrame);
-# X = Matrix(dat[:,3:end]);
-# y = (dat[:,2]);
-# fit = BlockComIHT(X = X,
-#         y = y,
-#         study = dat[:,1],
-#                     beta =  ones(51, 2),#beta;#
-#                     rho = 9,
-#                     lambda1 = 0.3,
-#                     lambda2 = 0.2,
-#                     scale = false,
-#                     eig = nothing)
