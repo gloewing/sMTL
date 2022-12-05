@@ -89,7 +89,7 @@ if(MSTn %in% c("hoso", "balancedCV") ){
     nfold <- 5
 }
 
-rho <- seq(5, 25, by = 5) #c(seq(2, 10, by = 2), seq(15, 20, by = 5))  # this works: 3/19/22 , just changed for sparse c(seq(2, 10, by = 2), seq(15, 50, by = 5), seq(60, 90, by = 10)) 
+rho <- seq(5, 25, by = 5) 
 
 # rho <- rho[rho <= round(2500 / colSubSamp) ]
 
@@ -250,7 +250,7 @@ L0_MS_z3 <- juliaCall("include", paste0(juliaFnPath, "BlockComIHT_inexact_diffAS
         set.seed(seedSet)
 
         # data
-        full <- read.csv("/n/home12/gloewinger/sub_samp2500")[,-c(1,2,4,5)] #read.csv( paste0("/n/home12/gloewinger/fscv_subset") )
+        full <- read.csv("/n/home12/gloewinger/sub_samp2500")[,-c(1,2,4,5)]
         colnames(full)[c(1,2)] <- c("Study", "Y_DA")
         
         # select subset
@@ -430,7 +430,6 @@ L0_MS_z3 <- juliaCall("include", paste0(juliaFnPath, "BlockComIHT_inexact_diffAS
         colnames(tune.grid) <- c("lambda", "rho")
         
         # glmnet for ridge
-        # tune.gridGLM <- as.data.frame( expand.grid(seq(0,1,by=0.1), lambda) ) # Ridge
         tune.gridGLM <- as.data.frame( cbind( 0, lambda) ) # Ridge
         
         colnames(tune.gridGLM) <- c("alpha", "lambda")
@@ -713,11 +712,6 @@ L0_MS_z3 <- juliaCall("include", paste0(juliaFnPath, "BlockComIHT_inexact_diffAS
         ########################################################
         
         print("setWD to save file")
-        # saveFn(file = resMat, 
-        #        fileNm = fileNm, 
-        #        iterNum = iterNum, 
-        #        save.folder = save.folder)
-        
         #####################################################################
         
         ####################################
@@ -923,12 +917,10 @@ L0_MS_z3 <- juliaCall("include", paste0(juliaFnPath, "BlockComIHT_inexact_diffAS
         # share info on the beta - betaBar but no ||z - zbar|| penalty (currently but could do it if changed tuning grid)
         glPenalty <- 4
         predsMat <- matrix(NA, ncol = K, nrow = nrow(full)) # predictions for stacking matrix
-        #testMat <- matrix(NA, ncol = K, nrow = nrow(test)) # predictions on test set
         
         # tune multi-study with l0 penalty with GL Penalty = TRUE
         
         predsMat <- matrix(NA, ncol = K, nrow = nrow(full)) # predictions for stacking matrix
-        #testMat <- matrix(NA, ncol = K, nrow = nrow(test)) # predictions on test set
         res <- resS <- vector(length = K) # store support prediction
         
         if(tuneInd){
@@ -1068,12 +1060,6 @@ L0_MS_z3 <- juliaCall("include", paste0(juliaFnPath, "BlockComIHT_inexact_diffAS
         
         rm(MSparams, tuneMS, betasMS, warmStart)
         ########################################################
-        # ******************************************************
-        # saveFn(file = resMat, 
-        #        fileNm = fileNm, 
-        #        iterNum = iterNum, 
-        #        save.folder = save.folder)
-        #####################################################################
  
         ####################################
         # common support L0 regularization with ||beta - betaBar|| penalty
@@ -1302,10 +1288,6 @@ L0_MS_z3 <- juliaCall("include", paste0(juliaFnPath, "BlockComIHT_inexact_diffAS
         # save results
         ########################
         print("setWD to save file")
-        # saveFn(file = resMat, 
-        #        fileNm = fileNm, 
-        #        iterNum = iterNum, 
-        #        save.folder = save.folder)
        
         ########################################################
         print(paste("iteration: ", iterNum, " Complete!"))
@@ -1505,10 +1487,7 @@ L0_MS_z3 <- juliaCall("include", paste0(juliaFnPath, "BlockComIHT_inexact_diffAS
         
         ########################################################
         print("setWD to save file")
-        # saveFn(file = resMat, 
-        #        fileNm = fileNm, 
-        #        iterNum = iterNum, 
-        #        save.folder = save.folder)
+
         ##############
         # RMTL - Trace
         ##############
