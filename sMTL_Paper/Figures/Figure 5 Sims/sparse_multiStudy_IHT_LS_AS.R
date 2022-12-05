@@ -16,149 +16,10 @@ source("SSE.caret.mSSL.R")
 source("merge.caret.mSSL.R")
 source("ss.caret.mSSL.R")
 source("OEC Functions.R")
-# source("sparseFn_iht.R") # below
-# source("sparseFn_iht_par.R")
-# #
-# sims6 <- cbind(1, expand.grid(c(0.0001, 0.1),
-#                 c(1e-10),
-#                 c(50), # 50
-#                 c(5), #c(3, 5, 7), #c(3, 8),
-#                 c(0.01, 1), # 0.01, 0.5, 1
-#                 c("exponential"),
-#                 c(0.5), # 0.5
-#                 c(0.2), # 0.2
-#                 c(0.5),# 0.5
-#                 c(250),
-#                 c(5), #
-#               c(10), # r
-#                    c(0.5), # r_p # , 3/5
-#               c(2), # error multiplier
-#               c("multiTask")
-#                    )
-#                 )#
-# # 
-# sims6 <- cbind(1, expand.grid(c(0.0001, 0.1),
-#                 c(1e-10),
-#                 c(50), # 50
-#                 c(3, 5, 7), #c(3, 5, 7), #c(3, 8),
-#                 c(1, 10), # 0.01, 0.5, 1  # , 0.5, 1
-#                 c("exponential"),
-#                 c(0.5), # 0.5
-#                 c(0.2), # 0.2
-#                 c(0.5),# 0.5
-#                 c(250),
-#                 c(20), #
-#               c(10), # r
-#                    c(0.5), # r_p # , 3/5
-#               c(2), # error multiplier
-#               c("hoso"), #"multiTask"
-#               c(TRUE) # tuneInd
-#                    )
-#                 )#
-# sims6 <- cbind(1, expand.grid(c(10),
-#                 c(1e-10),
-#                 c(50), # 50
-#                 c(5), #c(3, 5, 7), #c(3, 8),
-#                 c(1, 10), # 0.01, 0.5, 1  # , 0.5, 1
-#                 c("exponential"),
-#                 c(0.5), # 0.5
-#                 c(0.2), # 0.2
-#                 c(0.5),# 0.5
-#                 c(250),
-#                 c(20), #
-#               c(10), # r
-#                    c(0.5), # r_p # , 3/5
-#               c(2), # error multiplier
-#               c("multiTask"), #"multiTask"
-#               c(TRUE, FALSE) # tuneInd
-#                    )
-#                 )#
-# sims8 <- cbind(1, expand.grid(c(10),
-#                 c(1e-10),
-#                 c(50), # 50
-#                 c(5), #c(3, 5, 7), #c(3, 8),
-#                 c(0.01, 1), # 0.01
-#                 c("exponential"),
-#                 c(0.5), # 0.5
-#                 c(0.2), # 0.2
-#                 c(0.5),# 0.5
-#                 c(250),
-#                 c(5), #
-#               c(10), # r -- random support
-#                    c(0.5), # r_p # , 3/5
-#               c(2), # error multiplier
-#               c("multiTask"),  # "hoso"
-#               c(TRUE, FALSE),
-#               c(1,2) #,
-#               # c(5, 50), # local search iterations
-#               # c(5, 1 ) # local search spacing
-#                    )
-#                 )#
-# colnames(sims8) <- c("simNum", "betaVar", "xVar", "nLow",
-#                         "K", "tau", "cov", "rho",
-#                         "betaRangeLow", "betaRangeHigh", "p", "s", "r", "r_p", "errorMult", "multiTask", "ASpass", "WSmethod") # , "lit", "lspc"
-# sims6 <- sims8
-######
-# sims6 <- cbind(1, expand.grid(c(0.0001, 0.1),
-#                 c(1e-10),
-#                 c(50),
-#                 c(3, 5), #c(3, 8),
-#                 c(0.01, 0.5, 1),
-#                 c("exponential"),
-#                 c(0.5),
-#                 c(0.2),
-#                 c(0.5),
-#                 c(250),
-#                 c(2), #
-#               c(5), # r
-#                    c(0.5), # r_p # , 3/5
-#               c(TRUE, FALSE)
-#                    )
-#                 )#
 
-######
-# sims7 <- cbind(1, expand.grid(c(0.0001, 0.1),
-#                 c(1e-10),
-#                 c(100),
-#                 c(3,5), #c(3, 8),
-#                 c(0.1),
-#                 c("exponential"),
-#                 c(0.5),
-#                 c(0.2),
-#                 c(5),
-#                 c(250),
-#                 c(5), #
-#               c(2), # r
-#                    c(0/5) , # r_p # , 3/5
-#               c(TRUE, FALSE)
-#                    )
-#                 )# "cvCF"
-
-# sims7 <- cbind(1, expand.grid(c(0.0001, 0.1),
-#                               c(1e-10),
-#                               c(200, 400),
-#                               c(6),
-#                               c(2, 3),
-#                               c("exponential"),
-#                               c(0.5),
-#                               c(0.2),
-#                               c(0.5),
-#                               c(500),
-#                               c(10), #
-#                               c(5), # r
-#                               c(0/5, 3/5), # r_p # , 3/5
-#               c(TRUE, FALSE)
-# )
-# )# "cvCF"
-#sims6 <- rbind(sims6, sims7)
-# sims6 = sims6[order(sims6$K),]
-# colnames(sims6) <- c("simNum", "betaVar", "xVar", "nLow",
-#                         "K", "tau", "cov", "rho",
-#                         "betaRangeLow", "betaRangeHigh", "p", "s", "r", "r_p", "errorMult", "multiTask", "tuneInd")
 # # # s is true number of non-zeros
 # # r is number of covariates that are potentially divergent support (set of covariates that are randomly selected to be include)
 # # r_p is the probability of inclusion for a given study (i..e, each of the K studies selects each of the r covariates for inclusion ~ i.i.d. Ber(r_p) )
-# write.csv(sims6, "~/Desktop/Research/sparseParam_test", row.names = FALSE)
 
 sims6 <- read.csv("sparseParam_test")
 cluserInd <- TRUE # whether running on computer or on cluster
@@ -168,7 +29,7 @@ load.folder <- "~/Desktop/Research"
 if(cluserInd){
     # if on cluster
     args = commandArgs(TRUE)
-    runNum <- as.integer( as.numeric(args[1]) ) #as.integer(Sys.getenv('SLURM_ARRAY_TASK_ID'))
+    runNum <- as.integer( as.numeric(args[1]) )
     iterNum <- as.integer( Sys.getenv('SLURM_ARRAY_TASK_ID') ) # seed index from array id
 
     # Julia paths
@@ -181,7 +42,6 @@ if(cluserInd){
 
     # Julia paths
     juliaPath <- "/Applications/Julia-1.5.app/Contents/Resources/julia/bin"
-    # juliaFnPath <- "/Users/gabeloewinger/Desktop/Research Final/Sparse Multi-Study/"
     juliaFnPath <- "/Users/gabeloewinger/Desktop/Research Final/Sparse Multi-Study/IHT/Tune/"
     juliaFnPath_MT <- "/Users/gabeloewinger/Desktop/Research Final/Sparse Multi-Study/IHT/Tune MT/"
     
@@ -237,8 +97,6 @@ epsHigh <- tau * errorMult# noise lower/upper
 epsLow <- tau / errorMult# noise lower/upper
 nLow <- nHigh <- sims6$nLow[runNum]  # multiply by 2 because of multi-task test set  # samp size lower/upper
 tuneInd <- sims6$tuneInd[runNum]
-# nHigh <- sims6$nLow[runNum] * errorMult # multiply by 2 because of multi-task test set  # samp size lower/upper
-# nLow <- sims6$nLow[runNum] / errorMult
 WSmethod = 2 # sims6$WSmethod[runNum]
 ASpass = TRUE # sims6$ASpass[runNum]
 
@@ -268,13 +126,9 @@ if(MSTn %in% c("hoso", "balancedCV") ){
 
 nfoldL0_ose <- min( 5, K) # 5 fold maximum
 
-#oseTuneLong <- sims6$oseTn[runNum]
 
 lamb <- 0.5
 fileNm <- paste0("sprsMS_LS",
-                #"_sclX_", scaleInd,
-                #"_sprs_", length(zeroCovs) / numCovs,
-                #"_p_", p, "_q_",
                 "_s_", s, "_r_", r, "_rp_", r_p,
                   "_numCovs_", numCovs, "_n_", nLow, ".", nHigh,
                  "_eps_", epsLow, ".", epsHigh,
@@ -285,10 +139,6 @@ fileNm <- paste0("sprsMS_LS",
                 round( covVar, 2), "_clst_",
                 length(unique(clusts)) - 1, "_K_", K,
                 "_bMean_", betaMeanRange[1], "_", betaMeanRange[2], "_",
-                #"_erMult_", errorMult,
-                #"_L0Retn_",L0TuneInd,
-                #"_L0MrgRetn_", L0MrgTuneInd,
-               # "_oseTn_", oseTuneLong,
                 "_bFix_", seedFixedInd,
                 "_L0sseTn_", L0_sseTn,
                 "_MSTn_", MSTn,
@@ -300,24 +150,9 @@ fileNm <- paste0("sprsMS_LS",
                "_TnIn_", tuneInd)
 print(fileNm)
 
-#nfold <- ifelse(nfold == "K", K, nfold)
 minRho <- max(   c(1, (s - 2) )   )
 maxRho <- min(   numCovs,  (s+r+1)  )
 rho <- minRho:maxRho
-    # sort( c( seq(4, s-2, by = 2),
-    #             s-1, s ,s+1,
-    #             seq(s+2, s*2 -2, by = 2)),
-    #          decreasing = FALSE)
-
-# lambda <- sort( unique( c(
-#                           exp(-seq(0,5, length = 5)) ), decreasing = TRUE ) ) # 2:100
-# sort( c(1,2,3,4,5,6,7,8,10), decreasing = FALSE)
-# lambda <- sort( unique( c(0, 0.0001, 0.001, 0.01,
-#                              exp(-seq(0,5, length = 20)),
-#                              seq(2,4),
-#                              seq(5,20, by = 5),
-#                              seq(30,100, by = 10),
-#                              seq(120, 200, by = 20)) ), decreasing = TRUE ) # 2:100
 
 lambda <- sort( unique( c(0, 0.0001, 0.001, 0.01, 5,10, 50, 100, 200,
                           exp(-seq(0,5, length = 15))
@@ -335,20 +170,6 @@ lambdaZ <- sort( unique( c(0, 1e-6, 1e-5, 1e-4, 1e-3,
                      decreasing = TRUE ) # 2:100
 
 lambdaBeta <- c( 1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1, 10, 100, 1000 )
-# lambda <- sort( unique( c(0, 0.0001, 0.001, 0.01,
-#                           exp(-seq(0,5, length = 20)),
-#                           seq(2,4),
-#                           seq(5,20, by = 5),
-#                           seq(30,100, by = 20), #,
-#                           c(150, 200)
-#                           #seq(120, 200, by = 20)
-#                           ) ), decreasing = TRUE ) # 2:100
-#
-# lambdaShort <- sort( unique( c(0,
-#                           exp(-seq(0,5, length = 9)),
-#                           c(5, 10),
-#                           c(50, 100, 200) #,
-#                           ) ), decreasing = TRUE ) # 2:100
 
 tune.grid_MS2 <- as.data.frame(  expand.grid( 0, lambda, rho) ) # tuning parameters to consider
 tune.grid_MSZ <- as.data.frame(  expand.grid( lambda, 0, lambdaZ, rho) ) # tuning parameters to consider
@@ -378,7 +199,7 @@ tune.grid_MSZ_3 <- tune.grid_MSZ_3[  order(-tune.grid_MSZ_3$rho,
                                            decreasing=TRUE),     ]
 
 tune.grid <- as.data.frame(  expand.grid(
-                                            c(lambda) , # 0 # add 0 but not to glmnet because that will cause problems
+                                            c(lambda) ,
                                             rho)
                              ) # tuning parameters to consider
 colnames(tune.grid) <- c("lambda", "rho")
@@ -394,14 +215,11 @@ print(paste0("start: ", iterNum))
 
 
     # read in sparse functions from Julia
-    #Sys.setenv(JULIA_BINDIR = "/n/helmod/apps/centos7/Comp/gcc/9.3.0-fasrc01/julia/1.5.1-fasrc01/bin/")
-    #Sys.setenv(JULIA_BINDIR = "/n/sw/eb/apps/centos7/Julia/1.5.3-linux-x86_64/bin")
 
     Sys.setenv(JULIA_BINDIR = juliaPath)
     L0_reg <- juliaCall("include", paste0(juliaFnPath, "l0_IHT_tune.jl") ) # sparseReg # MT: doesnt make sense
     L0_MS <- juliaCall("include", paste0(juliaFnPath, "BlockIHT_tune.jl") ) # MT: Need to check it works
     L0_MS2 <- juliaCall("include", paste0(juliaFnPath, "BlockComIHT_tune.jl") ) # MT: Need to check it works;   multi study with beta-bar penalty
-    #L0_MS_z <- juliaCall("include", paste0(juliaFnPath, "BlockComIHT_inexactAS_tuneTest.jl") ) # \beta - \betaBar penalty
     L0_MS_z <- juliaCall("include", paste0(juliaFnPath, "BlockComIHT_inexactAS_tune_old.jl") ) # MT: Need to check it works;  "_tune_old.jl" version gives the original active set version that performs better #\beta - \betaBar penalty
     L0_MS_z2 <- juliaCall("include", paste0(juliaFnPath, "BlockComIHT_inexact_tuneTest.jl") ) # MT: Need to check it works; no active set but NO common support (it does have Z - zbar and beta - betabar)
     L0_MS_z3 <- juliaCall("include", paste0(juliaFnPath, "BlockComIHT_inexact_diffAS_tuneTest.jl") ) # sepratae active sets for each study
@@ -410,9 +228,6 @@ print(paste0("start: ", iterNum))
     MoM_L0 <- juliaCall("include", paste0(juliaFnPath, "MoM_IHT_tune.jl") ) # max eigenvalue
 
     # gurobiEnviornment
-    #gurEn  <- juliaCall("include", paste0(juliaFnPath, "gurobiEnv.jl") )
-    # gurobiEnv <- gurEn()
-    # https://github.com/jump-dev/Gurobi.jl#reusing-the-same-gurobi-environment-for-multiple-solves
 
     resMat <- matrix(nrow = totalSims, ncol = 235)
     colnames(resMat) <- c("mergeRdg", "oseRdg","oseRdgStk",
@@ -550,7 +365,6 @@ print(paste0("start: ", iterNum))
                                clusters_mu = NULL, # vector of cluster where each element indicates which cluster that study is in (i.e., study is index of vector)
                                clusters_beta = NULL, # vector of cluster where each element indicates which cluster that study is in (i.e., study is index of vector)
                                num.covariates = numCovs,
-                               # zero_covs = zeroCovs, # indices of covariates which are 0
                                fixed.effects = NULL, # all random effects if NA #0:p, # indices of fixed effects -- 1 is the intercept
                                fixed.effectsX = c(), # indices of "fixed covariates" across studies
                                fixB = fixB, # boolean of whether there is "fixed effects" (this basically means whether there is random variation in means of betas marginally)
@@ -575,11 +389,6 @@ print(paste0("start: ", iterNum))
         #-----------------------------
         trueZ <- I(full$betas != 0) * 1
         trueB <- t( full$betas )[,-test_study] # true betas
-        # M <- max( abs(full$betas[,-1] ) ) * 1.5
-        # b = full$fixedBetas * trueZ
-        # b = b[1,]
-        # Sigma = full$Sigma
-        # t(b[-1]) %*% Sigma %*% b[-1] / epsLow
         #-----------------------------
 
         full <- as.data.frame( full$data )
@@ -610,11 +419,6 @@ print(paste0("start: ", iterNum))
         countries <- unique(full$Study) # only include countries that have both
         K <- length(countries) # number of training countries
 
-        # resMat[iterNum, 25] <- K # number of training countries including the test country
-        # resMat[iterNum, 26] <- length(trainIndx) # number of observations in training set for test country
-        # resMat[iterNum, 27] <- nrow(test) # number of observations in training set for test country
-        # resMat[iterNum, 28] <- nrow(full) # size of training set
-
         #################
         # Study Labels
         #################
@@ -642,7 +446,6 @@ print(paste0("start: ", iterNum))
                 test[, column] <- (test[, column ] - means[column - 2]) / sds[column - 2]
                 mtTest[, column] <- (mtTest[, column ] - means[column - 2]) / sds[column - 2]
                 
-                # test2[, column + 2] <- (test2[, column + 2] - means[column]) / sds[column]
             }
 
 
@@ -703,14 +506,6 @@ print(paste0("start: ", iterNum))
                                metric = "RMSE",
                                nfolds = nfold )
 
-        # standard stacking tune
-        # removed because
-        # tuneParam <- hosoCV(data = full,
-        #                     tune.gridGLM,
-        #                     hoso = "cv", # within-study cv
-        #                     method = "glmnet",
-        #                     metric = "RMSE",
-        #                     nfolds = "K") # nfold
 
         ##############
         # Merge Ridge
@@ -756,7 +551,7 @@ print(paste0("start: ", iterNum))
             supMat[j,] <- suppStat(response = trueZ[j, -1], predictor = lassoSupp[-1])
         }
 
-        resMat[iterNum, 103:106] <- colMeans(supMat) # suppStat(response = z, predictor = lassoSupp[-1])
+        resMat[iterNum, 103:106] <- colMeans(supMat) # 
         resMat[iterNum, 141] <- suppStat(response = trueZ[K + 1, -1], predictor = lassoSupp[-1])[3] # support recovery of test study
         resMat[iterNum, 162] <-  sum(lassoSupp[-1]) # size of xupport
         resMat[iterNum, 204] <- sqrt( mean( (betaEst - trueB)^2 ) ) # coef error
@@ -976,12 +771,9 @@ print(paste0("start: ", iterNum))
             # fit l0 model on jth study
             cvfit = L0Learn.cvfit(x = as.matrix(full[indx, -c(1,2)]),
                                   y = as.vector(full$Y[indx]),
-                                  # nFolds = 5, # caused problems for low n_k settings
                                   seed = 1,
                                   penalty="L0L2",
                                   nGamma = length(gm),
-                                  #gammaMin = min(gm), # min and max numbers of our 2 parameter that is comaprable
-                                  #gammaMax = max(gm),
                                   algorithm = "CDPSI",
                                   maxSuppSize = max(tune.grid$rho), # largest that we search
                                   scaleDownFactor = 0.99
@@ -1009,7 +801,6 @@ print(paste0("start: ", iterNum))
             # model specific nonzero covs
             zOSE <- I(L0LearnCoef != 0) * 1 # nonzero betas
 
-            #res[j] <- pROC::auc( response = trueZ[j, -1], predictor = zOSE[-1] ) # auc
             supMat[j,] <- suppStat(response = trueZ[j, -1], predictor = zOSE[-1])
             rm(cvfit, indx)
         }
@@ -1059,25 +850,7 @@ print(paste0("start: ", iterNum))
         rm(betaMat, w, res, supMat, zStack, zAvg, zOSE)
 
         ##############################################
-        # *****
-        # ####################################
-        # # MS4 -- different support with beta - betaBar penalty
-        # ####################################
-        # # share info on the beta - betaBar but no ||z - zbar|| penalty (currently but could do it if changed tuning grid)
-        # glPenalty <- 4
-        # predsMat <- matrix(NA, ncol = K, nrow = nrow(full)) # predictions for stacking matrix
-        # testMat <- matrix(NA, ncol = K, nrow = nrow(test)) # predictions on test set
-        # tune.grid_MSZ$lambda2 <- tune.grid_MSZ$lambda_z # beta - betaBar
-        # tune.grid_MSZ$lambda_z <- 0 # set ||z - zbar|| penalty  to 0
-        # tune.grid_MSZ <- unique(tune.grid_MSZ)
-        # # tune multi-study with l0 penalty with GL Penalty = TRUE
-        #
-        # predsMat <- matrix(NA, ncol = K, nrow = nrow(full)) # predictions for stacking matrix
-        # testMat <- matrix(NA, ncol = K, nrow = nrow(test)) # predictions on test set
-        # res <- resS <- vector(length = K) # store support prediction
-        #
-        # # tune multi-study with l0 penalty with z - zbar and beta - betaBar penalties
-        #
+
 
         ############
         # OSE L0
@@ -1110,40 +883,6 @@ print(paste0("start: ", iterNum))
         
         L0_tune <- L0_tune$best # parameters
         
-        # L0_tune <- L0_tune$best # parameters
-        # 
-        # rhoStar <- L0_tune$rho
-        # rhoG <- (rhoStar - 1):(rhoStar + 1)
-        # lambdaStar <- L0_tune$lambda1
-        # 
-        # lambda1grid<- c( seq(3, 10, length = 5), seq(0.5, 2, length = 10), seq(0.1, 1, length = 5) ) * lambdaStar # makes grid roughly spaced between   # exp(-seq(0, 2.3, length = 5))
-        # lambda1grid <- sort(lambda1grid, decreasing = TRUE)
-        # rm(rhoStar, lambdaStar)
-        # 
-        # gridUpdate <- as.data.frame(  expand.grid( lambda1grid, 0, 0, rhoG) )
-        # colnames(gridUpdate) <- c("lambda1", "lambda2", "lambda_z","rho")
-        # 
-        # gridUpdate <- gridUpdate[  order(gridUpdate$rho,
-        #                                  gridUpdate$lambda1,
-        #                                  -gridUpdate$lambda_z,
-        #                                  decreasing=TRUE),     ]
-        # gridUpdate <- unique(gridUpdate)
-        # rm(lambda1grid, rhoG)
-        # 
-        # L0_tune <- sparseCV_iht_par(data = full,
-        #                             tune.grid = gridUpdate,
-        #                             hoso = MSTn, #L0_sseTn, #MSTn # could balancedCV (study balanced CV necessary if K =2)
-        #                             method = "MS_z", # this does not use the active set so should be much faster and since we do not use a lambda_z penalty it is OK to not use active set
-        #                             nfolds = nfold,
-        #                             cvFolds = 5,
-        #                             juliaPath = juliaPath,
-        #                             juliaFnPath = juliaFnPath,
-        #                             messageInd = FALSE,
-        #                             LSitr = LSitr,
-        #                             LSspc = LSspc,
-        #                             threads = tuneThreads
-        # )
-        # 
         # initialize algorithm warm start
         p <- ncol(full) - 1
         b <-  matrix(0, ncol = K, nrow = p ) #rep(0, p) #rnorm( p )
@@ -1484,20 +1223,6 @@ print(paste0("start: ", iterNum))
             )
         }
         
-        # # tune multi-study with l0 penalty with z - zbar and beta - betaBar penalties
-        # tuneMS <- sparseCV_iht_par(data = full,
-        #                        tune.grid = tune.grid_MSZ,
-        #                        hoso = MSTn, # could balancedCV (study balanced CV necessary if K =2)
-        #                        method = "MS_z", # could be L0 for sparse regression or MS # for multi study
-        #                        nfolds = nfold,
-        #                        cvFolds = 5,
-        #                        juliaPath = juliaPath,
-        #                        juliaFnPath = juliaFnPath,
-        #                        messageInd = FALSE,
-        #                        LSitr = LSitr,
-        #                        LSspc = LSspc,
-        #                        threads = tuneThreads
-        # )
 
         MSparams <- tuneMS$best # parameters
 
@@ -1684,84 +1409,7 @@ print(paste0("start: ", iterNum))
         timeStart1 <- Sys.time()
         
         glPenalty <- 4
-        # tune.grid_MSZ_original <- tune.grid_MSZ # save for later
-        # tune.grid_MSZ$lambda2 <- tune.grid_MSZ$lambda1 # beta - betaBar
-        # tune.grid_MSZ$lambda1 <- 0 # set ||z - zbar|| penalty  to 0
-        # tune.grid_MSZ <- unique(tune.grid_MSZ)
-        # 
-        # tune.grid_MSZ <- tune.grid_MSZ[  order(-tune.grid_MSZ$rho,
-        #                                        -tune.grid_MSZ$lambda2,
-        #                                        -tune.grid_MSZ$lambda_z,
-        #                                        decreasing=TRUE),     ]
-
-        # tune multi-study with l0 penalty with GL Penalty = TRUE
         
-        # ***************************************
-        # original from 1/20/21 ****************
-        # tune.grid_MSZ_2 <- as.data.frame(  expand.grid( 0, 0, lambdaZ, rho) ) # tuning parameters to consider
-        # colnames(tune.grid_MSZ_2) <- c("lambda1", "lambda2", "lambda_z","rho")
-        # 
-        # tune.grid_MSZ_2 <- unique( tune.grid_MSZ_2 )
-        # tune.grid_MSZ_2 <- tune.grid_MSZ_2[  order(-tune.grid_MSZ_2$rho,
-        #                                        -tune.grid_MSZ_2$lambda2,
-        #                                        -tune.grid_MSZ_2$lambda_z,
-        #                                        decreasing=TRUE),     ]
-        # 
-        # 
-        # predsMat <- matrix(NA, ncol = K, nrow = nrow(full)) # predictions for stacking matrix
-        # testMat <- matrix(NA, ncol = K, nrow = nrow(test)) # predictions on test set
-        # res <- resS <- vector(length = K) # store support prediction
-        # 
-        # # tune multi-study with l0 penalty with z - zbar and beta - betaBar penalties
-        # tuneMS <- sparseCV_iht_par(data = full,
-        #                        tune.grid = tune.grid_MSZ_2,
-        #                        hoso = MSTn, # could balancedCV (study balanced CV necessary if K =2)
-        #                        method = "MS_z", # could be L0 for sparse regression or MS # for multi study
-        #                        nfolds = nfold,
-        #                        cvFolds = 5,
-        #                        juliaPath = juliaPath,
-        #                        juliaFnPath = juliaFnPath,
-        #                        messageInd = FALSE,
-        #                        LSitr = LSitr, 
-        #                        LSspc = LSspc,
-        #                        threads = tuneThreads,
-        #                        WSmethod = WSmethod,
-        #                        ASpass = ASpass
-        # )
-        # 
-        # MSparams <- tuneMS$best # parameters
-        # rhoStar <- MSparams$rho
-        # lambdaZstar <- MSparams$lambda_z
-        # 
-        # rhoG <- (rhoStar - 1):(rhoStar + 1)
-        # lambdaZgrid<- c( seq(3, 10, length = 5), seq(0.5, 2, length = 10), seq(0.1, 1, length = 5) ) * lambdaZstar # makes grid roughly spaced between   # exp(-seq(0, 2.3, length = 5))
-        # lambdaZgrid <- sort(lambdaZgrid, decreasing = TRUE)
-        # 
-        # gridUpdate <- as.data.frame(  expand.grid( 0, lambda, lambdaZgrid, rhoG) )
-        # colnames(gridUpdate) <- c("lambda1", "lambda2", "lambda_z","rho")
-        # 
-        # gridUpdate <- gridUpdate[  order(gridUpdate$rho,
-        #                                  gridUpdate$lambda1,
-        #                                  -gridUpdate$lambda_z,
-        #                                  decreasing=TRUE),     ]
-        # 
-        # gridUpdate <- unique(gridUpdate)
-        # 
-        # tuneMS <- sparseCV_iht_par(data = full,
-        #                            tune.grid = gridUpdate,
-        #                            hoso = MSTn, # could balancedCV (study balanced CV necessary if K =2)
-        #                            method = "MS_z", # could be L0 for sparse regression or MS # for multi study
-        #                            nfolds = nfold,
-        #                            cvFolds = 5,
-        #                            juliaPath = juliaPath,
-        #                            juliaFnPath = juliaFnPath,
-        #                            messageInd = FALSE,
-        #                            LSitr = LSitr, 
-        #                            LSspc = LSspc,
-        #                            threads = tuneThreads,
-        #                            WSmethod = WSmethod,
-        #                            ASpass = ASpass
-        # )
         # ************************************************
         
         if(tuneInd){
@@ -1808,8 +1456,6 @@ print(paste0("start: ", iterNum))
             lambdaZgrid <- sort(lambdaZgrid, decreasing = TRUE)
             
             # ************
-            # original from 1/20/21
-            # gridUpdate <- as.data.frame(  expand.grid( lambda, 0, lambdaZgrid, rhoG) )
             # ************
             gridUpdate <- as.data.frame(  expand.grid( 0, lambdaBeta, lambdaZgrid, rhoG) )
             colnames(gridUpdate) <- c("lambda1", "lambda2", "lambda_z","rho")
@@ -2360,19 +2006,7 @@ print(paste0("start: ", iterNum))
                fileNm = fileNm, 
                iterNum = iterNum, 
                save.folder = save.folder)
-# 
-#         # check if file exists
-#         if(  file.exists(fileNm)  ){
-#             # check if file exists
-#             # if exists read in file and save this result to correspond to row
-#             res <- read.csv( fileNm )
-#             res[iterNum,] <- resMat[iterNum,]
-#             write.csv(res, fileNm, row.names = FALSE)
-# 
-#         }else{
-#             # if it does not exist (first iteration to complete) then save resMat
-#             write.csv(resMat, fileNm, row.names = FALSE)
-#         }
+
         ########################################################
 
         ########################################################
