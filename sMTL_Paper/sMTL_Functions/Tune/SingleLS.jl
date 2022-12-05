@@ -11,9 +11,7 @@ function SingleLS(; X::Matrix,
     p,
     maxIter = 50)
 
-    # p is number of covariates not including intercept
     s = rho; #
-    # n, p, K = size(X)
     B = copy(beta)
     beta = 0; # save memory
     S = zeros(p, p)
@@ -29,7 +27,7 @@ function SingleLS(; X::Matrix,
     delta_cost = 0
 
     obj = 0
-    r = zeros(n); #Vector{Any}(); # list of vectors of residuals # zeros(n,K)
+    r = zeros(n);  # list of vectors of residuals # zeros(n,K)
 
     r = y - X * B
     obj = obj + r' * r / (2 * n)
