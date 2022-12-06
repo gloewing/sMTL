@@ -138,25 +138,16 @@ if(MSTn %in% c("hoso", "balancedCV") ){
 
 nfoldL0_ose <- min( 5, K) # 5 fold maximum
 nfold <- 3
-#oseTuneLong <- sims6$oseTn[runNum]
 
-# maxRho: 20
-# rho <- c(seq(2, 10, by = 2), seq(15, 20, by = 5))  
+
 
 # maxRho: 50
 rho <- c( seq(5, 15, by = 5), c(25, 25, 50) )
-
-# c(seq(2, 10, by = 2), seq(15, 50, by = 5), seq(60, 90, by = 10)) # works great: 3-20-22 c( seq(5, 15, by = 5), c(25, 25, 50) ) #
-
-#rho <- c( 50, seq(100, 325, by = 75)) # if ds is full marginal data then use this because dimension much higher
-# rho <- c(seq(100, 225, by = 25)) # did well with this for breast cancer but added more for sparse 
-
 
 rhoDiff <- round( mean( diff(rho) ) / 2 ) # average interval
 
 lambda <- sort( unique( c(1e-6, 1e-5, 0.0001, 0.001, 0.01, 5,10, 50, 100,
                           exp(-seq(0,5, length = 10))
-                          #seq(120, 200, by = 20)
                 ) ), decreasing = TRUE ) # 2:100
 
 lambdaShort <- sort( unique( c(
@@ -313,7 +304,6 @@ print(paste0("start: ", iterNum))
         
         splitSize <- 1 - (1 / totalSims) # number of cross validation 
         
-        # if(Yscale)   full[,Yindx] <- scale(full[,Yindx]) # center and scale Ys
         
         set.seed(seedSet)
         mtTest <- full[full$Study == testStudy, -1] # test study, remove "Study" column
@@ -503,7 +493,6 @@ print(paste0("start: ", iterNum))
         ##############
         print(paste("iteration: ", iterNum, " L0Learn OSE"))
         predsMat <- matrix(NA, ncol = K, nrow = nrow(full)) # predictions for stacking matrix
-        # testMat <- matrix(NA, ncol = K, nrow = nrow(test)) # predictions on test set
         betaMat <- matrix(NA, ncol = K, nrow = length(Xindx) + 1) # matrix of betas from each study
         res <- vector(length = K) # store auc
         Mvec <- vector(length = K) # use to initialize other models later on
@@ -516,8 +505,6 @@ print(paste0("start: ", iterNum))
 
         for(j in 1:K){
             print(j)
-           # indx <- which(full$Study == j) # rows of each study
-        #    n_k <- length(indx) # sample size of jth study
             sdY <- 1 # set to 1 for now so we DO NOT adjust as glmnet() #sd(full$Y[indx]) * (n_k - 1) / n_k #MLE
             gm <- tune.grid$lambda / (sdY * 2) # convert into comparable numbers for L0Learn
 
@@ -790,10 +777,7 @@ print(paste0("start: ", iterNum))
             MSparams <- tuneMS$best # parameters
             rhoStar <- MSparams$rho
             lambdaZstar <- MSparams$lambda_z
-            
-            # rhoG <- seq(rhoStar - rhoDiff, rhoStar + rhoDiff, length = 3)
-            # rhoG <- sapply(rhoG, function(x) max(x, 2 ) ) # make sure there is nothing below 2
-            # lambdaZgrid<- c( seq(3, 10, length = 5), seq(0.5, 2, length = 10), seq(0.1, 1, length = 5) ) * lambdaZstar # makes grid roughly spaced between   # exp(-seq(0, 2.3, length = 5))
+
             lambdaZgrid <- c( seq(1.5, 10, length = 5), seq(0.1, 1, length = 5) ) * lambdaZstar
             lambdaZgrid <- lambdaZgrid[lambdaZgrid <= lambdaZmax] # make sure this is below a threshold to prevent numerical issues
             lambdaZgrid <- sort(lambdaZgrid, decreasing = TRUE)
@@ -950,8 +934,7 @@ print(paste0("start: ", iterNum))
         # ||beta - betaBar|| and NO Frobenius norm no cardinality constraints
         # Convex, IP = FALSE
         ####################################
-        # glPenalty <- 1
-        # ip <- FALSE
+
         tune.grid_MS2$rho <- length(Xindx) # full support
         tune.grid_MS2 <- unique(tune.grid_MS2) # convex -- no IP selection
 
