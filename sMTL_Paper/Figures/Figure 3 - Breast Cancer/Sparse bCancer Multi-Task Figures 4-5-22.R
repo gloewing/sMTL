@@ -103,8 +103,6 @@ plt_rmse =
                color = "black", 
                size = rel(0.5),
                alpha = 0.7) + #
-    #ylim(0, 2) +
-    # ylab(TeX('$\\mathbf{RMSE_{Method}/RMSE_{TS- \u2113 0 \u2113 2}}$') )+ 
     ylab(TeX('$\\mathbf{RMSE_{Method}/RMSE_{TS-SR}$') )+ 
     xlab("Number of Features (p)") + 
     scale_fill_manual(values = c("#ca0020", "lightgrey", "#0868ac",  "darkgray", "#E69F00", "#525252") ) +
@@ -190,16 +188,12 @@ plt_supp =
     dplyr::summarize(my_mean = mean(value) ) %>% 
     arrange(k) %>% #print(n = Inf)
     ggplot(aes(y = my_mean, x = k, fill = key)) +
-    # y = value, x = e1, fill = key 
-    #facet_wrap( ~ n, nrow = 1) +
     geom_bar(stat="identity", position=position_dodge()) +
-    # coord_cartesian(ylim = c(-0.1, 0.5) ) + 
     ylab(TeX('$\\mathbf{\\rho_{Method} - \\rho_{\u2113_0}}$') )+ 
     xlab("K") + 
     scale_fill_manual(values = c("#ca0020", "lightgrey", "#0868ac", "#E69F00", "#525252", "darkgray") ) +
     scale_color_manual(values = c("#ca0020", "lightgrey", "#0868ac", "#E69F00", "#525252", "darkgray")) +
     theme_classic(base_size = 12) +
-    #ylim(0.8, 1.1) + 
     theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2.5), face="bold"),
            axis.text=element_text(face="bold",color="black", size=rel(2)),
            axis.title = element_text(face="bold", color="black", size=rel(2)),
@@ -226,16 +220,12 @@ plt_supp =
     dplyr::summarize(my_mean = mean(value) ) %>% 
     arrange(k) %>% #print(n = Inf)
     ggplot(aes(y = my_mean, x = k, fill = key)) +
-    # y = value, x = e1, fill = key 
-    #facet_wrap( ~ n, nrow = 1) +
     geom_bar(stat="identity", position=position_dodge()) +
-    # coord_cartesian(ylim = c(-0.1, 0.5) ) + 
     ylab(TeX('$\\mathbf{\\rho_{Method} - \\rho_{\u2113_0}}$') )+ 
     xlab("K") + 
     scale_fill_manual(values = c("#ca0020", "lightgrey", "#0868ac", "#E69F00", "#525252", "darkgray") ) +
     scale_color_manual(values = c("#ca0020", "lightgrey", "#0868ac", "#E69F00", "#525252", "darkgray")) +
     theme_classic(base_size = 12) +
-    #ylim(0.8, 1.1) + 
     theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2.5), face="bold"),
            axis.text=element_text(face="bold",color="black", size=rel(2)),
            axis.title = element_text(face="bold", color="black", size=rel(2)),
