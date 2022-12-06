@@ -1,4 +1,3 @@
-# Updates: December 19, 2021 
 # uses active set versions appropriate for each method
 library(pROC)
 library(JuliaConnectoR)
@@ -9,151 +8,6 @@ library(dplyr)
 library(L0Learn)
 
 source("SimFn.R")
-
-###############
-# grid expand
-###############
-# sims <- cbind(1, expand.grid(c(10),
-#                 c(1e-10),
-#                 c(50), # 50
-#                 c(3,5,7), #c(3, 5, 7), #c(3, 8),
-#                 c(0.1, 1, 10), # 0.01, 0.5, 1  # , 0.5, 1
-#                 c("exponential"),
-#                 c(0.5), # 0.5
-#                 c(0.2), # 0.2
-#                 c(0.5),# 0.5
-#                 c(250),
-#                 c(10), # s
-#               c(5), # r
-#                    c(0.5), # r_p # , 3/5
-#               c(2), # error multiplier
-#               c("multiTask"), #"multiTask"
-#               c(TRUE) # tuneInd
-#                    )
-#                 )#
-# 
-# ###############
-# # sample size
-# ###############
-# sims1 <- cbind(1, expand.grid(c(10),
-#                               c(1e-10),
-#                               c(50, 100, 200, 400), # 50
-#                               c(7), #c(3, 5, 7), #c(3, 8),
-#                               c(10), # 0.01, 0.5, 1  # , 0.5, 1
-#                               c("exponential"),
-#                               c(0.5), # 0.5
-#                               c(0.2), # 0.2
-#                               c(0.5),# 0.5
-#                               c(250),
-#                 c(10), # s
-#               c(5), # r
-#                               c(0.5), # r_p # , 3/5
-#                               c(2), # error multiplier
-#                               c("multiTask"), #"multiTask"
-#                               c(TRUE) # tuneInd
-# )
-# )#
-# 
-# ###############
-# # tasks
-# ###############
-# sims2 <- cbind(1, expand.grid(c(10),
-#                               c(1e-10),
-#                               c(50), # 50
-#                               c(9, 11), #c(3, 5, 7), #c(3, 8),
-#                               c(10), # 0.01, 0.5, 1  # , 0.5, 1
-#                               c("exponential"),
-#                               c(0.5), # 0.5
-#                               c(0.2), # 0.2
-#                               c(0.5),# 0.5
-#                               c(250),
-#                 c(10), # s
-#               c(5), # r
-#                               c(0.5), # r_p # , 3/5
-#                               c(2), # error multiplier
-#                               c("multiTask"), #"multiTask"
-#                               c(TRUE) # tuneInd
-# )
-# )#
-# 
-# ###############
-# # error
-# ###############
-# sims3 <- cbind(1, expand.grid(c(10),
-#                               c(1e-10),
-#                               c(50), # 50
-#                               c(7), #c(3, 5, 7), #c(3, 8),
-#                               c(0.01, 100), # 0.01, 0.5, 1  # , 0.5, 1
-#                               c("exponential"),
-#                               c(0.5), # 0.5
-#                               c(0.2), # 0.2
-#                               c(0.5),# 0.5
-#                               c(250),
-#                 c(10), # s
-#               c(5), # r
-#                               c(0.5), # r_p # , 3/5
-#                               c(2), # error multiplier
-#                               c("multiTask"), #"multiTask"
-#                               c(TRUE) # tuneInd
-# )
-# )#
-
-# ###############
-# # s
-# ###############
-# sims4 <- cbind(1, expand.grid(c(10),
-#                               c(1e-10),
-#                               c(50), # 50
-#                               c(7), #c(3, 5, 7), #c(3, 8),
-#                               c( 10 ), # 0.01, 0.5, 1  # , 0.5, 1
-#                               c("exponential"),
-#                               c(0.5), # 0.5
-#                               c(0.2), # 0.2
-#                               c(0.5),# 0.5
-#                               c(250),
-#                               c(20), #
-#                               c(5, 20, 40), # r
-#                               c(0.5), # r_p # , 3/5
-#                               c(2), # error multiplier
-#                               c("multiTask"), #"multiTask"
-#                               c(TRUE) # tuneInd
-# )
-# )#
-# 
-# 
-# ###############
-# # r
-# ###############
-# sims5 <- cbind(1, expand.grid(c(10),
-#                               c(1e-10),
-#                               c(50), # 50
-#                               c(7), #c(3, 5, 7), #c(3, 8),
-#                               c( 10 ), # 0.01, 0.5, 1  # , 0.5, 1
-#                               c("exponential"),
-#                               c(0.5), # 0.5
-#                               c(0.2), # 0.2
-#                               c(0.5),# 0.5
-#                               c(250),
-#                               c(10, 30, 40), #
-#                               c(5), # r
-#                               c(0.5), # r_p # , 3/5
-#                               c(2), # error multiplier
-#                               c("multiTask"), #"multiTask"
-#                               c(TRUE) # tuneInd
-# )
-# )#
-# 
-# sims5$Var12 <- c(5, 15, 20) # keep r/s fixed
-# 
-# sims <- rbind(sims, sims1, sims2, sims3, sims4, sims5)
-# colnames(sims) <- c("simNum", "betaVar", "xVar", "nLow",
-#                         "K", "tau", "cov", "rho",
-#                         "betaRangeLow", "betaRangeHigh", "p", "s", "r", "r_p", "errorMult", "multiTask", "tuneInd")
-
-# # # s is true number of non-zeros
-# # r is number of covariates that are potentially divergent support (set of covariates that are randomly selected to be include)
-# # r_p is the probability of inclusion for a given study (i..e, each of the K studies selects each of the r covariates for inclusion ~ i.i.d. Ber(r_p) )
-# write.csv(sims, "~/Desktop/Research/sparseParam_test", row.names = FALSE)
 
 sims6 <- read.csv("sparseParam_test")
 cluserInd <- TRUE # whether running on computer or on cluster
@@ -444,9 +298,7 @@ print(paste0("start: ", iterNum))
                                    exp(-seq(0,5, length = 8)),
                                    1:3) ),
                          decreasing = TRUE ) 
-        
-        # lambdaBeta <- c( 1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1, 10, 100, 1000 )
-        
+                
         tune.grid_MS2 <- as.data.frame(  expand.grid( 0, lambda, rho) ) # tuning parameters to consider
         tune.grid_MSZ <- as.data.frame(  expand.grid( lambda, 0, lambdaZ, rho) ) # tuning parameters to consider
         tune.grid_MSZ_2 <- as.data.frame(  expand.grid( 0, lambda, lambdaZ, rho) ) # tuning parameters to consider
