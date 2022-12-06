@@ -17,7 +17,6 @@ if(cluserInd){
     # if on cluster
     args <- commandArgs(TRUE)
     K <- as.integer( as.numeric(args[1]) ) # number of tasks
-    #ds <- as.integer( as.numeric(args[2]) ) # dataset index
     p <- as.integer( as.numeric(args[2]) ) # dataset index
     studies <- as.integer( as.numeric(args[3]) ) # dataset index
     iterNum <- as.integer( Sys.getenv('SLURM_ARRAY_TASK_ID') ) # seed index from array id
@@ -252,7 +251,6 @@ timeStart <- Sys.time()
         
         splitSize <- 1 - (1 / totalSims) # number of cross validation 
         
-        # if(Yscale)   full[,Yindx] <- scale(full[,Yindx]) # center and scale Ys
         
         set.seed(seedSet)
         mtTest <- full[full$Study == testStudy, -1] # test study, remove "Study" column
@@ -364,35 +362,7 @@ timeStart <- Sys.time()
         foldID <- vector( length = nrow(full) )
         for(fd in 1:nfold)  foldID[ HOOL[[fd]] ] <- fd
         
-        ##############
-        # GLMNET Lasso - MultiTask
-        ##############
-        # tune.mod <- cv.glmnet(y = as.matrix(full[,Yindx]),
-        #                       x = as.matrix(full[,Xindx]),
-        #                       alpha = 1,# tune.gridGLM$alpha,
-        #                       lambda = tune.gridGLM$lambda,
-        #                       intercept = TRUE,
-        #                       # parallel = TRUE,
-        #                       foldid = foldID,
-        #                       family = "mgaussian")
-        # 
-        # lambSeq <- tune.mod$lambda # lambdas
-        # tn_len <- length(lambSeq) # length of tuning grid
-        # suppVec <- vector(length = tn_len)
-        # errorVec <- tune.mod$cvm
-        # 
-        # for(j in 1:tn_len){
-        #     beta_tn <- do.call(cbind, as.list( coef(tune.mod, exact = TRUE, s = lambSeq[j]) ) )
-        #     suppVec[j] <- mean( apply(beta_tn, 2, function(x) sum(x[-1] != 0)) ) # avg sparsity
-        # }
-        # 
-        # betaEst <- do.call(cbind, as.list( coef(tune.mod, exact = TRUE, s = "lambda.min") ) )
-        # betaEst <- as.matrix(betaEst)
-        # 
-        # resMat[iterNum, 218] <- multiTaskRmse_MT(data = mtTest, beta = betaEst)
-        # resMat[iterNum, 162] <- sum( betaEst[-1,] != 0 ) / K # size of xupport
-        # 
-        # rm(betaEst)
+   
         # 
         timeStartTotal <- Sys.time()
 
@@ -402,88 +372,6 @@ timeStart <- Sys.time()
             print(paste0("r: ", r))
             resIndx <- (r - 1) * nmLen # saving in matrix indx
             r <- rhoVec[r] # rho value
-            # resIndx2 <- which(colnames(resMat) == paste0("MT_mtLasso_", r, "_pair"))
-            
-            ##############
-            # GLMNET Lasso - MultiTask
-            ##############
-            # errorVec <- errorVec[ suppVec <= r ] # errors for which rho is smaller than the max
-            # sV <- suppVec[ suppVec <= r ]
-            # lambs <- lambSeq[ suppVec <= r ]
-            # 
-            # lambdaStar <- lambs[which.min(errorVec)]
-            # 
-            # # best lasso with s rho constraint
-            # betaEst <- do.call(cbind, as.list( coef(tune.mod, exact = TRUE, s = lambdaStar) ) )
-            # betaEst <- as.matrix(betaEst)
-            # 
-            # resMat[iterNum, resIndx + 1] <- multiTaskRmse_MT(data = mtTest, beta = betaEst)
-            # resMat[iterNum, (resIndx2):(resIndx2+1)] <- suppHet(betaEst, intercept = TRUE)
-            # rm(betaEst, lambdaStar, errorVec, suppVec, lambSeq)
-            # 
-            
-            ##############
-            # OSE L0Learn
-            ##############
-            # print(paste("iteration: ", iterNum, " L0Learn OSE"))
-            # predsMat <- matrix(NA, ncol = K, nrow = nrow(full)) # predictions for stacking matrix
-            # betaMat <- matrix(NA, ncol = K, nrow = length(Xindx) + 1) # matrix of betas from each study
-            # res <- vector(length = K) # store auc
-            # L0_tune <- matrix(NA, nrow = K, ncol = ncol(tune.grid) ) # save best parameter values
-            # L0_tune <- as.data.frame(L0_tune)
-            # colnames(L0_tune) <- colnames(tune.grid)
-            # 
-            # supMat <- matrix(NA, nrow = K, ncol = 4)
-            # 
-            # for(j in 1:K){
-            #     
-            #     print(j)
-            #     sdY <- 1 # set to 1 for now so we DO NOT adjust as glmnet() #sd(full$Y[indx]) * (n_k - 1) / n_k #MLE
-            #     gm <- tune.grid$lambda / (sdY * 2) # convert into comparable numbers for L0Learn
-            # 
-            #     # fit l0 model on jth study
-            #     cvfit = L0Learn.cvfit(x = as.matrix(full[, Xindx]),
-            #                           y = as.vector(full[,j]),
-            #                           nFolds = nfold, # caused problems for low n_k settings
-            #                           seed = 1,
-            #                           penalty="L0L2",
-            #                           nGamma = length(gm),
-            #                           #gammaMin = min(gm), # min and max numbers of our 2 parameter that is comaprable
-            #                           #gammaMax = max(gm),
-            #                           algorithm = "CD", #"CDPSI",
-            #                           maxSuppSize = max(tune.grid$rho)#, # largest that we search
-            #                           # scaleDownFactor = 0.99
-            #     )
-            #     
-            #     # optimal tuning parameters
-            #     optimalGammaIndex <- which.min( lapply(cvfit$cvMeans, min) ) # index of the optimal gamma identified previously
-            #     optimalLambdaIndex = which.min(cvfit$cvMeans[[optimalGammaIndex]])
-            #     optimalLambda = cvfit$fit$lambda[[optimalGammaIndex]][optimalLambdaIndex]
-            #     L0LearnCoef <- coef(cvfit, lambda=optimalLambda, gamma = cvfit$fit$gamma[optimalGammaIndex] )
-            # 
-            #     # save tuned parameter values
-            #     rhoStar <- sum(  as.vector(L0LearnCoef)[-1] != 0   ) # cardinality
-            #     L0_tune$lambda[j] <- cvfit$fit$gamma[optimalGammaIndex] * (2 * sdY) # put on scale used by gurobi version below
-            #     L0_tune$rho[j] <- rhoStar
-            # 
-            #     # use L0Learn coefficients as warm starts
-            #     betaMat[,j] <- L0LearnCoef <- as.vector(L0LearnCoef) # save coefficients -- use "betas" as warm start for later
-            # 
-            #     # stack matrix
-            #     predsMat[,j] <- cbind( 1, as.matrix( full[,Xindx ] ) ) %*% L0LearnCoef
-            # 
-            #     rm(cvfit)
-            # }
-            # 
-            # rm(sdY)
-            # 
-            # zAvg <- I( rowMeans(betaMat)[-1] != 0) * 1 # stacking
-            # 
-            # resMat[iterNum, 165] <- mean(L0_tune$rho) # cardinality of support
-            # resMat[iterNum, 166] <- sum( zAvg ) # cardinality of support
-            # resMat[iterNum, 222] <- multiTaskRmse_MT(data = mtTest, beta = betaMat)
-            # 
-            # rm(betaMat, res, zAvg)
             
             ############
             # OSE L0
@@ -635,10 +523,7 @@ timeStart <- Sys.time()
                              localIter = localIters
             )
             
-            # resMat[iterNum, 96] <- MSparams$lambda2 # tuning parameter
-            # 
-            # resMat[iterNum, 169] <- MSparams$rho # cardinality of support
-            # 
+
             resMat[iterNum, resIndx + 3] <- multiTaskRmse_MT(data = mtTest, beta = betasMS)
             resMat[iterNum, (resIndx2):(resIndx2+1)] <- suppHet(betasMS, intercept = TRUE)
             
@@ -731,10 +616,6 @@ timeStart <- Sys.time()
             )
             
 
-            
-            # print(difftime(timeEnd, timeStart, units='mins'))
-            # resMat[iterNum, 231] <- as.numeric(difftime(timeEnd1, timeStart1, units='mins'))
-
             resMat[iterNum, resIndx + 4] <- multiTaskRmse_MT(data = mtTest, beta = betasMS)
             resMat[iterNum, (resIndx2):(resIndx2+1)] <- suppHet(betasMS, intercept = TRUE)
             
@@ -825,12 +706,7 @@ timeStart <- Sys.time()
             )
             
             timeEnd1 <- Sys.time()
-            
-            # resMat[iterNum, 232] <- as.numeric(difftime(timeEnd1, timeStart1, units='mins'))
-            # 
-            # resMat[iterNum, 199] <- MSparams$lambda2 # tuning parameter
-            # resMat[iterNum, 200] <- MSparams$lambda_z # tuning parameter
-            # resMat[iterNum, 201] <- MSparams$rho # cardinality of support
+
             resMat[iterNum, resIndx + 6] <- multiTaskRmse_MT(data = mtTest, beta = betasMS)
             resMat[iterNum, (resIndx2):(resIndx2+1)] <- suppHet(betasMS, intercept = TRUE)
             
@@ -911,10 +787,7 @@ timeStart <- Sys.time()
                               WSmethod = WSmethod,
                               ASpass = ASpass
             )
-            
-            # resMat[iterNum, 99] <- MSparams$lambda2 # tuning parameter
-            # resMat[iterNum, 175] <- MSparams$rho # cardinality of support
-            # 
+
             resMat[iterNum, resIndx + 7] <- multiTaskRmse_MT(data = mtTest, beta = betasMS)
             resMat[iterNum, (resIndx2):(resIndx2+1)] <- suppHet(betasMS, intercept = TRUE)
             
@@ -1044,9 +917,7 @@ timeStart <- Sys.time()
         )
         
         nmID <- which(fullNms == "msP1_con")
-        
-        # resMat[iterNum, 98] <- MSparams$lambda2 # tuning parameter
-        # resMat[iterNum, 173] <- MSparams$rho # cardinality of support
+
         # 
         resMat[iterNum, nmID] <- multiTaskRmse_MT(data = mtTest, beta = betasMS)
 
@@ -1094,10 +965,6 @@ timeStart <- Sys.time()
                         localIter = 0 # convex
         )
 
-        # resMat[iterNum, 101] <- MSparams$lambda # tuning parameter
-        # resMat[iterNum, 179] <- MSparams$rho # cardinality of support
-        #resMat[iterNum, 180] <- sum( zStack ) # cardinality of support
-        #resMat[iterNum, 216] <- sqrt( mean( (betasMS - trueB)^2 ) ) # coef error
         resMat[iterNum, nmID ] <- multiTaskRmse_MT(data = mtTest, beta = betasMS)
 
         rm(MSparams, tuneMS)
@@ -1259,7 +1126,6 @@ timeStart <- Sys.time()
                          Lam1_seq = lambSeq
             )
             
-            # FIX INDICES "mtl_L2L1_supp"
             
             suppSize <- sum( model$W[-1,] != 0 ) / K 
             
@@ -1277,16 +1143,7 @@ timeStart <- Sys.time()
         rm(Xlist, Ylist)
         
         ########################################################
-        # print(paste("iteration: ", iterNum, " Complete!"))
-        # print(resMat[iterNum,])
-        # 
-        # # time difference
-        # timeEnd <- Sys.time()
-        # print(difftime(timeEnd, timeStart, units='mins'))
-        # resMat[iterNum, 140] <- as.numeric(difftime(timeEnd, timeStart, units='mins'))
-        # 
-        # timeEndTotal <- Sys.time()
-        # resMat[iterNum, 234] <- as.numeric(difftime(timeEndTotal, timeStartTotal, units='mins'))
+
         ########################
         # save results
         ########################
