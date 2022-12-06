@@ -220,10 +220,7 @@ plt_supp =
     dplyr::summarize(my_mean = mean(value) ) %>% 
     arrange(k) %>% #print(n = Inf)
     ggplot(aes(y = my_mean, x = k, fill = key)) +
-    # y = value, x = e1, fill = key 
-    #facet_wrap( ~ n, nrow = 1) +
     geom_bar(stat="identity", position=position_dodge()) +
-    # coord_cartesian(ylim = c(-0.1, 0.5) ) + 
     ylab(TeX('$\\mathbf{\\rho_{Method} - \\rho_{\u2113_0}}$') )+ 
     xlab("K") + 
     scale_fill_manual(values = c("#ca0020", "lightgrey", "#0868ac", "#E69F00", "#525252", "darkgray") ) +
