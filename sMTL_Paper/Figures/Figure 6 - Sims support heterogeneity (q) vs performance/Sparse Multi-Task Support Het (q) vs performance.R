@@ -46,7 +46,7 @@ for(r in rVec){
                         e1 <- epsVecUp[ep]
     
                         flNm <-  paste0("sprsMS_LS_s_",s,"_r_",r,"_rp_0.5_q_", q,"_numCovs_250_n_",n, ".", n, "_eps_", e1, ".", e2, "_covTyp_exponential_rho_0.5_clustDiv_10_bVar_", b, "_xVar_0_clst_", k, "_K_", k, "_bMean_0.2_0.5__bFix_TRUE_L0sseTn_sse_MSTn_multiTask_nFld_10_LSitr_50_LSspc_1_wsMeth_1_asPass_TRUE_TnIn_TRUEcat_4")
-                                        #"sprsMS_LS_s_0_r_20_rp_0.5_q_18_numCovs_250_n_150.150_eps_0.05.0.2_covTyp_exponential_rho_0.5_clustDiv_10_bVar_50_xVar_0_clst_4_K_4_bMean_0.2_0.5__bFix_TRUE_L0sseTn_sse_MSTn_multiTask_nFld_10_LSitr_50_LSspc_1_wsMeth_1_asPass_TRUE_TnIn_TRUEcat_4"
+                                        
                         if(file.exists(flNm)){
                             # check to see if file exists
                             cnt <- cnt + 1
@@ -208,7 +208,6 @@ plt_rmse = dat %>% tibble %>%
                color = "black", 
                size = rel(0.5),
                alpha = 0.7) + #
-    # ylab(TeX('$\\mathbf{RMSE_{Method}/RMSE_{\u2113_0}}$') )+ 
     ylab(TeX('$\\mathbf{RMSE_{Method}/RMSE_{TS-SR}$') )+ 
     xlab(TeX('$\\mathbf{s/q}$')) + 
     scale_fill_manual(values = c("#ca0020", "lightgrey", "#0868ac",  "darkgray", "#E69F00", "#525252") ) +
@@ -249,18 +248,15 @@ plt_rmse = dat %>% tibble %>%
     arrange(b, k,  q, n) %>%
     rename("Method"="key" ) %>%
     ggplot(aes( y = my_mean, x = 10 / q, fill = Method, color = Method )) +
-    #facet_grid(e1 ~ n) +
     facet_wrap( ~ n, nrow =1) +
     geom_line() +
     geom_point()+
     geom_errorbar(aes(ymin=my_mean-se, ymax=my_mean+se)) +#,
-     #             position=position_dodge(0.05)) +
     geom_hline(yintercept=1, 
                linetype="dashed", 
                color = "black", 
                size = rel(0.5),
                alpha = 0.7) + #
-    # ylab(TeX('$\\mathbf{RMSE_{Method}/RMSE_{\u2113_0}}$') )+ 
     ylab(TeX('$\\mathbf{RMSE_{Method}/RMSE_{TS-SR}$') )+ 
     xlab(TeX('$\\mathbf{s/q}$')) + 
     scale_fill_manual(values = c("#ca0020", "#0868ac", "darkgray",  "#525252") ) +
@@ -316,11 +312,9 @@ plt_f1 =
     rename("Method"="key" ) %>%
     ggplot(aes( y = my_mean, x = 10 / q, fill = Method, color = Method )) +
     facet_grid(e1 ~ n) +
-    #facet_wrap( ~ n, nrow =1) +
     geom_line() +
     geom_point()+
     geom_errorbar(aes(ymin=my_mean-se, ymax=my_mean+se)) +#,
-    #             position=position_dodge(0.05)) +
     geom_hline(yintercept=1, 
                linetype="dashed", 
                color = "black", 
@@ -331,7 +325,6 @@ plt_f1 =
     scale_fill_manual(values = c("#ca0020", "lightgrey", "#0868ac",  "darkgray", "#E69F00", "#525252") ) +
     scale_color_manual(values = c("#ca0020", "lightgrey", "#0868ac",  "darkgray", "#E69F00", "#525252")) +
     theme_classic(base_size = 12) +
-    #coord_cartesian(ylim = c(0.35, 0.8) ) + 
     theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(1.5), face="bold"),
            axis.text=element_text(face="bold",color="black", size=rel(1.5)),
            axis.title = element_text(face="bold", color="black", size=rel(1.5)),
@@ -367,12 +360,10 @@ plt_f1 =
     arrange(b, k,  q, n) %>%
     rename("Method"="key" ) %>%
     ggplot(aes( y = my_mean, x = 10 / q, fill = Method, color = Method )) +
-    #facet_grid(e1 ~ n) +
     facet_wrap( ~ n, nrow =1) +
     geom_line() +
     geom_point()+
     geom_errorbar(aes(ymin=my_mean-se, ymax=my_mean+se)) +#,
-    #             position=position_dodge(0.05)) +
     geom_hline(yintercept=1, 
                linetype="dashed", 
                color = "black", 
@@ -383,7 +374,6 @@ plt_f1 =
     scale_fill_manual(values = c("#ca0020", "#0868ac", "darkgray",  "#525252") ) +
     scale_color_manual(values = c("#ca0020", "#0868ac", "darkgray",  "#525252")) +
     theme_classic(base_size = 12) +
-    #coord_cartesian(ylim = c(0.35, 0.8) ) + 
     theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(1.5), face="bold"),
            axis.text=element_text(face="bold",color="black", size=rel(1.5)),
            axis.title = element_text(face="bold", color="black", size=rel(1.5)),
@@ -446,7 +436,6 @@ plt_coef = dat %>% tibble %>%
                color = "black", 
                size = rel(0.5),
                alpha = 0.7) + #
-    # ylab(TeX('$\\mathbf{RMSE_{Method}/RMSE_{\u2113_0}}$') )+ 
     ylab(TeX('$\\mathbf{RMSE_{Method}/RMSE_{TS-SR}$') )+ 
     xlab(TeX('$\\mathbf{s/q}$')) + 
     scale_fill_manual(values = c("#ca0020", "lightgrey", "#0868ac",  "darkgray", "#E69F00", "#525252") ) +
@@ -486,18 +475,15 @@ plt_coef = dat %>% tibble %>%
     arrange(b, k,  q, n) %>%
     rename("Method"="key" ) %>%
     ggplot(aes( y = my_mean, x = 10 / q, fill = Method, color = Method )) +
-    #facet_grid(e1 ~ n) +
     facet_wrap( ~ n, nrow =1) +
     geom_line() +
     geom_point()+
     geom_errorbar(aes(ymin=my_mean-se, ymax=my_mean+se)) +#,
-    #             position=position_dodge(0.05)) +
     geom_hline(yintercept=1, 
                linetype="dashed", 
                color = "black", 
                size = rel(0.5),
                alpha = 0.7) + #
-    # ylab(TeX('$\\mathbf{RMSE_{Method}/RMSE_{\u2113_0}}$') )+ 
     ylab(TeX('$\\mathbf{RMSE_{Method}/RMSE_{TS-SR}$') )+ 
     xlab(TeX('$\\mathbf{s/q}$')) + 
     scale_fill_manual(values = c("#ca0020", "#0868ac", "darkgray",  "#525252") ) +
