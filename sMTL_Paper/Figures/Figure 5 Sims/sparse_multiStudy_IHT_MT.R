@@ -1,4 +1,3 @@
-# Updates: December 19, 2021 
 # uses active set versions appropriate for each method
 library(pROC)
 library(JuliaConnectoR)
