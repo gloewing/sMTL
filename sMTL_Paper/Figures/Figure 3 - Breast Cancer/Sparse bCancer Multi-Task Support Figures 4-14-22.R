@@ -21,7 +21,6 @@ for(p in pVec){
     
     for(k in Kvec){
         flNm <-  paste0("MT_breast_rand_supp__K_", k, "_study_17_p_", p, "_totSims_100_L0sseTn_sse_rdgLmd_TRUE_MSTn_multiTask_Yscl_TRUE_rhoMax_500_nFld_3_LSitr_50_LSspc_1_fitLocal_50_Zlen_19_wsMeth_2_asPass_TRUE_TnIn_TRUE")
-                      # "MT_breast_rand_supp__K_4_study_17_p_100_totSims_100_L0sseTn_sse_rdgLmd_TRUE_MSTn_multiTask_Yscl_TRUE_rhoMax_500_nFld_3_LSitr_50_LSspc_1_fitLocal_50_Zlen_19_wsMeth_2_asPass_TRUE_TnIn_TRUE"
         if(file.exists(flNm)){
             # check to see if file exists
             cnt <- cnt + 1
@@ -45,23 +44,8 @@ for(p in pVec){
                                       "LASSO_full"= d[paste0( "MT_lasso_low")] / d[paste0( "MT_oseL0_", rho)] # tuned despite name
                 )
                 
-                # rmseMat <- rmseMat[complete.cases(rmseMat), ] # include if observations for all so comparisons are fair
-                #names(rmseMat) <- gsub(x = names(rmseMat), pattern = paste0("\\_", rho), replacement = "")
                 names(rmseMat) <- c("LASSO", "CS+Bbar", "Zbar+L2", "CS+L2", "Bbar", "Zbar+Bbar", "CVX_Bbar", "Ridge", "Trace", "LASSO_full")
-                # suppMat <- data.frame(
-                #     "CS+Bbar" = d$s_MS1 - d$s_ose,
-                #     "Zbar+L2" = d$s_MS2 - d$s_ose,
-                #     "CS+L2" = d$s_MS3 - d$s_ose,
-                #     "Bbar" = d$s_MS4 - d$s_ose,
-                #     "Zbar+Bbar" = d$s_MS5 - d$s_ose,
-                #     "LASSO" = d$s_lassoMrg - d$s_ose,
-                #     "LASSO_low"= d$MT_lasso_low_s - d$s_ose
-                #     
-                # )
-                # 
-                # names(suppMat) <- gsub(x = names(suppMat), pattern = "\\.", replacement = "+")
-                # suppMat <- suppMat[complete.cases(suppMat), ] # include if observations for all
-                # 
+                
                 # 
                 
                 pairMat <- data.frame("LASSO" = d[paste0("MT_mtLasso_", rho, "_pair")] / d[paste0( "MT_oseL0_", rho, "_pair")],
@@ -70,14 +54,9 @@ for(p in pVec){
                                       "CS+L2" = d[paste0("MT_msP3_L0_", rho, "_pair")] / d[paste0( "MT_oseL0_", rho, "_pair")],
                                       "Bbar" = d[paste0("MT_msP4_L0_", rho, "_pair")] / d[paste0( "MT_oseL0_", rho, "_pair")],
                                       "Zbar+Bbar" = d[paste0("MT_msP5_L0_", rho, "_pair")] / d[paste0( "MT_oseL0_", rho, "_pair")]
-                                      #"CVX_Bbar" = d[paste0("msP1_con", "_pair")] / d[paste0( "MT_oseL0_", rho, "_pair")],
-                                      #"Ridge" = d[paste0("msP3_con", "_pair")] / d[paste0( "MT_oseL0_", rho, "_pair")],
-                                      #"Trace" = d[paste0("MTL_trace", "_pair")] /d[paste0( "MT_oseL0_", rho, "_pair")],
-                                      #"LASSO_full"= d[paste0( "MT_lasso_low", "_pair")] / d[paste0( "MT_oseL0_", rho, "_pair")] # tuned despite name
+                                      
                 )
                 
-                # rmseMat <- rmseMat[complete.cases(rmseMat), ] # include if observations for all so comparisons are fair
-                #names(rmseMat) <- gsub(x = names(rmseMat), pattern = paste0("\\_", rho), replacement = "")
                 names(pairMat) <- c("LASSO", "CS+Bbar", "Zbar+L2", "CS+L2", "Bbar", "Zbar+Bbar")
                 
                 
@@ -87,14 +66,9 @@ for(p in pVec){
                                       "CS+L2" = d[paste0("MT_msP3_L0_", rho, "_prob")] / d[paste0( "MT_oseL0_", rho, "_prob")],
                                       "Bbar" = d[paste0("MT_msP4_L0_", rho, "_prob")] / d[paste0( "MT_oseL0_", rho, "_prob")],
                                       "Zbar+Bbar" = d[paste0("MT_msP5_L0_", rho, "_prob")] / d[paste0( "MT_oseL0_", rho, "_prob")]
-                                      # "CVX_Bbar" = d[paste0("msP1_con", "_prob")] / d[paste0( "MT_oseL0_", rho, "_prob")],
-                                      # "Ridge" = d[paste0("msP3_con", "_prob")] / d[paste0( "MT_oseL0_", rho, "_prob")],
-                                      # "Trace" = d[paste0("MTL_trace", "_prob")] /d[paste0( "MT_oseL0_", rho, "_prob")],
-                                      # "LASSO_full"= d[paste0( "MT_lasso_low", "_prob")] / d[paste0( "MT_oseL0_", rho, "_prob")] # tuned despite name
+ 
                 )
                 
-                # rmseMat <- rmseMat[complete.cases(rmseMat), ] # include if observations for all so comparisons are fair
-                #names(rmseMat) <- gsub(x = names(rmseMat), pattern = paste0("\\_", rho), replacement = "")
                 names(probMat) <- c("LASSO", "CS+Bbar", "Zbar+L2", "CS+L2", "Bbar", "Zbar+Bbar")
                 
                 r <- rhoVec[rho]
@@ -114,10 +88,7 @@ for(p in pVec){
                     k, p, r
                 )
                 
-                # ls_supp[[cnt]] <- cbind( 
-                #     gather(suppMat), 
-                #     k, p, rhoVec[rho]
-                # )
+
             }
             d1 <- d
             
@@ -141,7 +112,6 @@ dat$key <- as.factor(dat$key)
 plt_rmse = 
     dat %>% tibble %>%  # "CS+Bbar", "CS+L2", , "Zbar+Bbar"
     dplyr::filter(
-                  # key %in% c("LASSO", "CS+Bbar", "Zbar+L2", "CS+L2", "Bbar", "Zbar+Bbar", "CVX_Bbar", "Ridge", "Trace", "LASSO_full"), # , "LASSO", "Trace"
         key %in% c("LASSO", "Zbar+L2", "CS+L2", "Bbar", "Zbar+Bbar", "Ridge", "LASSO_full"), # , "LASSO", "Trace"
         
                 p == 1000 
@@ -157,12 +127,8 @@ plt_rmse =
                color = "black", 
                size = rel(0.5),
                alpha = 0.7) + #
-    #ylim(0, 2) +
-    # ylab(TeX('$\\mathbf{RMSE_{Method}/RMSE_{TS- \u2113 0 \u2113 2}}$') )+ 
     ylab(TeX('$\\mathbf{RMSE_{Method}/RMSE_{TS-SR}$') )+ 
     xlab("Number of Features (p)") + 
-    #scale_fill_manual(values = c("#ca0020", "lightgrey", "#0868ac", "#E69F00", "#525252", "darkgray") ) +
-    #scale_color_manual(values = c("#ca0020", "lightgrey", "#0868ac", "#E69F00", "#525252", "darkgray")) +
     theme_classic(base_size = 12) +
     coord_cartesian(ylim = c(0.6, 1.2) ) + 
     theme( plot.title = element_text(hjust = 0.5, color="black", size=rel(2.5), face="bold"),
