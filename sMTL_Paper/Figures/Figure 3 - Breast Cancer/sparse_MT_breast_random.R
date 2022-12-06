@@ -17,7 +17,6 @@ if(cluserInd){
     # if on cluster
     args <- commandArgs(TRUE)
     K <- as.integer( as.numeric(args[1]) ) # number of tasks
-    #ds <- as.integer( as.numeric(args[2]) ) # dataset index
     p <- as.integer( as.numeric(args[2]) ) # dataset index
     studies <- as.integer( as.numeric(args[3]) ) # dataset index
     iterNum <- as.integer( Sys.getenv('SLURM_ARRAY_TASK_ID') ) # seed index from array id
@@ -315,7 +314,6 @@ print(paste0("start: ", iterNum))
         
         splitSize <- 1 - (1 / totalSims) # number of cross validation 
         
-        # if(Yscale)   full[,Yindx] <- scale(full[,Yindx]) # center and scale Ys
         
         set.seed(seedSet)
         mtTest <- full[full$Study == testStudy, -1] # test study, remove "Study" column
@@ -503,7 +501,6 @@ print(paste0("start: ", iterNum))
         ##############
         print(paste("iteration: ", iterNum, " L0Learn OSE"))
         predsMat <- matrix(NA, ncol = K, nrow = nrow(full)) # predictions for stacking matrix
-        # testMat <- matrix(NA, ncol = K, nrow = nrow(test)) # predictions on test set
         betaMat <- matrix(NA, ncol = K, nrow = length(Xindx) + 1) # matrix of betas from each study
         res <- vector(length = K) # store auc
         Mvec <- vector(length = K) # use to initialize other models later on
@@ -516,8 +513,6 @@ print(paste0("start: ", iterNum))
 
         for(j in 1:K){
             print(j)
-           # indx <- which(full$Study == j) # rows of each study
-        #    n_k <- length(indx) # sample size of jth study
             sdY <- 1 # set to 1 for now so we DO NOT adjust as glmnet() #sd(full$Y[indx]) * (n_k - 1) / n_k #MLE
             gm <- tune.grid$lambda / (sdY * 2) # convert into comparable numbers for L0Learn
 
@@ -727,7 +722,6 @@ print(paste0("start: ", iterNum))
         timeStart1 <- Sys.time()
         
         predsMat <- matrix(NA, ncol = K, nrow = nrow(full)) # predictions for stacking matrix
-        # testMat <- matrix(NA, ncol = K, nrow = nrow(test)) # predictions on test set
         res <- resS <- vector(length = K) # store support prediction
         
         if(tuneInd){
@@ -738,7 +732,6 @@ print(paste0("start: ", iterNum))
             # ************
             
             tune.grid_MSZ_5 <- as.data.frame(  expand.grid( ridgeLambda, 0, lambdaZ, rho) )
-            # ridgeLambda * (rho / ridgeRho)
             colnames(tune.grid_MSZ_5) <- c("lambda1", "lambda2", "lambda_z","rho")
             
             # order correctly
@@ -780,9 +773,6 @@ print(paste0("start: ", iterNum))
             rhoStar <- MSparams$rho
             lambdaZstar <- MSparams$lambda_z
             
-            # rhoG <- seq(rhoStar - rhoDiff, rhoStar + rhoDiff, length = 3)
-            # rhoG <- sapply(rhoG, function(x) max(x, 2 ) ) # make sure there is nothing below 2
-            # lambdaZgrid<- c( seq(3, 10, length = 5), seq(0.5, 2, length = 10), seq(0.1, 1, length = 5) ) * lambdaZstar # makes grid roughly spaced between   # exp(-seq(0, 2.3, length = 5))
             lambdaZgrid <- c( seq(1.5, 10, length = 5), seq(0.1, 1, length = 5) ) * lambdaZstar
             lambdaZgrid <- lambdaZgrid[lambdaZgrid <= lambdaZmax] # make sure this is below a threshold to prevent numerical issues
             lambdaZgrid <- sort(lambdaZgrid, decreasing = TRUE)
@@ -1038,9 +1028,6 @@ print(paste0("start: ", iterNum))
             rhoStar <- MSparams$rho
             lambdaZstar <- MSparams$lambda_z
             
-            # rhoG <- seq(rhoStar - rhoDiff, rhoStar + rhoDiff, length = 3)
-            # rhoG <- sapply(rhoG, function(x) max(x, 2 ) ) # make sure there is nothing below 2
-            # lambdaZgrid<- c( seq(3, 10, length = 5), seq(0.5, 2, length = 10), seq(0.1, 1, length = 5) ) * lambdaZstar # makes grid roughly spaced between   # exp(-seq(0, 2.3, length = 5))
             lambdaZgrid <- c( seq(1.5, 10, length = 5), seq(0.1, 1, length = 5) ) * lambdaZstar
             lambdaZgrid <- lambdaZgrid[lambdaZgrid <= lambdaZmax] # make sure this is below a threshold to prevent numerical issues
             lambdaZgrid <- sort(lambdaZgrid, decreasing = TRUE)
@@ -1220,9 +1207,6 @@ print(paste0("start: ", iterNum))
             rhoStar <- MSparams$rho
             lambdaBstar <- MSparams$lambda2
             
-            # rhoG <- seq(rhoStar - rhoDiff, rhoStar + rhoDiff, length = 3)
-            # rhoG <- sapply(rhoG, function(x) max(x, 2 ) )
-            # lambdaBgrid<- c( seq(3, 10, length = 5), seq(0.5, 2, length = 10), seq(0.1, 1, length = 5) ) * lambdaBstar # makes grid roughly spaced between   # exp(-seq(0, 2.3, length = 5))
             lambdaBgrid<- c( seq(1.5, 10, length = 5), seq(0.1, 1, length = 5) ) * lambdaBstar 
 
             gridUpdate <- as.data.frame(  expand.grid( 0, lambdaBgrid, 0, rhoStar) )
@@ -1338,7 +1322,6 @@ print(paste0("start: ", iterNum))
         # MS3
         glPenalty <- 3
         ip = TRUE
-        # testMat <- matrix(NA, ncol = K, nrow = nrow(test)) # predictions on test set
 
         # tune multi-study with l0 penalty with GL Penalty = TRUE
 
@@ -1401,8 +1384,6 @@ print(paste0("start: ", iterNum))
         tune.grid2 <- tune.grid
         tune.grid2$rho <- length(Xindx) # full support
         tune.grid2 <- unique(tune.grid2)
-        #betas <- matrix(0, ncol = K, nrow = numCovs + 1)
-        # testMat <- matrix(NA, ncol = K, nrow = nrow(test)) # predictions on test set
 
         # tune multi-study with l0 penalty with GL Penalty = TRUE
 
@@ -1506,9 +1487,7 @@ print(paste0("start: ", iterNum))
                      Lam1_seq=cvfitc$Lam1_seq
         )
         
-        # FIX INDICES "mtl_L2L1_supp"
-        
-        # FIX INDICES "mtl_L2L1_supp"
+
         
         resMat[iterNum, 107] <-  S <- sum( model$W[-1,] != 0 ) / K # size of support
         resMat[iterNum, 108] <- multiTaskRmse(data = mtTest, beta = model$W)
