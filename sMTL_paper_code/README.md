@@ -4,7 +4,7 @@
 1) Open "~/Rcode/Intro Support Figure1 Demo.R" and run entire script.
 
 Note that running this code requires specifying (in this .R file) the following path that is computer-specific:
-juliaPath: the path name to Julia binary on your computer
+juliaPath: the path name to Julia binary on your computer (line 16 of this .R file)
 --To find the binary location, open Julia and enter the command: >> Base.julia_cmd()[1]
 --Paste the pathname of that in the .R file
 
