@@ -11,7 +11,7 @@ Repository for code for R Package `sMTL` under development and for code to run a
 
 2) The 'sMTL_Paper' folder has code to run analyses and make figures for the manuscript. Some files will require changing path names. Please feel free to reach out to the author for more annotation or help with reproducing any analyses.
 
-3) 
+3) The 'sMTL_paper_Fig1_demo' folder contains code that can be used as a short self-contained demo/introduction to many of the methods proposed in the paper. This code should reproduce Figures 1 and 3 in the manuscript. It includes R code for data simulation, calls the algorithms (through Julia) to tune and fit models on the data and then generate figures.
 
 ## Dataset Links
 Links to the data repositories for the neuroscience and cancer genomics applications can be found at:
