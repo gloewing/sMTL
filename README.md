@@ -1,7 +1,7 @@
 # sMTL
 ## Repository Description
-Multi-Task Learning for Sparsity Pattern Heterogeneity
-Repository for code for R Package `sMTL` under development and for code for paper
+Multi-Task Learning for Sparsity Pattern Heterogeneity: A Discrete Optimiztion Approach
+Repository for code for R Package `sMTL` under development and for code to run analyses and reproduce figures in the paper.
 
 <br />
 <br />
