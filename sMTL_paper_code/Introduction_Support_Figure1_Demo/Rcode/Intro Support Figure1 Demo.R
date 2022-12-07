@@ -1,7 +1,13 @@
+list.of.packages <- c("MASS", "JuliaConnectoR", "ggpubr", "here", "ggplot2", 
+                      "tidyverse", "latex2exp", "grid", "glmnet")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+
 library(MASS)
 library(JuliaConnectoR)
 library(ggpubr)
 library(here)
+
 
 # function paths
 savePath <- here() # path to save files and figures -- set based on where this saved
