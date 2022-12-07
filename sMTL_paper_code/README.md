@@ -5,7 +5,9 @@
 
 Note that running this code requires specifying (in this .R file) the following path that is computer-specific:
 juliaPath: the path name to Julia binary on your computer (line 22 of this .R file)
-a) To find the binary location, open Julia and enter the command: >> Base.julia_cmd()[1]
+
+a) To find the binary location, open Julia and enter the command: `Base.julia_cmd()[1]`
+
 b) Paste the pathname of that in the .R file
 
 The folders are organized as follows:
