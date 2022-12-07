@@ -6,6 +6,11 @@ Repository for code for R Package `sMTL` under development and for code to run a
 <br />
 <br />
 
+## Folders
+1) Package has the 'sMTL' R package that is current under development. This includes Julia code to run algorithms and R wrapper code to tune and fit these models. This package is still under development and has not been widely tested.
+
+2) 
+
 ## Dataset Links
 Links to the data repositories for the neuroscience and cancer genomics applications can be found at:
 
