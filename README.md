@@ -1,4 +1,5 @@
 # sMTL
+## Repository Description
 Multi-Task Learning for Sparsity Pattern Heterogeneity
 Repository for code for R Package `sMTL` under development and for code for paper
 
@@ -8,7 +9,7 @@ Repository for code for R Package `sMTL` under development and for code for pape
 <br />
 <br />
 <br />
-
+## Dataset Links
 Links to the data repositories for the neuroscience and cancer genomics applications can be found at:
 
 1) Neuroscience application: https://osf.io/tb8fx/
