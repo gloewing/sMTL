@@ -1,7 +1,7 @@
 # Sparse Multi-Task Learning Code
 
 ## Figures 
-1) Contain the .pdf files of Figures 1 and 3 int he main text. These files are produced by the code in "~/Rcode/Intro Support Figure1 Demo.R"
+1) Contains the .pdf files of Figures 1 and 3 in the main text. These files are produced by the code in "~/Rcode/Intro Support Figure1 Demo.R"
 
 ## Rcode
 1) "sparseFn_iht_test_MT.R" contains R code to tune MTL models. 
