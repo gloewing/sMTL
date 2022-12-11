@@ -2,50 +2,41 @@
 % Please edit documentation in R/grid.gen.R
 \name{grid.gen}
 \alias{grid.gen}
-\title{grid.gen: generate grid for ross-validation function}
+\title{grid.gen: generate grid for cross-validation function}
 \usage{
 grid.gen(
   y,
-  X,
+  p,
   study = NA,
-  grid,
-  commonSupp = FALSE,
   lambda_1 = TRUE,
   lambda_2 = FALSE,
   lambda_z = TRUE,
+  commonSupp = FALSE,
   multiTask = TRUE
 )
 }
 \arguments{
-\item{y}{A numeric vector}
+\item{y}{A numeric vector or matrix}
 
-\item{X}{A matrix}
+\item{p}{An integer}
 
 \item{study}{An integer vector}
 
-\item{grid}{A dataframe}
+\item{lambda_1}{A boolean}
+
+\item{lambda_2}{A boolean}
+
+\item{lambda_z}{A boolean}
 
 \item{commonSupp}{A boolean}
 
 \item{multiTask}{A boolean}
-
-\item{nfold}{An integer}
-
-\item{maxIter}{An integer}
-
-\item{LocSrch_skip}{An integer}
-
-\item{LocSrch_maxIter}{An integer}
-
-\item{messageInd}{A boolean}
-
-\item{independent.regs}{A boolean}
 }
 \value{
-A list
+A dataframe
 }
 \description{
-grid.gen: generate grid for ross-validation function
+grid.gen: generate grid for cross-validation function
 }
 \examples{
 

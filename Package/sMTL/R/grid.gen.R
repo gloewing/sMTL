@@ -1,18 +1,14 @@
-#' grid.gen: generate grid for ross-validation function
+#' grid.gen: generate grid for cross-validation function
 #'
-#' @param y A numeric vector
-#' @param X A matrix
+#' @param y A numeric vector or matrix
+#' @param p An integer
 #' @param study An integer vector
-#' @param grid A dataframe
-#' @param nfold An integer
+#' @param lambda_1 A boolean
+#' @param lambda_2 A boolean
+#' @param lambda_z A boolean
 #' @param commonSupp A boolean
 #' @param multiTask A boolean
-#' @param maxIter An integer
-#' @param LocSrch_skip An integer
-#' @param LocSrch_maxIter An integer
-#' @param messageInd A boolean
-#' @param independent.regs A boolean
-#' @return A list
+#' @return A dataframe
 #' @examples
 #' 
 #' #####################################################################################
@@ -23,18 +19,34 @@
 #' @import dplyr
 #' @export
 
-grid.gen = function(y, 
-                   X, 
+grid.gen = function(y,
+                    p,
                    study = NA, 
-                   grid,
-                   commonSupp = FALSE,
                    lambda_1 = TRUE,
                    lambda_2 = FALSE,
                    lambda_z = TRUE,
+                   commonSupp = FALSE,
                    multiTask = TRUE # only used if study indices provided, then use this to distinguish between a "hoso" and " multiTask" tuning 
 ) {
     
-    p <- ncol(X)
+    ##################
+    # sparsity level
+    ##################
+    # sparsity parameter depends on dimension of X
+    if(p <= 50){
+        s <- c(2, 4, 6, 10, 15, 20)
+    }else if(p > 50 & p <= 500){
+        s <- c(5, 10, 15, 20, 30)
+    }else if(p > 500){
+        s <- c(5, 10, 15, 25, 40 )
+    }
+
+    ##################
+    # problem type
+    ##################
+    
+    # if common support set multi-study paramters to FALSE
+    if(commonSupp)     lambda_z <- lambda_2 <- FALSE
     
     if( is.matrix(y) ){
         
@@ -56,6 +68,7 @@ grid.gen = function(y,
         if( anyNA(study) ){
             reg_type <- method <- "L0"
             K <- 1
+            lambda_2 <- lambda_z <- FALSE # these penalties are meaningless for single task problems
         }else{
             # if study is given
             study <- as.integer( as.factor(study) ) # make integer for Julia type
@@ -65,37 +78,46 @@ grid.gen = function(y,
         }
     }
     
+    ##################
+    # create grid
+    ##################
     # ridge penalty
-    if(lambda_1){
-        # baseline cardinality set to s = 10 
-        s_baseline <- 10
-        
-        lambda1_vec <- c(1e-7, 1e-5, 1e-3, 1e-1, 1)
-        
-    }else{
-        lambda1_vec <- 0
-    }
-    
+    if(lambda_1)        lambda_1 <- c(1e-7, 1e-5, 1e-3, 1e-1, 1) 
+ 
     # bbar penalty
-    if(lambda_2){
-        lambda2_vec <- 10^(seq(-5,3))
-    }else{
-        lambda2_vec <- 0
-    }
+    if(lambda_2)        lambda_2 <- c(0,
+                                      10^(seq(-3,-1)),
+                                      exp( seq(2,6, length = 6)) )
+    # zBar penalty
+    if(lambda_z)        lambda_z <- sort( unique( c(0, 1e-6, 1e-5, 1e-4, 1e-3,
+                                                    exp(-seq(0,5, length = 8)),
+                                                    1, 3) ),    decreasing = TRUE )
     
-    if(lambda_z & !commonSupp){
-        lambdaZ <- sort( unique( c(0, 1e-6, 1e-5, 1e-4, 1e-3,
-                                   exp(-seq(0,5, length = 8)),
-                                   1:3) ),
-                         decreasing = TRUE ) 
-        
-        lambda2_vec <- 10^(seq(-5,3))
-    }else{
-        lambda2_vec <- 0
-    }
+    if(!lambda_1)        lambda_1 <- 0
+    if(!lambda_2)        lambda_2 <- 0
+    if(!lambda_z)        lambda_z <- 0
     
+    grid <- as.data.frame(  expand.grid( lambda_1, lambda_2, lambda_z, s) )
+    colnames(grid) <- c("lambda_1", "lambda_2", "lambda_z", "s")
     
+    # scale z
+    lambdaZScale <- sMTL::rhoScale(K = K, 
+                                     p = p, 
+                                     rhoVec = grid$s, 
+                                     itrs = 5000,
+                                     seed = 1)
     
+    grid <- sMTL::tuneZscale(tune.grid = grid, 
+                             rhoScale = lambdaZScale)
     
+    # order correctly
+    grid <- grid[  order(-grid$s,
+                         -grid$lambda_2,
+                         grid$lambda_1,
+                         -grid$lambda_z,
+                         decreasing=TRUE),     ]
+
+    
+    return( expand.grid(grid) )
     
 }

@@ -1,12 +1,15 @@
 #' cv.smtl: cross-validation function
 #'
-#' @param y A numeric vector
+#' @param y A numeric vector or matrix (for multi-label problems)
 #' @param X A matrix
 #' @param study An integer vector
 #' @param grid A dataframe
 #' @param nfold An integer
 #' @param commonSupp A boolean
 #' @param multiTask A boolean
+#' @param lambda_1 A boolean
+#' @param lambda_2 A boolean
+#' @param lambda_z A boolean
 #' @param maxIter An integer
 #' @param LocSrch_skip An integer
 #' @param LocSrch_maxIter An integer
@@ -26,10 +29,13 @@
 cv.smtl = function(y, 
                 X, 
                 study = NA, 
-                grid,
+                grid = NA,
                 nfolds = NA,
                 commonSupp = FALSE,
                 multiTask = TRUE, # only used if study indices provided, then use this to distinguish between a "hoso" and " multiTask" tuning 
+                lambda_1 = TRUE, # a flag that is used if grid = NA to generate a tuning grid with ridge penalty
+                lambda_2 = FALSE, # a flag that is used if grid = NA to generate a tuning grid with Bbar penalty
+                lambda_z = TRUE, # a flag that is used if grid = NA to generate a tuning grid with Zbar penalty
                 maxIter = 2500,
                 LocSrch_skip = 1,
                 LocSrch_maxIter = 10,
@@ -37,12 +43,28 @@ cv.smtl = function(y,
                 independent.regs = FALSE # shared active sets
 ) {
     
-    ###################
-    # sanity checks
-    ###################
     np <- dim(X)
     nobs <- as.integer(np[1])
     p <- as.integer(np[2])
+    
+    
+    
+    #########################################
+    # tuning grid - generate if not provided
+    #########################################
+    if(is.na(grid)[1])      grid <- grid.gen(y = y,
+                                             p = p,
+                                             study = NA, 
+                                             lambda_1 = lambda_1,
+                                             lambda_2 = lambda_2,
+                                             lambda_z = lambda_z,
+                                             commonSupp = commonSupp,
+                                             multiTask = multiTask) # only used if study indices provided, then use this to distinguish between a "hoso" and " multiTask" tuning 
+
+    
+    ###################
+    # sanity checks
+    ###################
     
     ##check dims
     if(is.null(np)|(np[2]<=1))   stop("X should be a matrix with 2 or more columns")
@@ -54,7 +76,7 @@ cv.smtl = function(y,
     convex_flag <- FALSE # whether to solve the convex problem for ALL solutions
     
     if(any(grid$s >= p)){
-        message(paste("Some values of s (",max(grid$s),") (support size) are >= than number of covaraites (",p,"). s is set to p",sep=""))
+        message(paste("Some values of s (",max(grid$s),") (support size) are >= than number of covariates (",p,"). s is set to p",sep=""))
         sp_index <- which(grid$s >= p)
         grid$s[sp_index] <- p # set to p
         if(  length(grid$lambda_z) > 0   )    grid$lambda_z[sp_index] <- 0 # cannot have s = p and lambda_z > 0
@@ -110,8 +132,9 @@ cv.smtl = function(y,
         LocSrch_skip <- 1
     }      
     
-    
+    ####################################
     # determine if problem is multiTask
+    ####################################
     if( is.matrix(y) ){
         
         if( any( apply(y, 2, var)  == 0 ) )   stop("At least one task's y is constant")
@@ -144,7 +167,7 @@ cv.smtl = function(y,
             K <- length( unique(study) )
             
             if(nfolds > K & !multiTask ){
-                message("nfolds must be <= K, nfolds set to K ")
+                message("Warning: nfolds must be <= K, nfolds set to K ")
                 nfolds <- K
             }else if(is.na(nfolds)){
                 nfolds <- K

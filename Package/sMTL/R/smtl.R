@@ -250,7 +250,7 @@ smtl = function(y,
                         )
         
         dimnames(fit_list$beta)[[2]] <- paste0("beta_", 1:(dim(fit_list$beta)[[2]]) ) # rename columns
-        dimnames(fit_list$beta)[[1]] <- c("Intercept", paste0("V", 1:(dim(fit_list$beta)[[1]]) ) ) # rename rows
+        dimnames(fit_list$beta)[[1]] <- c("Intercept", paste0("V", seq(1, dim(fit_list$beta)[[1]] - 1) ) ) # rename rows
         
         return(fit_list)
         
@@ -307,9 +307,10 @@ smtl = function(y,
                                 maxIter = as.integer( maxIter ),
                                 localIter = as.integer(LocSrch_maxIter)
                 )
-                
+                # message(dim(fit_list$beta))
+
                 dimnames(fit_list$beta)[[2]] <- paste0("beta_", 1:(dim(fit_list$beta)[[2]]) ) # rename columns
-                dimnames(fit_list$beta)[[1]] <- c("Intercept", paste0("V", 1:(dim(fit_list$beta)[[1]]) ) ) # rename rows
+                dimnames(fit_list$beta)[[1]] <- c("Intercept", paste0("V", seq(1, dim(fit_list$beta)[[1]] - 1) ) ) # rename rows
                 
                 return(fit_list)
                 
@@ -352,7 +353,7 @@ smtl = function(y,
             }
             
             dimnames(fit_list$beta)[[2]] <- paste0("beta_", 1:(dim(fit_list$beta)[[2]]) ) # rename columns
-            dimnames(fit_list$beta)[[1]] <- c("Intercept", paste0("V", 1:(dim(fit_list$beta)[[1]]) ) ) # rename rows
+            dimnames(fit_list$beta)[[1]] <- c("Intercept", paste0("V", seq(1, dim(fit_list$beta)[[1]] - 1) ) ) # rename rows
             
             return(fit_list)
             
@@ -443,7 +444,7 @@ smtl = function(y,
             #L0_MS_z2 <- juliaCall("include", paste0(juliaFnPath, "BlockComIHT_inexact_tuneTest.jl") ) # MT: Need to check it works; no active set but NO common support (it does have Z - zbar and beta - betabar)
             
             dimnames(fit_list$beta)[[2]] <- paste0("beta_", 1:(dim(fit_list$beta)[[2]]) ) # rename columns
-            dimnames(fit_list$beta)[[1]] <- c("Intercept", paste0("V", 1:(dim(fit_list$beta)[[1]]) ) ) # rename rows
+            dimnames(fit_list$beta)[[1]] <- c("Intercept", paste0("V", seq(1, dim(fit_list$beta)[[1]] - 1) ) ) # rename rows
             
             return(fit_list)
         }
@@ -503,7 +504,7 @@ smtl = function(y,
                 )
                 
                 dimnames(fit_list$beta)[[2]] <- paste0("beta_", 1:(dim(fit_list$beta)[[2]]) ) # rename columns
-                dimnames(fit_list$beta)[[1]] <- c("Intercept", paste0("V", 1:(dim(fit_list$beta)[[1]]) ) ) # rename rows
+                dimnames(fit_list$beta)[[1]] <- c("Intercept", paste0("V", seq(1, dim(fit_list$beta)[[1]] - 1) ) ) # rename rows
                 
                 return(fit_list)
                 
@@ -546,7 +547,7 @@ smtl = function(y,
             }
             
             dimnames(fit_list$beta)[[2]] <- paste0("beta_", 1:(dim(fit_list$beta)[[2]]) ) # rename columns
-            dimnames(fit_list$beta)[[1]] <- c("Intercept", paste0("V", 1:(dim(fit_list$beta)[[1]]) ) ) # rename rows
+            dimnames(fit_list$beta)[[1]] <- c("Intercept", paste0("V", seq(1, dim(fit_list$beta)[[1]] - 1) ) ) # rename rows
             
             return(fit_list)
             
@@ -634,7 +635,7 @@ smtl = function(y,
             #L0_MS_z2 <- juliaCall("include", paste0(juliaFnPath, "BlockComIHT_inexact_tuneTest.jl") ) # MT: Need to check it works; no active set but NO common support (it does have Z - zbar and beta - betabar)
             
             dimnames(fit_list$beta)[[2]] <- paste0("beta_", 1:(dim(fit_list$beta)[[2]]) ) # rename columns
-            dimnames(fit_list$beta)[[1]] <- c("Intercept", paste0("V", 1:(dim(fit_list$beta)[[1]]) ) ) # rename rows
+            dimnames(fit_list$beta)[[1]] <- c("Intercept", paste0("V", seq(1, dim(fit_list$beta)[[1]] - 1) ) ) # rename rows
             
             return(fit_list)
         }

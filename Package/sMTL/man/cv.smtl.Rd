@@ -8,10 +8,13 @@ cv.smtl(
   y,
   X,
   study = NA,
-  grid,
+  grid = NA,
   nfolds = NA,
   commonSupp = FALSE,
   multiTask = TRUE,
+  lambda_1 = TRUE,
+  lambda_2 = FALSE,
+  lambda_z = TRUE,
   maxIter = 2500,
   LocSrch_skip = 1,
   LocSrch_maxIter = 10,
@@ -20,7 +23,7 @@ cv.smtl(
 )
 }
 \arguments{
-\item{y}{A numeric vector}
+\item{y}{A numeric vector or matrix (for multi-label problems)}
 
 \item{X}{A matrix}
 
@@ -31,6 +34,12 @@ cv.smtl(
 \item{commonSupp}{A boolean}
 
 \item{multiTask}{A boolean}
+
+\item{lambda_1}{A boolean}
+
+\item{lambda_2}{A boolean}
+
+\item{lambda_z}{A boolean}
 
 \item{maxIter}{An integer}
 
