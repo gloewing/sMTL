@@ -23,31 +23,31 @@ smtl(
 )
 }
 \arguments{
-\item{y}{A numeric vector}
+\item{y}{A numeric outcome vector (for multi-task/domain generalization problems) or a numeric outcome matrix (for multi-label problems)}
 
-\item{X}{A matrix}
+\item{X}{A matrix of covariates}
 
-\item{s}{An integer}
+\item{s}{An integer specifying the sparsity level}
 
-\item{commonSupp}{A boolean}
+\item{commonSupp}{A boolean specifying whether to constrain solutions to have a common support}
 
-\item{lambda_1}{A numeric vector}
+\item{lambda_1}{A numeric vector of ridge penalty hyperparameter values}
 
-\item{lambda_2}{A numeric vector}
+\item{lambda_2}{A numeric vector of betaBar (to borrow strength across coefficient values) penalty hperparameter values}
 
-\item{lambda_z}{A numeric vector}
+\item{lambda_z}{A numeric vector zBar (to borrow strength across coefficient supports) penalty hperparameter values}
 
-\item{scale}{A boolean}
+\item{scale}{A boolean specifying whether to center and scale covariates before model fitting (either way coefficient estimates are returned on original scale before centering/scaling)}
 
-\item{maxIter}{An integer}
+\item{maxIter}{An integer specifying the maximum number of coordinate descent iterations before}
 
-\item{LocSrch_maxIter}{An integer}
+\item{LocSrch_maxIter}{An integer specifying the number of maximum local search iterations}
 
-\item{messageInd}{A boolean}
+\item{messageInd}{A boolean specifying whether to include messages (verbose)}
 
-\item{model}{A boolean}
+\item{model}{A boolean indicating whether to return design matrix and outcome vector}
 
-\item{independent.regs}{A boolean}
+\item{independent.regs}{A boolean specifying whether to fit independent regressions (instead of multi-task). This ensures there is NO information sharing via active sets or penalties}
 }
 \value{
 A model object (list)
@@ -58,22 +58,70 @@ smtl: make model-fitting function
 \examples{
 
 #####################################################################################
-##### First Time Loading, Julia is Installed and Julia Path is Known ######
+##### simulate data
 #####################################################################################
-smtl_setup(path = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin", installJulia = FALSE, installPackages = FALSE)"
+set.seed(1) # fix the seed to get a reproducible result
+K <- 4 # number of datasets 
+p <- 100 # covariate dimension
+s <- 5 # support size
+q <- 7 # size of subset of covariates that can be non-zero for any task
+n_k <- 50 # task sample size
+N <- n_k * p # full dataset samplesize
+X <- matrix( rnorm(N * p), nrow = N, ncol=p) # full design matrix
+B <- matrix(1 + rnorm(K * (p+1) ), nrow = p + 1, ncol = K) # betas before making sparse
+Z <- matrix(0, nrow = p, ncol = K) # matrix of supports
+y <- vector(length = N) # outcome vector
 
-#######################################################################################################
-##### If you have run smtl_setup() before, then path specification shouldn't be necessary ######
-#######################################################################################################
-smtl_setup(path = NULL, installJulia = FALSE, installPackages = FALSE)"
+# randomly sample support to make betas sparse
+for(j in 1:K)     Z[1:q, j] <- sample( c( rep(1,s), rep(0, q - s) ), q, replace = FALSE )
+B[-1,] <- B[-1,] * Z # make betas sparse and ensure all models have an intercept
 
-#####################################################################################
-##### First Time Loading, Julia is Not Installed   ######
-#####################################################################################
-smtl_setup(path = NULL, installJulia = TRUE, installPackages = FALSE)"
+task <- rep(1:K, each = n_k) # vector of task labels (indices)
 
+# iterate through and make each task specific dataset
+for(j in 1:K){
+    indx <- which(task == j) # indices of task
+    e <- rnorm(n_k)
+    y[indx] <- B[1, j] + X[indx,] \%*\% B[-1,j] + e
+    }
+    colnames(B) <- paste0("beta_", 1:K)
+    rownames(B) <- paste0("X_", 1:(p+1))
+    
+    print("Betas")
+    print(round(B[1:8,],2))
+    
 #####################################################################################
-##### First Time Loading, Julia is Installed But Packages NEED INSTALLATION  ######
+##### fit Multi-Task Learning Model for Heterogeneous Support
 #####################################################################################
-smtl_setup(path = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin", installJulia = TRUE, installPackages = TRUE)"
+    library(sMTL)
+    sMTL::smtl_setup(path = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin")
+    mod <- sMTL::smtl(y = y, 
+                      X = X, 
+                      study = task, 
+                      s = 5, 
+                      commonSupp = FALSE,
+                      lambda_1 = 0.001,
+                      lambda_2 = 0,
+                      lambda_z = 0.25)
+    
+    print(round(mod$beta[1:8,],2))
+    
+    # make predictions
+    preds <- sMTL::predict(model = mod, X = X[1:5,])
+    
+#####################################################################################
+##### fit Multi-Task Learning Model for Common Support
+#####################################################################################
+    library(sMTL)
+    sMTL::smtl_setup(path = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin")
+    mod <- sMTL::smtl(y = y, 
+                      X = X, 
+                      study = task, 
+                      s = 5, 
+                      commonSupp = TRUE,
+                      lambda_1 = 0.001,
+                      lambda_2 = 0.5)
+    
+    print(round(mod$beta[1:8,],2))
+    
 }

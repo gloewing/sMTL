@@ -2,7 +2,7 @@
 % Please edit documentation in R/grid.gen.R
 \name{grid.gen}
 \alias{grid.gen}
-\title{grid.gen: generate grid for cross-validation function}
+\title{grid.gen: generate grid for cross-validation function. For internal package use only.}
 \usage{
 grid.gen(
   y,
@@ -16,11 +16,11 @@ grid.gen(
 )
 }
 \arguments{
-\item{y}{A numeric vector or matrix}
+\item{y}{A numeric vector or matrix of outcomes}
 
-\item{p}{An integer}
+\item{p}{An integer of covariate dimension}
 
-\item{study}{An integer vector}
+\item{study}{An integer vector of task IDs}
 
 \item{lambda_1}{A boolean}
 
@@ -36,12 +36,5 @@ grid.gen(
 A dataframe
 }
 \description{
-grid.gen: generate grid for cross-validation function
-}
-\examples{
-
-#####################################################################################
-##### First Time Loading, Julia is Installed But Packages NEED INSTALLATION  ######
-#####################################################################################
-smtl_setup(path = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin", installJulia = TRUE, installPackages = TRUE)
+grid.gen: generate grid for cross-validation function. For internal package use only.
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/seReturn.R
 \name{seReturn}
 \alias{seReturn}
-\title{seReturn: find smallest rho within 1 se of smallest cv error}
+\title{seReturn: find smallest rho within 1 se of smallest cv error. For internal package use.}
 \usage{
 seReturn(x)
 }
@@ -10,5 +10,5 @@ seReturn(x)
 \item{x}{dataframe}
 }
 \description{
-seReturn: find smallest rho within 1 se of smallest cv error
+seReturn: find smallest rho within 1 se of smallest cv error. For internal package use.
 }

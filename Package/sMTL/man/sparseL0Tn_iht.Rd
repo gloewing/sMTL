@@ -2,7 +2,7 @@
 % Please edit documentation in R/sparseL0Tn_iht.R
 \name{sparseL0Tn_iht}
 \alias{sparseL0Tn_iht}
-\title{sparseCV_L0: cross-validation functions}
+\title{sparseCV_L0: cross-validation functions. For internal package use only.}
 \usage{
 sparseL0Tn_iht(
   data,
@@ -18,12 +18,28 @@ sparseL0Tn_iht(
 )
 }
 \arguments{
-\item{y}{A numeric vector}
+\item{data}{Matrix with outcome and design matrix}
 
-\item{X}{A matrix}
+\item{tune.grid}{A data.frame of tuning values}
 
-\item{s}{An integer}
+\item{hoso}{String specifying tuning type}
+
+\item{nfolds}{String or integer specifying number of folds}
+
+\item{juliaFnPath}{String specifying path to Julia binary}
+
+\item{trainingStudy}{Integer specifying index of training study}
+
+\item{messageInd}{Boolean for message printing}
+
+\item{LSitr}{Integer specifying do <LSitr> local search iterations on parameter values where we do actually do LS; NA does no local search}
+
+\item{LSspc}{Integer specifying number of hyperparameters to conduct local search: conduct local search every <LSspc>^th iteration. NA does no local search}
+
+\item{maxIter}{Integer specifying max iterations of coordinate descent}
+
+\item{method}{Sting specifying regression method}
 }
 \description{
-sparseCV_L0: cross-validation functions
+sparseCV_L0: cross-validation functions. For internal package use only.
 }

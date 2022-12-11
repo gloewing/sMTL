@@ -2,7 +2,7 @@
 % Please edit documentation in R/sparseFn.R
 \name{sparseCV}
 \alias{sparseCV}
-\title{sparseCV: cross-validation functions}
+\title{sparseCV: cross-validation functions. For internal package use only.}
 \usage{
 sparseCV(
   data,
@@ -18,12 +18,28 @@ sparseCV(
 )
 }
 \arguments{
-\item{y}{A numeric vector}
+\item{data}{Matrix with outcome and design matrix}
 
-\item{X}{A matrix}
+\item{tune.grid}{A data.frame of tuning values}
+
+\item{hoso}{String specifying tuning type}
+
+\item{method}{Sting specifying regression method}
+
+\item{nfolds}{String or integer specifying number of folds}
+
+\item{juliaFnPath}{String specifying path to Julia binary}
+
+\item{messageInd}{Boolean for message printing}
+
+\item{LSitr}{Integer specifying do <LSitr> local search iterations on parameter values where we do actually do LS; NA does no local search}
+
+\item{LSspc}{Integer specifying number of hyperparameters to conduct local search: conduct local search every <LSspc>^th iteration. NA does no local search}
+
+\item{maxIter}{Integer specifying max iterations of coordinate descent}
 
 \item{s}{An integer}
 }
 \description{
-sparseCV: cross-validation functions
+sparseCV: cross-validation functions. For internal package use only.
 }

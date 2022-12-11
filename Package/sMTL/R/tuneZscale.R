@@ -3,8 +3,6 @@
 #' @param rhoScale A dataframe
 #' @export
 
-
-
 # takes in tune grid and the output of function rhoScale and re-scales the lambda_z
 tuneZscale <- function(tune.grid, rhoScale){
     

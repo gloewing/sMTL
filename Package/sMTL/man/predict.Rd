@@ -7,17 +7,17 @@
 predict(model, X, lambda_1 = NA, lambda_2 = NA, lambda_z = NA, stack = FALSE)
 }
 \arguments{
-\item{model}{A numeric vector}
+\item{model}{An sMTL model object returned from the smtl() function}
 
-\item{X}{A matrix}
+\item{X}{A matrix of deatures}
 
-\item{lambda_1}{A optional numeric scalar. Only needed if the model object is fit on a path (multiple hyperparameterr values)}
+\item{lambda_1}{A optional numeric scalar specifying which lambda_1 to use for prediction. Only needed if the model object is fit on a path (multiple hyperparameterr values)}
 
-\item{lambda_2}{A optional numeric scalar. Only needed if the model object is fit on a path (multiple hyperparameterr values)}
+\item{lambda_2}{A optional numeric scalar specifying which lambda_2 to use for prediction. Only needed if the model object is fit on a path (multiple hyperparameterr values)}
 
-\item{lambda_z}{A numeric scalar}
+\item{lambda_z}{A optional numeric scalar specifying which lambda_2 to use for prediction. Only needed if the model object is fit on a path (multiple hyperparameterr values)}
 
-\item{stack}{An optional boolean to use only for Domain Generalization problems.}
+\item{stack}{An optional boolean specifying whether to calculate and apply stacking weights (only for Domain Generalization problems).}
 }
 \value{
 A matrix of task-specific predictions for multi-task/multi-label or for Domain Generalization problems, average and multi-study stacking predictions.
@@ -30,5 +30,18 @@ predict: predict on smtl model object
 #####################################################################################
 ##### First Time Loading, Julia is Installed and Julia Path is Known ######
 #####################################################################################
-smtl_setup(path = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin", installJulia = FALSE, installPackages = FALSE)
+# fit model
+mod <- smtl(y = y, 
+            X = X, 
+            study = task, 
+            s = 5, 
+            commonSupp = FALSE,
+            lambda_1 = c(0.1, 0.2, 0.3),
+            lambda_z = c(0.01, 0.05, 0.1))
+
+# make predictions
+preds <- sMTL::predict(model = mod, 
+                       X = X, 
+                       lambda_1 = 0.1, 
+                       lambda_z = 0.01)
 }

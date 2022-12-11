@@ -1,6 +1,14 @@
-#' sparseCV: cross-validation functions
-#' @param y A numeric vector
-#' @param X A matrix
+#' sparseCV: cross-validation functions. For internal package use only.
+#' @param data Matrix with outcome and design matrix
+#' @param tune.grid A data.frame of tuning values
+#' @param hoso String specifying tuning type
+#' @param method Sting specifying regression method
+#' @param nfolds String or integer specifying number of folds
+#' @param juliaFnPath String specifying path to Julia binary
+#' @param messageInd Boolean for message printing
+#' @param LSitr Integer specifying do <LSitr> local search iterations on parameter values where we do actually do LS; NA does no local search
+#' @param LSspc Integer specifying number of hyperparameters to conduct local search: conduct local search every <LSspc>^th iteration. NA does no local search
+#' @param maxIter Integer specifying max iterations of coordinate descent
 #' @param s An integer
 #' @import JuliaConnectoR
 #' @import dplyr
@@ -10,8 +18,7 @@
 #######################
 # sparse HOSO CV
 #######################
-# consider using this for sharing Gurobi enviornment:
-# https://github.com/jump-dev/Gurobi.jl
+
 sparseCV <- function(data,
                      tune.grid,
                      hoso = "hoso", # could balancedCV (study balanced CV necessary if K =2)
@@ -133,12 +140,7 @@ sparseCV <- function(data,
       } 
       
         suppressWarnings( rm( L0_MS2, L0_MS, L0_MS_z ) )
-        
-        # if(method == "MS_z_old"){
-        #   method <- "MS_z" 
-        #   L0_MS_z <- juliaCall("include", paste0(juliaFnPath, "BlockComIHT_inexactAS_tune_oldTest.jl") ) # \beta - \betaBar penalty --- BlockComIHT_inexactAS_tune_oldTest.jl is the same as BlockComIHT_inexactAS_tune_old.jl but includes some dummy variables
-        # }else 
-          
+
         if(method == "MS_z" & !exists("MS_z") ){
           L0_MS_z1 <- juliaCall("include", paste0(juliaFnPath, "BlockComIHT_inexactAS_tune_old.jl") ) # "_tune_old.jl" version gives the original active set version that performs better #\beta - \betaBar penalty
           }else if(method == "MS_z_fast" & !exists("MS_z_fast") ){
@@ -152,14 +154,6 @@ sparseCV <- function(data,
         if(method == "MS" & !exists("MS") )        L0_MS <- juliaCall("include", paste0(juliaFnPath, "BlockIHT_tune.jl") ) # Only L2 penalty
 
         # hold one study out on the merged dataset--used for Merged tuning
-
-        # if(!IP){
-        #     # set max support and rho to be number of covaraites if this is not cardinality constrained
-        #     tune.grid$rho <- maxSuppSize <- ncol(data) - 2 # if no IP then no cardinality constraint necessary--set all to max
-        #   }else{
-        #     maxSuppSize <- max(tune.grid$rho)
-        # }
-
 
         lambdaMat <- matrix(nrow = nfolds, ncol = ncol(tune.grid) ) # stores best lambdas
         rmseMat <- matrix(nrow = nfolds, ncol = nrow(tune.grid) ) # store RMSEs for current study
@@ -175,8 +169,6 @@ sparseCV <- function(data,
             
             indxList <- indxL[[fold]] # indices of studies to train on
             HOOList <- HOOL[[fold]] # indices of study to hold out
-            # HOOList <- which(data$Study == study) # indices of study to hold out
-            # indxList <- which(data$Study != study) # indices of studies to train on
 
             studyMat <- matrix(nrow = length(indxList), ncol = 2) # matrix of original study label and study labels within this fold
             studyMat[,1] <- data$Study[indxList] # original study labeks
@@ -275,7 +267,6 @@ sparseCV <- function(data,
                                  lambda2 = lambdaVec2,
                                  scale = TRUE,
                                  maxIter = as.integer(maxIter),
-                                 #  eig = L, # commented out 3-14-22 because doesn't correspond with study-specific scaled design matrix eigenvales
                                  localIter = as.integer(localIter))
 
                   # save prediction error
@@ -291,8 +282,7 @@ sparseCV <- function(data,
                     }else{
                       betaAvg <- rowMeans( betas )
                     }
-                    #fitG <- betas[,,t] # beta coefficient vector
-
+  
                     # predictions on merged dataset of all held out studies
                     preds <- as.vector(  as.matrix( cbind(1, data[HOOList, -c(1,2)]) ) %*% betaAvg   )
                     rmseMat[fold, tnIndx]  <- sqrt(mean( (preds - data$Y[HOOList] )^2  )) # rmse
@@ -345,7 +335,6 @@ sparseCV <- function(data,
                                 lambda = lambdaVec,
                                 scale = TRUE,
                                 maxIter = as.integer(maxIter),
-                                #  eig = L, # commented out 3-14-22 because doesn't correspond with study-specific scaled design matrix eigenvales
                                 localIter = as.integer(localIter))
 
                   ## save prediction error
@@ -377,7 +366,6 @@ sparseCV <- function(data,
                   lambdaV_Z <- tune.grid$lambda_z[rhoIndx]
                   zVec <- unique( lambdaV_Z  )
 
-                  # if(!0 %in% zVec){
                     # ensure a warm start with lambda_z = 0 if it is not in tuning grid
                   lambdaRidge <- max(tune.grid$lambda1) # use highest lambda_ridge term to get warm start
                   lambdaBetaBar <- 0 # set to 0 for warm start since this shrinks betas together when high
@@ -407,11 +395,7 @@ sparseCV <- function(data,
                                  if(j == 1 & fold == 1)    b_init <- b
                   }
                   
-                    
-                  # }else{
-                  #   bStart <- b
-                  # }
-
+     
                   for(z in zVec){
 
                     # find lambda_ridge and lambda_{betaBar} that correspond to this level of lambda_z and rho
@@ -445,8 +429,6 @@ sparseCV <- function(data,
                                     lambda_z = as.vector(lambdaVecZ),
                                     maxIter = as.integer(maxIter),
                                     localIter = as.integer(localIter),
-                                     # eigenVec = eigenVec, # commented out 3-14-22 because doesn't correspond with study-specific scaled design matrix eigenvales
-                                    #  eig = L, # commented out 3-14-22 because doesn't correspond with study-specific scaled design matrix eigenvales
                                     WSmethod = as.integer(WSmethod),
                                     ASpass = ASpass)
 
@@ -497,7 +479,6 @@ sparseCV <- function(data,
                   lambdaV_Z <- tune.grid$lambda_z[rhoIndx]
                   zVec <- unique( lambdaV_Z  )
                   
-                  # if(!0 %in% zVec){
                   # ensure a warm start with lambda_z = 0 if it is not in tuning grid
                   lambdaRidge <- max(tune.grid$lambda1) # use highest lambda_ridge term to get warm start
                   lambdaBetaBar <- 0 # set to 0 for warm start since this shrinks betas together when high
@@ -526,11 +507,7 @@ sparseCV <- function(data,
                                  if(j == 1 & fold == 1)    b_init <- b
                   }
                   
-                  
-                  # }else{
-                  #   bStart <- b
-                  # }
-                  
+
                   for(z in zVec){
                     
                     # find lambda_ridge and lambda_{betaBar} that correspond to this level of lambda_z and rho
@@ -614,7 +591,6 @@ sparseCV <- function(data,
                   lambdaV_Z <- tune.grid$lambda_z[rhoIndx]
                   zVec <- unique( lambdaV_Z  )
                   
-                  # if(!0 %in% zVec){
                   # ensure a warm start with lambda_z = 0 if it is not in tuning grid
                   lambdaRidge <- max(tune.grid$lambda1) # use highest lambda_ridge term to get warm start
                   lambdaBetaBar <- 0 # set to 0 for warm start since this shrinks betas together when high
@@ -642,11 +618,7 @@ sparseCV <- function(data,
                                  # to warm start the warm start, use the warm start from first fold and largest rho to warm start next fold with largest rho
                                  if(j == 1 & fold == 1)    b_init <- b
                   }
-                  
-                  
-                  # }else{
-                  #   bStart <- b
-                  # }
+
                   
                   for(z in zVec){
                     
@@ -681,8 +653,6 @@ sparseCV <- function(data,
                                     lambda_z = as.vector(lambdaVecZ),
                                     maxIter = as.integer(maxIter),
                                     localIter = as.integer(localIter),
-                                    # eigenVec = eigenVec, # commented out 3-14-22 because doesn't correspond with study-specific scaled design matrix eigenvales
-                                    #  eig = L, # commented out 3-14-22 because doesn't correspond with study-specific scaled design matrix eigenvales
                                     WSmethod = as.integer(WSmethod),
                                     ASpass = ASpass)
                     
@@ -724,7 +694,6 @@ sparseCV <- function(data,
                   }
                 }
                 
-                ###
 
             }
         }
@@ -759,8 +728,6 @@ sparseCV <- function(data,
           # "sse" == fit individual studies and test on all other studies
 
 
-
-        #lambdas <- matrix(nrow = num.trainStudy, ncol = ncol(tune.grid) ) # has as many columns as there are parameters
         paramMat <- matrix(nrow = num.trainStudy, ncol = ncol(tune.grid) ) # has as many columns as there are parameters
         avgList <- rmseMat <- vector(length = num.trainStudy, "list") # each element is a matrix of tuning
         # iterate through studies and each time do within-study CV
@@ -783,7 +750,6 @@ sparseCV <- function(data,
                                             tune.grid = tune.grid,
                                             hoso = hosoType, # could balancedCV # study balanced CV necessary if K =2
                                             nfolds = nfolds, # do this as cvFolds because here we never do "hoso" we only do 10-fold CV style training
-                                            #cvFolds = cvFolds,
                                             juliaPath = juliaPath,
                                             juliaFnPath = juliaFnPath,
                                             trainingStudy = studyInd, # only necessary if hoso = "out"

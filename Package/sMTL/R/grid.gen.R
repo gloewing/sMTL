@@ -1,20 +1,14 @@
-#' grid.gen: generate grid for cross-validation function
+#' grid.gen: generate grid for cross-validation function. For internal package use only.
 #'
-#' @param y A numeric vector or matrix
-#' @param p An integer
-#' @param study An integer vector
+#' @param y A numeric vector or matrix of outcomes
+#' @param p An integer of covariate dimension
+#' @param study An integer vector of task IDs
 #' @param lambda_1 A boolean
 #' @param lambda_2 A boolean
 #' @param lambda_z A boolean
 #' @param commonSupp A boolean
 #' @param multiTask A boolean
 #' @return A dataframe
-#' @examples
-#' 
-#' #####################################################################################
-#' ##### First Time Loading, Julia is Installed But Packages NEED INSTALLATION  ######
-#' #####################################################################################
-#' smtl_setup(path = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin", installJulia = TRUE, installPackages = TRUE)
 #' @import JuliaConnectoR
 #' @import dplyr
 #' @export

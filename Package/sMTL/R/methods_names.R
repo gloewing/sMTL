@@ -1,4 +1,4 @@
-#' methods names: give name for printing
+#' methods names: give name for printing. Internal package use only.
 #' @param method A string
 #' @param multiLabel A boolean
 #' @export

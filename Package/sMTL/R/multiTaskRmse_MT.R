@@ -1,13 +1,8 @@
-########################
-# sparse functions
-########################
-#' multiTaskRmse: RMSE for multi-task
+#' multiTaskRmse: calculate average (across tasks) RMSE for multi-label prediction problems
 #' @param data A matrix
 #' @param K An integer
 #' @param beta A matrix
 #' @export
-
-
 
 # multi task RMSE for multi-task (same design matrix)
 multiTaskRmse_MT <- function(data, 

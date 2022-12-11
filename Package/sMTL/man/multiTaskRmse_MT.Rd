@@ -2,7 +2,7 @@
 % Please edit documentation in R/multiTaskRmse_MT.R
 \name{multiTaskRmse_MT}
 \alias{multiTaskRmse_MT}
-\title{multiTaskRmse: RMSE for multi-task}
+\title{multiTaskRmse: calculate average (across tasks) RMSE for multi-label prediction problems}
 \usage{
 multiTaskRmse_MT(data, K = NA, beta)
 }
@@ -14,5 +14,5 @@ multiTaskRmse_MT(data, K = NA, beta)
 \item{beta}{A matrix}
 }
 \description{
-multiTaskRmse: RMSE for multi-task
+multiTaskRmse: calculate average (across tasks) RMSE for multi-label prediction problems
 }

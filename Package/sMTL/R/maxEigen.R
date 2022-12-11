@@ -1,4 +1,4 @@
-#' maxEigen: maximum eigenvalue wrapper for Julia TSVD package
+#' maxEigen: maximum eigenvalue wrapper for Julia TSVD package. internal package use only
 #'
 #' @param X A matrix.
 #' @param intercept A boolean.

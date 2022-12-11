@@ -1,7 +1,14 @@
-#' sparseCV_MT: cross-validation functions
-#' @param y A numeric vector
-#' @param X A matrix
-#' @param s An integer
+#' sparseCV_MT: internal cross-validation functions. For internal package use only.
+#' @param data Matrix with outcome and design matrix
+#' @param tune.grid A data.frame of tuning values
+#' @param hoso String specifying tuning type
+#' @param method Sting specifying regression method
+#' @param nfolds String or integer specifying number of folds
+#' @param juliaFnPath String specifying path to Julia binary
+#' @param messageInd Boolean for message printing
+#' @param LSitr Integer specifying do <LSitr> local search iterations on parameter values where we do actually do LS; NA does no local search
+#' @param LSspc Integer specifying number of hyperparameters to conduct local search: conduct local search every <LSspc>^th iteration. NA does no local search
+#' @param maxIter Integer specifying max iterations of coordinate descent
 #' @import JuliaConnectoR
 #' @import dplyr
 #' @importFrom caret createFolds
@@ -127,21 +134,14 @@ sparseCV_MT <- function(data,
         message(paste0(method_nm, ": ", hoso, " Tuning"))
       } 
       
-        # Sys.setenv(JULIA_BINDIR = juliaPath)
         suppressWarnings( rm( L0_MS2, L0_MS, L0_MS_z ) )
-        
-        # if(method == "MS_z_old"){
-        #   method <- "MS_z" 
-        #   # not converted to _MT version
-        #   # L0_MS_z <- juliaCall("include", paste0(juliaFnPath, "BlockComIHT_inexactAS_tune_oldTest.jl") ) # \beta - \betaBar penalty --- BlockComIHT_inexactAS_tune_oldTest.jl is the same as BlockComIHT_inexactAS_tune_old.jl but includes some dummy variables
-        # }else 
+
           if(method == "MS_z" & !exists("MS_z")){
-          #L0_MS_z <- juliaCall("include", paste0(juliaFnPath, "BlockComIHT_inexactAS_tuneTest.jl") ) #"BlockComIHT_inexactAS_tune.jl") ) # z - zbar with active set
-          L0_MS_z1 <- juliaCall("include", paste0(juliaFnPath, "BlockComIHT_inexactAS_tune_old_MT.jl") ) # "_tune_old.jl" version gives the original active set version that performs better #\beta - \betaBar penalty
+            L0_MS_z1 <- juliaCall("include", paste0(juliaFnPath, "BlockComIHT_inexactAS_tune_old_MT.jl") ) # "_tune_old.jl" version gives the original active set version that performs better #\beta - \betaBar penalty
           }else if(method == "MS_z_fast" & !exists("MS_z_fast")){
-          L0_MS_z2 <- juliaCall("include", paste0(juliaFnPath, "BlockComIHT_inexact_tuneTest_MT.jl") ) # best for when there is no z- zbar penalty but DOES NOT use active set so studies have same cardinality, same lambda for the ridge penalty, but support can differ. 
-        }else if(method == "MS_z3" & !exists("MS_z3") ){
-          L0_MS_z3 <- juliaCall("include", paste0(juliaFnPath, "BlockComIHT_inexact_diffAS_tuneTest_MT.jl") ) # separate active sets for each study
+            L0_MS_z2 <- juliaCall("include", paste0(juliaFnPath, "BlockComIHT_inexact_tuneTest_MT.jl") ) # best for when there is no z- zbar penalty but DOES NOT use active set so studies have same cardinality, same lambda for the ridge penalty, but support can differ. 
+          }else if(method == "MS_z3" & !exists("MS_z3") ){
+            L0_MS_z3 <- juliaCall("include", paste0(juliaFnPath, "BlockComIHT_inexact_diffAS_tuneTest_MT.jl") ) # separate active sets for each study
         }       
         
         if(method == "MS2" & !exists("MS2"))       L0_MS2 <- juliaCall("include", paste0(juliaFnPath, "BlockComIHT_tune_MT.jl") ) # \beta - \betaBar penalty
@@ -164,18 +164,7 @@ sparseCV_MT <- function(data,
           
             indxList <- indxL[[fold]] # indices of studies to train on
             HOOList <- HOOL[[fold]] # indices of study to hold out
-            # # HOOList <- which(data$Study == study) # indices of study to hold out
-            # # indxList <- which(data$Study != study) # indices of studies to train on
-            # 
-            # studyMat <- matrix(nrow = length(indxList), ncol = 2) # matrix of original study label and study labels within this fold
-            # studyMat[,1] <- data$Study[indxList] # original study labeks
-            # studyMat[,2] <- as.numeric( as.factor( data$Study[indxList] ) ) # "new" study labels
-            # colnames(studyMat) <- c("original", "foldKey")
-            # studyKey <- unique(studyMat) # unique matrix with only nfold rows that provides study key for each study label
-            # 
-            # # vector of study labels for this fold
-            # foldStudyVec <- unique( data$Study[indxList] )
-            # Kfold <- length(foldStudyVec) # number of unique studies in this training fold
+
             Kfold <- K # number of tasks here (number of betas in dataset)
             # if balanced CV then need to make the warm starts for each fold or if its the first fold need initial warm starts
             # because fold and study do not necessarily match
@@ -190,14 +179,12 @@ sparseCV_MT <- function(data,
               # if some non-zero, remove feature
               IndxRm <- which(sdVec == 0)
               Xindx2 <- Xindx[-IndxRm] # remove feature
-              #bStart2 <- bStart[-(IndxRm + 1), ] # remove coefficient (account for intercept) if feature has 0 sd
-              
+
             }else{
               
               # do not remove features: use original indices
               Xindx2 <- Xindx
-              #bStart2 <- bStart
-              
+
             }
             
             totIndx <- c(Yindx, Xindx2) # indices of dataframe to use for RMSE_MT()
@@ -206,7 +193,7 @@ sparseCV_MT <- function(data,
             # randomly initialize warm starts
             ########################################
             if(fold == 1){
-              b <- matrix( 0, nr = ( length( Xindx2 ) + 1 ), ncol = length(Yindx) ) #matrix( rnorm(totalBetas), nr = ncol(data) - 1, ncol = Kfold)
+              b <- matrix( 0, nr = ( length( Xindx2 ) + 1 ), ncol = length(Yindx) ) 
               b_init <- b # initial warm start with largest cardinality for first fold
             } 
             # end warm start
@@ -267,7 +254,6 @@ sparseCV_MT <- function(data,
                     if(j == 1 & fold == 1)    b_init <- b
                   }
                   
-                  
                   betas = L0_MS2(X = as.matrix( data[ indxList, Xindx2 ]) ,
                                  y = as.matrix(data[ indxList, Yindx ] ),
                                  rho = as.integer(rhoVec[j]),
@@ -276,7 +262,6 @@ sparseCV_MT <- function(data,
                                  lambda2 = lambdaVec2,
                                  scale = TRUE,
                                  maxIter = as.integer(maxIter),
-                                  #  eig = L, # commented out 3-14-22 because doesn't correspond with study-specific scaled design matrix eigenvales
                                  localIter = as.integer(localIter))
 
                   # save prediction error
@@ -292,11 +277,8 @@ sparseCV_MT <- function(data,
                     }else{
                       betaAvg <- rowMeans( betas )
                     }
-                    #fitG <- betas[,,t] # beta coefficient vector
 
                     # predictions on merged dataset of all held out studies
-                    # preds <- as.vector(  as.matrix( cbind(1, data[HOOList, Xindx]) ) %*% betaAvg   )
-                    # rmseMat[fold, tnIndx]  <- sqrt(mean( (preds - data$Y[HOOList] )^2  )) # rmse
                     if(hoso == "multiTask"){
                       # if multi task, test on held out studies with multi task RMSE
                       rmseMat[fold, tnIndx]  <- multiTaskRmse_MT(data = data[HOOList, totIndx], beta = betas[,,t])
@@ -332,7 +314,7 @@ sparseCV_MT <- function(data,
                               localIter = as.integer(0))
                     
                      # do WS in next fold
-                    
+          
                     # to warm start the warm start, use the warm start from first fold and largest rho to warm start next fold with largest rho
                     if(j == 1 & fold == 1)    b_init <- b
                   }
@@ -341,12 +323,10 @@ sparseCV_MT <- function(data,
                   betas = L0_MS(X = as.matrix( data[ indxList, Xindx2 ]),
                                 y = as.matrix(data[ indxList, Yindx ] ),
                                 rho = as.integer(rhoVec[j]),
-                                # study = as.vector( studyMat[,2] ), # these are the study labels ordered appropriately for this fold
                                 beta = as.matrix(b),
                                 lambda = lambdaVec,
                                 scale = TRUE,
                                 maxIter = as.integer(maxIter),
-                                 #  eig = L, # commented out 3-14-22 because doesn't correspond with study-specific scaled design matrix eigenvales
                                 localIter = as.integer(localIter))
 
                   ## save prediction error
@@ -358,9 +338,6 @@ sparseCV_MT <- function(data,
                     betaAvg <- rowMeans(fitG) # use average weights (not stacking)
 
                     # predictions on merged dataset of all held out studies
-                    # preds <- as.vector(  as.matrix( cbind(1, data[HOOList, Xindx]) ) %*% betaAvg   )
-                    # rmseMat[fold, tnIndx]  <- sqrt(mean( (preds - data$Y[HOOList] )^2  )) # rmse
-                    
                     if(hoso == "multiTask"){
                       
                       # if multi task, test on held out studies with multi task RMSE
@@ -379,7 +356,6 @@ sparseCV_MT <- function(data,
                   lambdaV_Z <- tune.grid$lambda_z[rhoIndx]
                   zVec <- unique( lambdaV_Z  )
 
-                  #if(!0 %in% zVec){
                   # ensure a warm start with lambda_z = 0 if it is not in tuning grid
                   lambdaRidge <- max( c(max(tune.grid$lambda1), 1e-3) )  # use highest lambda_ridge term to get warm start
                   lambdaBetaBar <- 0 # set to 0 for warm start since this shrinks betas together when high
@@ -410,7 +386,6 @@ sparseCV_MT <- function(data,
 
                   for(z in zVec){
                     
-                    # print(z)
                     # find lambda_ridge and lambda_{betaBar} that correspond to this level of lambda_z and rho
                     tuneIndx <- which(tune.grid$rho == rhoVec[j] &
                                         tune.grid$lambda_z == z)
@@ -470,9 +445,6 @@ sparseCV_MT <- function(data,
                       betaAvg <- rowMeans(fitG) # use average weights (not stacking)
 
                       # predictions on merged dataset of all held out studies
-                      # preds <- as.vector(  as.matrix( cbind(1, data[HOOList, Xindx]) ) %*% betaAvg   )
-                      # rmseMat[fold, tnIndx]  <- sqrt(mean( (preds - data$Y[HOOList] )^2  )) # rmse
-
                       if(hoso == "multiTask"){
                         # if multi task, test on held out studies with multi task RMSE
                         rmseMat[fold, tnIndx]  <- multiTaskRmse_MT(data = data[HOOList, totIndx], beta = fitG )
@@ -491,7 +463,6 @@ sparseCV_MT <- function(data,
                   lambdaV_Z <- tune.grid$lambda_z[rhoIndx]
                   zVec <- unique( lambdaV_Z  )
                   
-                  #if(!0 %in% zVec){
                   # ensure a warm start with lambda_z = 0 if it is not in tuning grid
                   lambdaRidge <- max( c(max(tune.grid$lambda1), 1e-3) )  # use highest lambda_ridge term to get warm start
                   lambdaBetaBar <- 0 # set to 0 for warm start since this shrinks betas together when high
@@ -518,11 +489,9 @@ sparseCV_MT <- function(data,
                     if(j == 1 & fold == 1)    b_init <- b
                   }
                   
-                  
-                  
+
                   for(z in zVec){
                     
-                    # print(z)
                     # find lambda_ridge and lambda_{betaBar} that correspond to this level of lambda_z and rho
                     tuneIndx <- which(tune.grid$rho == rhoVec[j] &
                                         tune.grid$lambda_z == z)
@@ -582,9 +551,6 @@ sparseCV_MT <- function(data,
                       betaAvg <- rowMeans(fitG) # use average weights (not stacking)
                       
                       # predictions on merged dataset of all held out studies
-                      # preds <- as.vector(  as.matrix( cbind(1, data[HOOList, Xindx]) ) %*% betaAvg   )
-                      # rmseMat[fold, tnIndx]  <- sqrt(mean( (preds - data$Y[HOOList] )^2  )) # rmse
-                      
                       if(hoso == "multiTask"){
                         # if multi task, test on held out studies with multi task RMSE
                         rmseMat[fold, tnIndx]  <- multiTaskRmse_MT(data = data[HOOList, totIndx], beta = fitG )
@@ -603,7 +569,6 @@ sparseCV_MT <- function(data,
                   lambdaV_Z <- tune.grid$lambda_z[rhoIndx]
                   zVec <- unique( lambdaV_Z  )
                   
-                  #if(!0 %in% zVec){
                   # ensure a warm start with lambda_z = 0 if it is not in tuning grid
                   lambdaRidge <- max( c(max(tune.grid$lambda1), 1e-3) )  # use highest lambda_ridge term to get warm start
                   lambdaBetaBar <- 0 # set to 0 for warm start since this shrinks betas together when high
@@ -631,10 +596,8 @@ sparseCV_MT <- function(data,
                   }
                   
                   
-                  
                   for(z in zVec){
                     
-                    # print(z)
                     # find lambda_ridge and lambda_{betaBar} that correspond to this level of lambda_z and rho
                     tuneIndx <- which(tune.grid$rho == rhoVec[j] &
                                         tune.grid$lambda_z == z)
@@ -694,9 +657,6 @@ sparseCV_MT <- function(data,
                       betaAvg <- rowMeans(fitG) # use average weights (not stacking)
                       
                       # predictions on merged dataset of all held out studies
-                      # preds <- as.vector(  as.matrix( cbind(1, data[HOOList, Xindx]) ) %*% betaAvg   )
-                      # rmseMat[fold, tnIndx]  <- sqrt(mean( (preds - data$Y[HOOList] )^2  )) # rmse
-                      
                       if(hoso == "multiTask"){
                         # if multi task, test on held out studies with multi task RMSE
                         rmseMat[fold, tnIndx]  <- multiTaskRmse_MT(data = data[HOOList, totIndx], beta = fitG )
@@ -705,8 +665,7 @@ sparseCV_MT <- function(data,
                     }
                   }
                 }
-                ###
-                
+
             }
         }
 
@@ -736,7 +695,6 @@ sparseCV_MT <- function(data,
       message(paste0(method_nm, ": ", hoso, " Tuning"))
           # "sse" == fit individual studies for stacking with WITHIN study CV
           # "sse" == fit individual studies and test on all other studies
-
 
 
         #lambdas <- matrix(nrow = num.trainStudy, ncol = ncol(tune.grid) ) # has as many columns as there are parameters

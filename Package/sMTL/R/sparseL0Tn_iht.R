@@ -1,7 +1,15 @@
-#' sparseCV_L0: cross-validation functions
-#' @param y A numeric vector
-#' @param X A matrix
-#' @param s An integer
+#' sparseCV_L0: cross-validation functions. For internal package use only.
+#' @param data Matrix with outcome and design matrix
+#' @param tune.grid A data.frame of tuning values
+#' @param hoso String specifying tuning type
+#' @param method Sting specifying regression method
+#' @param nfolds String or integer specifying number of folds
+#' @param juliaFnPath String specifying path to Julia binary
+#' @param trainingStudy Integer specifying index of training study
+#' @param messageInd Boolean for message printing
+#' @param LSitr Integer specifying do <LSitr> local search iterations on parameter values where we do actually do LS; NA does no local search
+#' @param LSspc Integer specifying number of hyperparameters to conduct local search: conduct local search every <LSspc>^th iteration. NA does no local search
+#' @param maxIter Integer specifying max iterations of coordinate descent
 #' @import JuliaConnectoR
 #' @importFrom caret createFolds
 #' @export
@@ -26,7 +34,6 @@ sparseL0Tn_iht <- function(data,
   # covariate indices
   Xindx <- which(!names(data) %in% c("Study", "Y")) 
   
-  # maxEigen <- juliaCall("include", paste0(juliaFnPath, "eigen.jl") ) # max eigenvalue
   if( !exists("L0_regression") )  L0_regression <- juliaCall("include", paste0(juliaFnPath, "l0_IHT_tune.jl") ) # IHT
 
   # rename studies from 1:K

@@ -2,7 +2,7 @@
 % Please edit documentation in R/multiTaskRmse.R
 \name{multiTaskRmse}
 \alias{multiTaskRmse}
-\title{multiTaskRmse: RMSE for multi-task}
+\title{multiTaskRmse: RMSE for multi-task problems (averaged across tasks)}
 \usage{
 multiTaskRmse(data, beta)
 }
@@ -12,5 +12,5 @@ multiTaskRmse(data, beta)
 \item{beta}{A matrix}
 }
 \description{
-multiTaskRmse: RMSE for multi-task
+multiTaskRmse: RMSE for multi-task problems (averaged across tasks)
 }

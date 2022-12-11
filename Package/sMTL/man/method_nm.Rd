@@ -2,7 +2,7 @@
 % Please edit documentation in R/methods_names.R
 \name{method_nm}
 \alias{method_nm}
-\title{methods names: give name for printing}
+\title{methods names: give name for printing. Internal package use only.}
 \usage{
 method_nm(method, multiLabel = TRUE)
 }
@@ -12,5 +12,5 @@ method_nm(method, multiLabel = TRUE)
 \item{multiLabel}{A boolean}
 }
 \description{
-methods names: give name for printing
+methods names: give name for printing. Internal package use only.
 }

@@ -337,19 +337,19 @@ div.tocify {
 
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p><code>sMTL</code> is a fast toolkit for L0-constrained Multi-Task Learning, Multi-Label Learning and Domain Generalization. L0 constraints select the best subset of features in a variety of multi-dataset settigs. The toolkit can (approximately) solve the following two problems</p>
+<p><code>sMTL</code> is a fast toolkit for <span class="math inline">\(\ell_0\)</span>-constrained Multi-Task Learning, Multi-Label Learning and Domain Generalization. <span class="math inline">\(\ell_0\)</span> constraints select the best subset of features in a variety of multi-dataset settigs. The toolkit can (approximately) solve the following two problems</p>
 <p><span class="math display">\[
 \begin{aligned} 
     &amp;\underset{~\mathbb{B},\bar{\boldsymbol{\beta}} }{\mbox{min }} \sum_{k=1}^K \frac{1}{n_k} ||  \mathbf{y}_k - \mathbb{X}_k \boldsymbol{\beta}_k ||_2^2 +  \lambda_1 ||\mathbb{B}||_2^2 + \lambda_2  \sum_{k=1}^K ||\boldsymbol{\beta}_k - \bar{{\boldsymbol{\beta}}} ||_2^2  \quad \quad \mbox{(Common Support)}  \\
-    &amp; \mbox{subject to: }~\mbox{Supp}(\boldsymbol{\beta}_k) = \mbox{Supp}(\boldsymbol{\beta}) ~~\mbox{for}~~~~ k \in \{1,2,...,K\} \notag  \\
-    &amp; ~~~~~~~~~~~~~~~~~~~~ ||\boldsymbol{\beta}_k ||_0 \leq s  ~~~~~~~~~~~~~~~~~~~~~\mbox{for}~ k \in \{1,2,...,K\}   \notag 
+    &amp; \mbox{subject to: }~\mbox{Supp}(\boldsymbol{\beta}_k) = \mbox{Supp}(\boldsymbol{\beta}) ~~~~~~~\mbox{for} ~k \in \{1,2,...,K\} \notag  \\
+    &amp; ~~~~~~~~~~~~~~~~~~~ ||\boldsymbol{\beta}_k ||_0 \leq s  ~~~~~~~~~~~~~~~~~~~~~~\mbox{for}~ k \in \{1,2,...,K\}   \notag 
 \end{aligned} 
-\]</span></p>
+\]</span>    </p>
 <p><span class="math display">\[
 \begin{aligned} 
     &amp;\underset{\boldsymbol{z},~\mathbb{B},\bar{\boldsymbol{\beta}} }{\mbox{min }} \sum_{k=1}^K \frac{1}{n_k} ||  \mathbf{y}_k - \mathbb{X}_k \boldsymbol{\beta}_k ||_2^2 + \lambda_1 ||\mathbb{B}||_2^2 + \lambda_2  \sum_{k=1}^K ||\boldsymbol{\beta}_k - \bar{{\boldsymbol{\beta}}} ||_2^2 + \lambda_z \sum_{k=1}^K ||\boldsymbol{z}_k - \bar{\boldsymbol{z}}||_2^2 \quad \quad \mbox{(Heterogeneous  Support)}  \\
     &amp; \mbox{subject to: }~ \boldsymbol{z}_k = \mbox{Supp}(\boldsymbol{\beta}_k) ~~~~~~~~~\mbox{for}~ k \in \{1,2,...,K\} \notag  \\
-    &amp; ~~~~~~~~~~~~~~~~~~~~ ||\boldsymbol{\beta}_k ||_0 \leq s  ~~~~~~~~~~~ ~~~\mbox{for}~ k \in \{1,2,...,K\}   \notag 
+    &amp; ~~~~~~~~~~~~~~~~~~ ||\boldsymbol{\beta}_k ||_0 \leq s  ~~~~~~~~~~~~~~~\mbox{for}~ k \in \{1,2,...,K\}   \notag 
 \end{aligned} 
 \]</span></p>
 <p>where <span class="math inline">\(\boldsymbol{\beta}_k\)</span> is the vector of coefficients associated with dataset <span class="math inline">\(k\)</span>, and <span class="math inline">\(\mbox{Supp}(\boldsymbol{\beta}_k) =\boldsymbol{z}_k = \mathbb{1}{(\boldsymbol{\beta}_k \neq \mathbf{1})}\)</span>, the ``support’’ of <span class="math inline">\(\boldsymbol{\beta}_k\)</span>, i.e., a <span class="math inline">\(p \times 1\)</span> indicator vector of whether the entries of <span class="math inline">\(\boldsymbol{\beta}_k\)</span> are non-zero. Note <span class="math inline">\(||\boldsymbol{\beta}_k||_0 = \sum_{j=1}^p z_{k,j}\)</span>, where the <span class="math inline">\(\ell_0\)</span> norm, <span class="math inline">\(||\boldsymbol{u}||_0\)</span>, equals the number of non-zero entries in the vector <span class="math inline">\(\boldsymbol{u}\)</span>. For example,</p>
@@ -359,33 +359,28 @@ div.tocify {
            1.23 \\
            0 \\
            -0.71 \\
-           0 \\
-           \vdots \\
-           1.12
+           0 
          \end{bmatrix}
          ~~~~~~~~~~~~~
          &amp;\mbox{Supp}(\boldsymbol{\beta}) = \boldsymbol{z} = \begin{bmatrix}
            1 \\
            0 \\
            1 \\
-           0 \\
-           \vdots \\
-           1
+           0 
          \end{bmatrix}
 \end{aligned} 
 \]</span></p>
-<p>The Common Support problem ensures that each of the <span class="math inline">\(K\)</span> task-specific (or dataset-specific) <span class="math inline">\(\boldsymbol{\beta}_k\)</span> have the same support. The Heterogeneous Support problem allows each task to have a different support put penalizes the <span class="math inline">\(\boldsymbol{\beta}_k\)</span> for having differing supports using the <span class="math inline">\(\lambda_z \sum_{k=1}^K ||\boldsymbol{z}_k - \bar{\boldsymbol{z}}||_2^2\)</span> penalty.</p>
-<p>The parameter <span class="math inline">\(\lambda_2\)</span> shrinks the <span class="math inline">\(\boldsymbol{\beta}_k\)</span> towards a common <span class="math inline">\(\bar{\boldsymbol{\beta}} = \frac{1}{K}\sum_{k=1}^K \boldsymbol{\beta}_k\)</span>. The parameter <span class="math inline">\(\lambda_1\)</span> controls the strength of <span class="math inline">\(\ell_2\)</span> (Ridge) shrinkage where <span class="math inline">\(\lambda_1||\mathbb{B}||_2^2 = \lambda_1 \sum_{k=1}^K ||\boldsymbol{\beta}_k||_2^2\)</span>. Adding either of these shrinkage terms can be effective in reducing the risk of overfitting and often results in better predictive models. We recommend using either but not both of these regularization terms. For Hetergeneous Support problems <span class="math inline">\(\lambda_z\)</span> controls the degree to which the <span class="math inline">\(\boldsymbol{z}\)</span>, the supports of the <span class="math inline">\(\boldsymbol{\beta}_k\)</span>, are shrunk towards <span class="math inline">\(\bar{\boldsymbol{z}} = \sum_{k=1}^K \boldsymbol{z}_k\)</span>. When <span class="math inline">\(\lambda_z\)</span> is high, this results in solutions equivalent to the Common Support approach. The fitting is done over a grid of <span class="math inline">\(\lambda\)</span>, <span class="math inline">\(\lambda_z\)</span> and <span class="math inline">\(\lambda_1\)</span> values to generate a regularization path.</p>
-<p><code>sMTL</code> also has dedicated code to deal with the “Multi-Label Learning” (a special case of, and sometimes referred to as, “Multi-Task Learning”) in which the design matrix is fixed across tasks (i.e., <span class="math inline">\(\mathbb{X}_k = \mathbb{X}~\forall~k~\in\{1,2,...,K\}\)</span>), but the outcome is multivariate. While this can be seen as a special case of the above, we include dedicated code that yields gains in efficiency in terms of memory and solve time.</p>
+<p>The Common Support problem ensures that each of the <span class="math inline">\(K\)</span> task-specific (or dataset-specific) <span class="math inline">\(\boldsymbol{\beta}_k\)</span> have the same support. The Heterogeneous Support problem allows each task to have a different support but penalizes the <span class="math inline">\(\boldsymbol{\beta}_k\)</span> for having differing supports using the <span class="math inline">\(\lambda_z \sum_{k=1}^K ||\boldsymbol{z}_k - \bar{\boldsymbol{z}}||_2^2\)</span> penalty.</p>
+<p>The parameter <span class="math inline">\(\lambda_2\)</span> shrinks the <span class="math inline">\(\boldsymbol{\beta}_k\)</span> towards a common <span class="math inline">\(\bar{\boldsymbol{\beta}} = \frac{1}{K}\sum_{k=1}^K \boldsymbol{\beta}_k\)</span>. The parameter <span class="math inline">\(\lambda_1\)</span> controls the strength of <span class="math inline">\(\ell_2\)</span> (Ridge) shrinkage where <span class="math inline">\(\lambda_1||\mathbb{B}||_2^2 = \lambda_1 \sum_{k=1}^K ||\boldsymbol{\beta}_k||_2^2\)</span>. Adding either of these shrinkage terms can be effective in reducing the risk of overfitting and often results in better predictive models. We recommend using either but not both of these regularization terms. For Hetergeneous Support problems <span class="math inline">\(\lambda_z\)</span> controls the degree to which the <span class="math inline">\(\boldsymbol{z}\)</span>, the supports of the <span class="math inline">\(\boldsymbol{\beta}_k\)</span>, are shrunk towards a common <span class="math inline">\(\bar{\boldsymbol{z}} = \frac{1}{K}\sum_{k=1}^K \boldsymbol{z}_k\)</span>. When <span class="math inline">\(\lambda_z\)</span> is high, this results in solutions equivalent to the Common Support approach. The fitting is done over a grid of <span class="math inline">\(\lambda_1\)</span>, <span class="math inline">\(\lambda_2\)</span> and <span class="math inline">\(\lambda_z\)</span> values to generate a regularization path.</p>
 <p>The algorithms provided in <code>sMTL</code> are based on block coordinate descent and local combinatorial search. Numerous computational tricks and heuristics are used to speed up the algorithms and improve the solution quality. These heuristics include warm starts and active set convergence. For more details on the algorithms used, please refer to our paper <a href="https://pubsonline.informs.org/doi/10.1287/opre.2019.1919">Multi-Task Learning for Sparsity Pattern Heterogeneity: A Discrete Optimization Approach</a>.</p>
-<p>The toolkit is implemented in Julia along with an easy-to-use R interface. In this vignette, we provide a tutorial on using the R interface. Particularly, we will demonstrate how use <span class="math inline">\(\texttt{sMTL}\)</span>’s main functions for fitting models and cross-validation.</p>
+<p>The toolkit is implemented in Julia along with an easy-to-use R interface. In this vignette, we provide a tutorial on using the R interface. We demonstrate how use <code>sMTL</code>’s main functions for fitting models and cross-validation.</p>
 </div>
 <div id="installation" class="section level1">
 <h1>Installation</h1>
-<p><span class="math inline">\(\texttt{sMTL}\)</span> can be installed directly from CRAN by executing:</p>
+<p><code>sMTL</code> can be installed directly from CRAN by executing:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;sMTL&quot;</span>)</span></code></pre></div>
-<!-- If you face installation issues, please refer to the [Installation Troubleshooting Wiki](https://github.com/hazimehh/L0Learn/wiki/Installation-Troubleshooting). If the issue is not resolved, you can submit an issue on [L0Learn's Github Repo](https://github.com/hazimehh/L0Learn). -->
-<p>The very first time we use <span class="math inline">\(\texttt{sMTL}\)</span> we have to keep in mind the following (after this initial setup, subsequent uses of the <span class="math inline">\(\texttt{sMTL}\)</span> package do not require any additional steps beyond the standard package load):</p>
+<!-- If you face installation issues, please refer to the [Installation Troubleshooting Wiki](https://github.com/hazimehh/$\ell_0$Learn/wiki/Installation-Troubleshooting). If the issue is not resolved, you can submit an issue on [$\ell_0$Learn's Github Repo](https://github.com/hazimehh/$\ell_0$Learn). -->
+<p>The very first time we use <code>sMTL</code> we have to keep in mind the following (after this initial setup, subsequent uses of the <code>sMTL</code> package do not require any additional steps beyond the standard package load):</p>
 </div>
 <div id="package-setup" class="section level1">
 <h1>Package Setup</h1>
@@ -395,29 +390,28 @@ div.tocify {
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sMTL)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">smtl_setup</span>(<span class="at">installJulia =</span> <span class="cn">TRUE</span>, <span class="at">installPackages =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
-<li>A few <span class="math inline">\(\texttt{Julia}\)</span> packages are required (e.g., <span class="math inline">\(\texttt{TSVD}\)</span> and <span class="math inline">\(\texttt{Statistics}\)</span>). We include a function to automatically install these if they are not already. If <span class="math inline">\(\texttt{Julia}\)</span> is installed but the packages are not, the function can install them without re-installing <span class="math inline">\(\texttt{Julia}\)</span>. If you ran the code for 1. above, you can ignore the rest of the set-up (1-3) and skip to fitting functions.</li>
+<li>A few <span class="math inline">\(\texttt{Julia}\)</span> packages are required (e.g., <span class="math inline">\(\texttt{TSVD}\)</span>, <span class="math inline">\(~\texttt{LinearAlgebra}\)</span>, <span class="math inline">\(~\texttt{Statistics}\)</span>). We include a function to automatically install these if they are not already. If <span class="math inline">\(\texttt{Julia}\)</span> is installed but the packages are not, the function can install them without re-installing <span class="math inline">\(\texttt{Julia}\)</span>. If you ran the code for 1. above, you can ignore the rest of the set-up (1-3) and skip to fitting functions.</li>
 </ol>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sMTL)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">smtl_setup</span>(<span class="at">installJulia =</span> <span class="cn">FALSE</span>, <span class="at">installPackages =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <ol start="3" style="list-style-type: decimal">
-<li>The <span class="math inline">\(\texttt{Julia}\)</span> binary path must be set. If <span class="math inline">\(\texttt{Julia}\)</span> is installed with our function (item 1), this should be set automatically. If <span class="math inline">\(\texttt{Julia}\)</span> is already installed, simply open <span class="math inline">\(\texttt{Julia}\)</span> and type “println(Sys.BINDIR)” and this will show the binary path.</li>
+<li>The <span class="math inline">\(\texttt{Julia}\)</span> binary path must be set. If <span class="math inline">\(\texttt{Julia}\)</span> is installed with our function (item 1), this should be set automatically. If <span class="math inline">\(\texttt{Julia}\)</span> is already installed, simply open <span class="math inline">\(\texttt{Julia}\)</span> and type <code>&gt;&gt; println(Sys.BINDIR)</code> and this will show the binary path.</li>
 </ol>
-<p>The following code can be used where the string (instead of &lt;&gt;) after the code <span class="math inline">\(\texttt{path=}\)</span> should be replaced with your computer’s path for Julia’s binary.</p>
+<p>The following code can be used where the string (instead of &lt;&gt;) after the code <code>path=</code> should be replaced with your computer’s path for Julia’s binary.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sMTL)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">smtl_setup</span>(<span class="at">path =</span> <span class="st">&quot;/Applications/Julia-1.5.app/Contents/Resources/julia/bin&quot;</span>)</span></code></pre></div>
 <p>The <span class="math inline">\(\texttt{Julia}\)</span> binary path is saved the first time the package is used after downloading, so one does not have to enter the path every time. Every time you load the package henceforth, one only need run the following.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sMTL)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(L0Learn)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">smtl_setup</span>()</span></code></pre></div>
-<p>Failure to run this function above will leave R unable to locate <span class="math inline">\(\texttt{Julia}\)</span> and the <span class="math inline">\(\texttt{sMTL}\)</span> package functions will not work.</p>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">smtl_setup</span>()</span></code></pre></div>
+<p>Failure to run this function above will leave R unable to locate <span class="math inline">\(\texttt{Julia}\)</span> and the <code>sMTL</code> package functions will not work.</p>
 </div>
 <div id="tutorial-guide" class="section level1">
 <h1>Tutorial Guide</h1>
 <p>To illustrate the main <code>sMTL</code> functions, we start by generating synthetic datasets and proceed by fitting models. We use terminology from Zhang &amp; Yang, 2021. The package has three main machine learning problems it aims to solve:</p>
 <ol style="list-style-type: decimal">
-<li><p>Multi-Task Learning in which we have a collection of <span class="math inline">\(K\)</span> separate training datasets: <span class="math inline">\(\{\mathbb{X}_1, \mathbb{X}_2,...,\mathbb{X}_K\}\)</span>, <span class="math inline">\(\{\mathbf{y}_1, \mathbf{y}_2,...,\mathbf{y}_K\}\)</span> where <span class="math inline">\(\mathbb{X}_k \in \mathbb{R}^{n_k \times p},~ \mathbf{y}_k \in \mathbb{R}^{n_k}\)</span>. We jointly train <span class="math inline">\(K\)</span> models, one to each of the <span class="math inline">\(K\)</span> datasets with the goal of making predictions on new observations from task <span class="math inline">\(k\)</span> using model <span class="math inline">\(k\)</span>.</p></li>
-<li><p>Multi-Label Learning in which we have a collection of training data with a single common design matrix, <span class="math inline">\(\mathbb{X}\)</span>, but a multivariate outcome for each observation, <span class="math inline">\(\{\mathbf{y}_1, \mathbf{y}_2,...,\mathbf{y}_K\}\)</span> and <span class="math inline">\(\mathbb{X} \in \mathbb{R}^{n \times p}, \mathbf{y}_k \in \mathbb{R}^{n}\)</span>. We jointly train <span class="math inline">\(K\)</span> models, one to each of the <span class="math inline">\(K\)</span> datasets with the goal of making predictions on new observations from task <span class="math inline">\(k\)</span> (i.e., to predict an observation of out come <span class="math inline">\(k\)</span>) using model <span class="math inline">\(k\)</span>. This can be viewed as a special case of the above multi-task framework (where <span class="math inline">\(\mathbb{X}_k = \mathbb{X} ~\forall k \in \{1,2,...,K\}\)</span>) but we include specialized algorithms for this case.</p></li>
-<li><p>Domain Generalization in which we have a collection of <span class="math inline">\(K\)</span> separate training datasets: <span class="math inline">\(\{\mathbb{X}_1, \mathbb{X}_2,...,\mathbb{X}_K\}\)</span> and <span class="math inline">\(\{\mathbf{y}_1, \mathbf{y}_2,...,\mathbf{y}_K\}\)</span> where <span class="math inline">\(\mathbb{X}_k \in \mathbb{R}^{n_k \times p},~ \mathbf{y}_k \in \mathbb{R}^{n_k}\)</span>. The goal is to make predictions on new observations from an unseen ``domain’’ or dataset, <span class="math inline">\(K+1\)</span> using an ensemble of <span class="math inline">\(K\)</span> models, each trained on a single dataset. We calculate ensemble weights based upon multi-study stacking and simple average weights. The code to fit models is identical to Case 1 (Multi-Task Learning). The only difference comes in how one tunes the models and makes predictions.</p></li>
+<li><p>Multi-Task Learning in which we have a collection of <span class="math inline">\(K\)</span> separate training datasets defined by their design (feature) matrices, <span class="math inline">\(\{\mathbb{X}_1, \mathbb{X}_2,...,\mathbb{X}_K\}\)</span>, and outcome vectors, <span class="math inline">\(\{\mathbf{y}_1, \mathbf{y}_2,...,\mathbf{y}_K\}\)</span>, where <span class="math inline">\(\mathbb{X}_k \in \mathbb{R}^{n_k \times p},~ \mathbf{y}_k \in \mathbb{R}^{n_k}\)</span>. We jointly train <span class="math inline">\(K\)</span> models, one to each of the <span class="math inline">\(K\)</span> datasets with the goal of making predictions on new observations from task <span class="math inline">\(k\)</span> using model <span class="math inline">\(k\)</span>.</p></li>
+<li><p>Multi-Label Learning is a special case of Multi-Task Learning (1) in which we have a collection of tasks with a single common design matrix, <span class="math inline">\(\mathbb{X}\in \mathbb{R}^{n \times p}\)</span>, but separate task-specific outcome vectors, <span class="math inline">\(\mathbf{y}_k \in \mathbb{R}^{n}\)</span>. One can think of each observation having a <span class="math inline">\(K\)</span> dimensional multivariate outcome. We jointly train <span class="math inline">\(K\)</span> models, one with each of the <span class="math inline">\(K\)</span> outcome vectors, <span class="math inline">\(\mathbf{y}_k\)</span>, with the goal of making predictions on new observations from task <span class="math inline">\(k\)</span> (i.e., to predict an observation of outcome <span class="math inline">\(k\)</span>) using model <span class="math inline">\(k\)</span>. While this is equivalent to (1) for the case that <span class="math inline">\(\mathbb{X}_k = \mathbb{X} ~\forall k \in \{1,2,...,K\}\)</span> but we include specialized algorithms for this case that yield gains in efficiency in terms of memory and solve time.</p></li>
+<li><p>Domain Generalization in which we have a collection of <span class="math inline">\(K\)</span> separate training datasets: <span class="math inline">\(\{\mathbb{X}_1, \mathbb{X}_2,...,\mathbb{X}_K\}\)</span> and <span class="math inline">\(\{\mathbf{y}_1, \mathbf{y}_2,...,\mathbf{y}_K\}\)</span> where <span class="math inline">\(\mathbb{X}_k \in \mathbb{R}^{n_k \times p},~ \mathbf{y}_k \in \mathbb{R}^{n_k}\)</span>. Unlike in (1) and (2), the goal is to make predictions on new observations from an unseen ``domain’’ or dataset, <span class="math inline">\(K+1\)</span>, using an <span class="math inline">\(ensemble\)</span> of <span class="math inline">\(K\)</span> models, each trained on a single dataset. We calculate ensemble weights based upon multi-study stacking (Patil and Parmigiani, 2018) and simple average weights. The code to fit models is identical to Case 1 (Multi-Task Learning). The only difference comes in how one tunes the models and makes predictions.</p></li>
 </ol>
 </div>
 <div id="multi-task-learning-case-1" class="section level1">
@@ -456,7 +450,7 @@ div.tocify {
 <span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(B) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;beta_&quot;</span>, <span class="dv">1</span><span class="sc">:</span>K)</span>
 <span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(B) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;X_&quot;</span>, <span class="dv">1</span><span class="sc">:</span>(p<span class="sc">+</span><span class="dv">1</span>))</span></code></pre></div>
-<p>Note that the <code>task</code> vector is a <span class="math inline">\(N \times 1\)</span> vector where element <span class="math inline">\(i\)</span> indicates the task index (<span class="math inline">\(\{1,2,...,K\}\)</span>) of observation <span class="math inline">\(i\)</span>.</p>
+<p>Note that the <code>task</code> vector is a <span class="math inline">\(N \times 1\)</span> vector where element <span class="math inline">\(i\)</span> indicates the task index (<span class="math inline">\(\in \{1,2,...,K\}\)</span>) of observation <span class="math inline">\(i\)</span>.</p>
 <p>First let’s see the structure of the <span class="math inline">\(\mathbb{B} \in \mathbb{R}^{p+1 \times K}\)</span> where column <span class="math inline">\(k\)</span> is equal to <span class="math inline">\(\boldsymbol{\beta}_k\)</span>. As we can see there is heterogeneity across tasks both in the support (which elements are non-zero) and in the magnitude of the coefficients. But there is enough shared structure that borrowing strength across tasks would be expected to improve performance.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>(B[<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>,],<span class="dv">2</span>))</span></code></pre></div>
 <pre><code>#&gt;     beta_1 beta_2 beta_3 beta_4
@@ -468,7 +462,7 @@ div.tocify {
 #&gt; X_6   0.39   0.00   1.62   1.11
 #&gt; X_7   0.00   2.03   0.61   0.00
 #&gt; X_8   0.81   1.11   0.00   2.26</code></pre>
-<p>We will use <span class="math inline">\(\texttt{sMTL}\)</span> to estimate <span class="math inline">\(\mathbb{B}\)</span> from the data.</p>
+<p>We will use <code>sMTL</code> to estimate <span class="math inline">\(\mathbb{B}\)</span> from the data.</p>
 <p>We will start with fitting Common Support models.</p>
 <div id="common-support-models-with-ridge-penalty" class="section level2">
 <h2>1) Common Support Models with Ridge Penalty</h2>
@@ -478,7 +472,7 @@ div.tocify {
     &amp;\underset{\boldsymbol{z},~\mathbb{B} }{\mbox{min }} \sum_{k=1}^K \frac{1}{n_k} ||  \mathbf{y}_k - \mathbb{X}_k \boldsymbol{\beta}_k ||_2^2 + \lambda_1 ||\mathbb{B}||_2^2 \quad \quad \mbox{(Common ~Support)}  \\
     &amp; \mbox{subject to: }~ ||\boldsymbol{\beta}_k ||_0 \leq s, ~\forall~k \in \{1,2,...,K\} \notag 
 \end{aligned} 
-\]</span> To fit a path of solutions for the Common Support Multi-Task model with 5 non-zero coefficients (i.e., <span class="math inline">\(s=5\)</span>) and a ridge penalty <span class="math inline">\(\lambda_1 = 0.001\)</span>, we use the <code>smtl</code> function and then print out the coefficients stored in <span class="math inline">\(\texttt{fit}\)</span>:</p>
+\]</span> To fit a path of solutions for the Common Support Multi-Task model with 5 non-zero coefficients (i.e., <span class="math inline">\(s=5\)</span>) and a ridge penalty <span class="math inline">\(\lambda_1 = 0.001\)</span>, we use the <code>smtl()</code> function and then print out the coefficients stored in <code>beta</code>:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sMTL)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>sMTL<span class="sc">::</span><span class="fu">smtl_setup</span>(<span class="at">path =</span> <span class="st">&quot;/Applications/Julia-1.5.app/Contents/Resources/julia/bin&quot;</span>)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -562,7 +556,7 @@ div.tocify {
 \begin{aligned} 
     &amp;\underset{\boldsymbol{z},~\mathbb{B},\bar{\boldsymbol{\beta}} }{\mbox{min }} \sum_{k=1}^K \frac{1}{n_k} ||  \mathbf{y}_k - \mathbb{X}_k \boldsymbol{\beta}_k ||_2^2 + \lambda_1 ||\mathbb{B}||_2^2 + \lambda_2  \sum_{k=1}^K ||\boldsymbol{\beta}_k - \bar{{\boldsymbol{\beta}}} ||_2^2 + \lambda_z \sum_{k=1}^K ||\boldsymbol{z}_k - \bar{\boldsymbol{z}}||_2^2 \quad \quad \mbox{(Heterogeneous  Support)}  \\
     &amp; \mbox{subject to: }~ \boldsymbol{z}_k = \mbox{Supp}(\boldsymbol{\beta}_k) ~~~~~~~~~\mbox{for}~ k \in \{1,2,...,K\} \notag  \\
-    &amp; ~~~~~~~~~~~~~~~~~~~~ ||\boldsymbol{\beta}_k ||_0 \leq s  ~~~~~~~~~~~ ~~~\mbox{for}~ k \in \{1,2,...,K\}   \notag 
+    &amp; ~~~~~~~~~~~~~~~~~~~ ||\boldsymbol{\beta}_k ||_0 \leq s  ~~~~~~~~~~~ ~~~\mbox{for}~ k \in \{1,2,...,K\}   \notag 
 \end{aligned} 
 \]</span></p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
@@ -654,7 +648,7 @@ div.tocify {
 #&gt; X_6  -0.24   0.00   1.55   0.89
 #&gt; X_7   0.00   0.69   0.00   0.32
 #&gt; X_8   1.60   1.72   0.18   1.49</code></pre>
-<p>We will use <span class="math inline">\(\texttt{sMTL}\)</span> to estimate <span class="math inline">\(\mathbb{B}\)</span> from the data.</p>
+<p>We will use <code>sMTL</code> to estimate <span class="math inline">\(\mathbb{B}\)</span> from the data.</p>
 <p>We will start with fitting Common Support models.</p>
 <div id="common-support-models-with-ridge-penalty-1" class="section level2">
 <h2>2) Common Support Models with Ridge Penalty</h2>
@@ -665,7 +659,7 @@ div.tocify {
     &amp; \mbox{subject to: }~ ||\boldsymbol{\beta}_k ||_0 \leq s, ~\forall~k \in \{1,2,...,K\} \notag 
 \end{aligned} 
 \]</span></p>
-<p>To fit a solutions for the Common Support Multi-Task model with 5 non-zero coefficients (i.e., <span class="math inline">\(s=5\)</span>) and a Ridge penalty <span class="math inline">\(\lambda_1 = 0.001\)</span>, we use the <code>smtl</code> function and then print out the coefficients stored in <span class="math inline">\(\texttt{fit}\)</span>. Notice here the <span class="math inline">\(y\)</span> object in <span class="math inline">\(\texttt{R}\)</span> is a matrix, and that we do not include the <code>study=</code> syntax that we use for Multi-Task learning or Domain Generalization. Instead the columns of the <span class="math inline">\(y\)</span> object are treated as separate ``labels’’ (akin to separate tasks). Otherwise the syntax is the exact same.</p>
+<p>To fit a solutions for the Common Support Multi-Task model with 5 non-zero coefficients (i.e., <span class="math inline">\(s=5\)</span>) and a Ridge penalty <span class="math inline">\(\lambda_1 = 0.001\)</span>, we use the <code>smtl()</code> function and then print out the coefficients stored in <code>beta</code>. Notice here the <span class="math inline">\(y\)</span> object in <span class="math inline">\(\texttt{R}\)</span> is a matrix, and that we do not include the <code>study=</code> syntax that we use for Multi-Task learning or Domain Generalization. Instead the columns of the <span class="math inline">\(y\)</span> object are treated as separate ``labels’’ (akin to separate tasks). Otherwise the syntax is the exact same.</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> sMTL<span class="sc">::</span><span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">X =</span> X, </span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">s =</span> <span class="dv">5</span>, </span>
@@ -690,7 +684,7 @@ div.tocify {
 \begin{aligned} 
     &amp;\underset{\boldsymbol{z},~\mathbb{B},\bar{\boldsymbol{\beta}} }{\mbox{min }} \sum_{k=1}^K \frac{1}{n_k} ||  \mathbf{y}_k - \mathbb{X} \boldsymbol{\beta}_k ||_2^2 + \lambda_1 ||\mathbb{B}||_2^2 + \lambda_2  \sum_{k=1}^K ||\boldsymbol{\beta}_k - \bar{{\boldsymbol{\beta}}} ||_2^2 + \lambda_z \sum_{k=1}^K ||\boldsymbol{z}_k - \bar{\boldsymbol{z}}||_2^2 \quad \quad \mbox{(Heterogeneous  Support)}  \\
     &amp; \mbox{subject to: }~ \boldsymbol{z}_k = \mbox{Supp}(\boldsymbol{\beta}_k) ~~~~~~~~~\mbox{for}~ k \in \{1,2,...,K\} \notag  \\
-    &amp; ~~~~~~~~~~~~~~~~~~~~ ||\boldsymbol{\beta}_k ||_0 \leq s  ~~~~~~~~~~~ ~~~\mbox{for}~ k \in \{1,2,...,K\}   \notag 
+    &amp; ~~~~~~~~~~~~~~~~~~~ ||\boldsymbol{\beta}_k ||_0 \leq s  ~~~~~~~~~~~ ~~~\mbox{for}~ k \in \{1,2,...,K\}   \notag 
 \end{aligned} 
 \]</span></p>
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> sMTL<span class="sc">::</span><span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
@@ -710,7 +704,7 @@ div.tocify {
 #&gt; V5         -0.39   0.14   1.55   0.87
 #&gt; V6          0.00   0.00   0.00   0.00
 #&gt; V7          1.58   1.61   0.21   1.39</code></pre>
-<p>Notice that the predictions are labeled as “task_1”,…,“task_K.” Since this is a ``Multi-Label’’ learning problem, we would interpret “task_j” to mean “label_j.”</p>
+<p>Notice that the predictions are labeled as “task_1”,…,“task_K.” Since this is a ``Multi-Label’’ learning problem, we would interpret “task_j” to mean “label_j” (or “otucome_j”).</p>
 <!-- ########################################################################## -->
 </div>
 </div>
@@ -763,7 +757,7 @@ div.tocify {
 #&gt; X_6   0.39   0.00   1.62   1.11
 #&gt; X_7   0.00   2.03   0.61   0.00
 #&gt; X_8   0.81   1.11   0.00   2.26</code></pre>
-<p>We will use <span class="math inline">\(\texttt{sMTL}\)</span> to estimate <span class="math inline">\(\mathbb{B}\)</span> from the data.</p>
+<p>We will use <code>sMTL</code> to estimate <span class="math inline">\(\mathbb{B}\)</span> from the data.</p>
 <p>We will start with fitting Common Support models.</p>
 <div id="heterogeneous-support-model-with-ridge-penalty" class="section level2">
 <h2>3) Heterogeneous Support Model with Ridge Penalty</h2>
@@ -774,7 +768,7 @@ div.tocify {
     &amp; \mbox{subject to: }~ ||\boldsymbol{\beta}_k ||_0 \leq s, ~\forall~k \in \{1,2,...,K\} \notag 
 \end{aligned} 
 \]</span></p>
-<p>Here we use the same syntax from Case 1 except for 1) in the <code>cv.smtl</code> function we set <code>multiTask = FALSE</code> and 2) when making predictions, we set <code>stack = TRUE</code> in the <code>predict</code> function to use multi-study stacking to generate ensemble weights. The <code>predict</code> function then produces aggregate predictions for some new dataset or ``domain’’ by either taking a weighted average of the model-specific predictions: <span class="math inline">\(\hat{f}(\boldsymbol{x}) = \sum_{k=1}^K w_k \boldsymbol{x}^T \hat{\boldsymbol{\beta}}_k\)</span>. We provide the output using average weights, <span class="math inline">\(w_k\)</span>, (i.e., <span class="math inline">\(w_k = 1/K, \forall~ k ~ \in \{1,2,...,K\}\)</span>), or multi-study stacking weights, <span class="math inline">\(w_k\)</span>.</p>
+<p>Here we use the same syntax from Case 1 except for 1) in the <code>cv.smtl()</code> function we set <code>multiTask = FALSE</code> and 2) when making predictions, we set <code>stack = TRUE</code> in the <code>predict()</code> function to use multi-study stacking to generate ensemble weights. The <code>predict()</code> function then produces aggregate predictions for some new dataset or ``domain’’ by either taking a weighted average of the model-specific predictions: <span class="math inline">\(\hat{f}(\boldsymbol{x}) = \sum_{k=1}^K w_k \boldsymbol{x}^T \hat{\boldsymbol{\beta}}_k\)</span>. We provide the output using average weights, <span class="math inline">\(w_k\)</span>, (i.e., <span class="math inline">\(w_k = 1/K, \forall~ k ~ \in \{1,2,...,K\}\)</span>), or multi-study stacking weights, <span class="math inline">\(w_k\)</span>.</p>
 <div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tuning grid</span></span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>grid <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">s =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">5</span>), </span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">lambda_1 =</span> <span class="fu">c</span>(<span class="fl">0.01</span>, <span class="fl">0.1</span>, <span class="fl">0.01</span>, <span class="fl">0.1</span>), </span>
@@ -803,8 +797,8 @@ div.tocify {
 </div>
 <div id="cross-validation" class="section level1">
 <h1>Cross Validation</h1>
-<p>We can use our cross validation function to tune models. The syntax is similar to the <code>smtl</code> function except one can specify an optional tuning grid, and the number of folds (<code>nfolds</code>). For Domain Generalization problems, one needs to switch <code>multiTask=FALSE</code> to change the cross validation to a hold-one-domain-out cross validation approach appropriate for the problem.</p>
-<p>Here we show a Multi-Task Learning problem in which we let the <span class="math inline">\(\texttt{cv.smtl()}\)</span> function generate a grid of hyperparameters for tuning internally, tune and then we fit a final model with the tuned hyperparameters.</p>
+<p>We can use our cross validation function to tune models. The syntax is similar to the <code>smtl()</code> function except one can specify an optional tuning grid, and the number of folds (<code>nfolds</code>). For Domain Generalization problems, one needs to switch <code>multiTask=FALSE</code> to change the cross validation to a hold-one-domain-out cross validation approach appropriate for the problem.</p>
+<p>Here we show a Multi-Task Learning problem in which we let the <code>cv.smtl()</code> function generate a grid of hyperparameters for tuning internally, tune and then we fit a final model with the tuned hyperparameters.</p>
 <div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># cross validation with internally generated grid</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>tn <span class="ot">&lt;-</span> <span class="fu">cv.smtl</span>(<span class="at">y =</span> y, </span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">X =</span> X, </span>
@@ -823,7 +817,7 @@ div.tocify {
 <span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>            <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
 <span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_1 =</span> tn<span class="sc">$</span>best<span class="sc">$</span>lambda_1,</span>
 <span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_z =</span> tn<span class="sc">$</span>best<span class="sc">$</span>lambda_z)</span></code></pre></div>
-<p>We see that instead of providing a grid, we chose which hyperparameters we wanted to tune by setting them to <span class="math inline">\(\texttt{TRUE}\)</span>.</p>
+<p>We see that instead of providing a grid, we chose which hyperparameters we wanted to tune by setting them to <code>TRUE</code>.</p>
 <div id="user-specified-grids" class="section level2">
 <h2>User Specified Grids</h2>
 <p>We highly recommend specifying your own grids as good ranges for hyperparameter values may be very problem-specific. Next we show the same Multi-Task Learning problem with a custom grid and then fit a final model with the tuned hyperparameters.</p>
@@ -961,7 +955,7 @@ div.tocify {
 </div>
 <div id="fitting-whole-paths" class="section level2">
 <h2>Fitting Whole Paths</h2>
-<p>Sometimes we may want to fit entire paths of solution for some fixed <span class="math inline">\(s\)</span>. The algorithm is coded to fit whole paths to efficiently use warm starts to speed up the code substantially and identify better local minima. For that reason, if solutions for multiple values of tuning parameters, <span class="math inline">\((\lambda_1, \lambda_2, \lambda_z)\)</span> are desired, it is far better to fit them jointly than to call <code>smtl</code> repeatedly. The code is almost identical except that now one or more of the tuning parameter arguments <span class="math inline">\((\lambda_1, \lambda_2, \lambda_z)\)</span> are a vector not a scalar. Notice that <span class="math inline">\(s\)</span> is a scalar. We cannot put multiple values of <span class="math inline">\(s\)</span> in because the path of solutions is generated independently for each value of <span class="math inline">\(s\)</span>.</p>
+<p>Sometimes we may want to fit entire paths of solution for some fixed <span class="math inline">\(s\)</span>. The algorithm is coded to fit whole paths to efficiently use warm starts to speed up the code substantially and identify better local minima. For that reason, if solutions for multiple values of tuning parameters, <span class="math inline">\((\lambda_1, \lambda_2, \lambda_z)\)</span> are desired, it is far better to fit them jointly than to call <code>smtl()</code> repeatedly. The code is almost identical except that now one or more of the tuning parameter arguments <span class="math inline">\((\lambda_1, \lambda_2, \lambda_z)\)</span> are a vector not a scalar. Notice that <span class="math inline">\(s\)</span> is a scalar. We cannot put multiple values of <span class="math inline">\(s\)</span> in because the path of solutions is generated independently for each value of <span class="math inline">\(s\)</span>.</p>
 <div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">X =</span> X, </span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">study =</span> task, </span>
@@ -975,15 +969,16 @@ div.tocify {
 <div id="predictions-on-whole-path-fits" class="section level2">
 <h2>Predictions on Whole Path Fits</h2>
 <p>Now we many solutions so if we want to make predictions we have to specify which one or else the package will issue a warning and return no predictions.</p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>preds <span class="ot">&lt;-</span> smtl<span class="sc">::</span><span class="fu">predict</span>(<span class="at">model =</span> mod, </span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">X =</span> X, </span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">lambda_1 =</span> <span class="fl">0.1</span>, </span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">lambda_z =</span> <span class="fl">0.01</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>preds <span class="ot">&lt;-</span> sMTL<span class="sc">::</span><span class="fu">predict</span>(<span class="at">model =</span> mod, </span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">X =</span> X, </span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">lambda_1 =</span> <span class="fl">0.1</span>, </span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">lambda_z =</span> <span class="fl">0.01</span>)</span></code></pre></div>
 </div>
 </div>
 <div id="references" class="section level1">
 <h1>References</h1>
-<p>Gabriel Loewinger, Kayhan Behdin, Kenneth Kishida, Giovanni Parmigiani and Rahul Mazumder. <a href="https://scholar.google.com/scholar_url?url=https://arxiv.org/pdf/1707.08114&amp;hl=en&amp;sa=X&amp;ei=6IbIYr7xMo-5yQTW04rIBw&amp;scisig=AAGBfm12ecsT1Wt4UCLfp0fvnw_iHIjZ2w&amp;oi=scholarr">Multi-Task Learning for Sparsity Pattern Heterogeneity: A Discrete Optimization Approach</a>. arXiv: (2022).</p>
+<p>Gabriel Loewinger, Kayhan Behdin, Kenneth Kishida, Giovanni Parmigiani and Rahul Mazumder. <a href>Multi-Task Learning for Sparsity Pattern Heterogeneity: A Discrete Optimization Approach</a>. arXiv: (2022).</p>
+<p>Prasad Patil and Giovanni Parmigiani. <a href="https://www.pnas.org/doi/full/10.1073/pnas.1708283115">Training replicable predictors in multiple studies</a>. Proceedings of the National Academy of Sciences (2018).</p>
 <p>Yu Zhang and Qiang Yang. <a href="https://scholar.google.com/scholar_url?url=https://arxiv.org/pdf/1707.08114&amp;hl=en&amp;sa=X&amp;ei=6IbIYr7xMo-5yQTW04rIBw&amp;scisig=AAGBfm12ecsT1Wt4UCLfp0fvnw_iHIjZ2w&amp;oi=scholarr">A Survey on Multi-Task Learning</a>. IEEE TRANSACTIONS ON KNOWLEDGE AND DATA ENGINEERING (2021).</p>
 </div>
 

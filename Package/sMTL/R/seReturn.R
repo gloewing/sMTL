@@ -1,4 +1,4 @@
-#' seReturn: find smallest rho within 1 se of smallest cv error 
+#' seReturn: find smallest rho within 1 se of smallest cv error. For internal package use.
 #' @param x dataframe
 #' @export
 

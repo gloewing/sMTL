@@ -1,7 +1,4 @@
-########################
-# sparse functions
-########################
-#' multiTaskRmse: RMSE for multi-task
+#' multiTaskRmse: RMSE for multi-task problems (averaged across tasks)
 #' @param data A matrix
 #' @param beta A matrix
 #' @export

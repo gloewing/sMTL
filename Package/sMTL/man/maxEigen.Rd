@@ -2,7 +2,7 @@
 % Please edit documentation in R/maxEigen.R
 \name{maxEigen}
 \alias{maxEigen}
-\title{maxEigen: maximum eigenvalue wrapper for Julia TSVD package}
+\title{maxEigen: maximum eigenvalue wrapper for Julia TSVD package. internal package use only}
 \usage{
 maxEigen(X, intercept = TRUE)
 }
@@ -17,7 +17,7 @@ maxEigen(X, intercept = TRUE)
 A scalar.
 }
 \description{
-maxEigen: maximum eigenvalue wrapper for Julia TSVD package
+maxEigen: maximum eigenvalue wrapper for Julia TSVD package. internal package use only
 }
 \examples{
 set.seed(1)

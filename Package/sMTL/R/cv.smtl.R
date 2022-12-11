@@ -1,27 +1,108 @@
 #' cv.smtl: cross-validation function
 #'
-#' @param y A numeric vector or matrix (for multi-label problems)
-#' @param X A matrix
-#' @param study An integer vector
-#' @param grid A dataframe
-#' @param nfold An integer
-#' @param commonSupp A boolean
-#' @param multiTask A boolean
-#' @param lambda_1 A boolean
-#' @param lambda_2 A boolean
-#' @param lambda_z A boolean
-#' @param maxIter An integer
-#' @param LocSrch_skip An integer
-#' @param LocSrch_maxIter An integer
-#' @param messageInd A boolean
-#' @param independent.regs A boolean
+#' @param y A numeric outcome vector or matrix (for multi-label problems)
+#' @param X A design (feature) matrix
+#' @param study An integer vector specifying the task ID
+#' @param grid A dataframe with column names "s", "lambda_1", "lambda_2" and "lambda_z" (if commonSupp = FALSE) with tuning values
+#' @param nfold An integer specifying number of CV folds
+#' @param commonSupp A boolean specifying whether the task models should have the same support
+#' @param multiTask A boolean only used if study/task indices are provided: used to distinguish between a Multi-Task Learning Tuning (TRUE) or Domain Generalization Tuning (FALSE)
+#' @param lambda_1 An optional boolean: if a grid is not provided, then set to TRUE if you want an automatic grid to be generated with non-zero values for this hyperparameter
+#' @param lambda_2 An optional boolean: if a grid is not provided, then set to TRUE if you want an automatic grid to be generated with non-zero values for this hyperparameter
+#' @param lambda_z An optional boolean: if a grid is not provided, then set to TRUE if you want an automatic grid to be generated with non-zero values for this hyperparameter
+#' @param maxIter An integer specifying the maximum number of coordinate descent iterations
+#' @param LocSrch_skip An integer specifying whether to use local search at every tuning value (set to 1), every other value (set to 2), every third (set to 3),...
+#' @param LocSrch_maxIter An integer specifying the maximum number of local search iterations
+#' @param messageInd A boolean (verbose) of whether to print messages
+#' @param independent.regs A boolean of whether models are completely indpendent (only set to TRUE for benchmarks)
 #' @return A list
 #' @examples
 #' 
 #' #####################################################################################
-#' ##### First Time Loading, Julia is Installed But Packages NEED INSTALLATION  ######
+#' ##### simulate data
 #' #####################################################################################
-#' smtl_setup(path = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin", installJulia = TRUE, installPackages = TRUE)
+#' set.seed(1) # fix the seed to get a reproducible result
+#' K <- 4 # number of datasets 
+#' p <- 100 # covariate dimension
+#' s <- 5 # support size
+#' q <- 7 # size of subset of covariates that can be non-zero for any task
+#' n_k <- 50 # task sample size
+#' N <- n_k * p # full dataset samplesize
+#' X <- matrix( rnorm(N * p), nrow = N, ncol=p) # full design matrix
+#' B <- matrix(1 + rnorm(K * (p+1) ), nrow = p + 1, ncol = K) # betas before making sparse
+#' Z <- matrix(0, nrow = p, ncol = K) # matrix of supports
+#' y <- vector(length = N) # outcome vector
+#' 
+#' # randomly sample support to make betas sparse
+#' for(j in 1:K)     Z[1:q, j] <- sample( c( rep(1,s), rep(0, q - s) ), q, replace = FALSE )
+#' B[-1,] <- B[-1,] * Z # make betas sparse and ensure all models have an intercept
+#' 
+#' task <- rep(1:K, each = n_k) # vector of task labels (indices)
+#' 
+#' # iterate through and make each task specific dataset
+#' for(j in 1:K){
+#'     indx <- which(task == j) # indices of task
+#'     e <- rnorm(n_k)
+#'     y[indx] <- B[1, j] + X[indx,] %*% B[-1,j] + e
+#'     }
+#'     colnames(B) <- paste0("beta_", 1:K)
+#'     rownames(B) <- paste0("X_", 1:(p+1))
+#'     
+#'     print("Betas")
+#'     print(round(B[1:8,],2))
+#'     
+#'     ###########################
+#'     # custom tuning grid
+#'     ###########################
+#'     grid <- data.frame(s = c(4, 4, 5, 5), 
+#'                   lambda_1 = c(0.01, 0.1, 0.01, 0.1), 
+#'                   lambda_2 = rep(0, 4), 
+#'                   lambda_z = c(0.01, 0.1, 0.01, 0.1))
+#'     
+#'     #################################################
+#'     # cross validation with custom tuning grid
+#'     ##################################################
+#'     tn <- cv.smtl(y = y, 
+#'                   X = X, 
+#'                   study = task, 
+#'                   commonSupp = FALSE,
+#'                   grid = grid,
+#'                   nfolds = 5,
+#'                   multiTask = FALSE) 
+#'                   
+#'      # model fitting
+#'      mod <- sMTL::smtl(y = y, 
+#'                    X = X, 
+#'                    study = task, 
+#'                    s = tn$best.1se$s, 
+#'                    commonSupp = TRUE,
+#'                    lambda_1 = tn$best.1se$lambda_1,
+#'                    lambda_z = tn$best.1se$lambda_z)
+#'     
+#'     ######################################################
+#'     # cross validation with automatically generated grid
+#'     #######################################################
+#'     tn <- cv.smtl(y = y, 
+#'                   X = X, 
+#'                   study = task, 
+#'                   commonSupp = FALSE,
+#'                   lambda_1 = TRUE,
+#'                   lambda_w = FALSE,
+#'                   lambda_z = TRUE,
+#'                   nfolds = 5,
+#'                   multiTask = FALSE) 
+#'     
+#'      # model fitting
+#'      mod <- sMTL::smtl(y = y, 
+#'                    X = X, 
+#'                    study = task, 
+#'                    s = tn$best.1se$s, 
+#'                    commonSupp = TRUE,
+#'                    lambda_1 = tn$best.1se$lambda_1,
+#'                    lambda_z = tn$best.1se$lambda_z)
+#'                    
+#'     print(round(mod$beta[1:8,],2))
+#'     
 #' @import JuliaConnectoR
 #' @import dplyr
 #' @export

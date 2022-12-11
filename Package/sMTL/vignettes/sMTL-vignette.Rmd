@@ -52,22 +52,23 @@ knit_hooks$set(output = function(x, options) {
 
 
 # Introduction
-`sMTL` is a fast toolkit for L0-constrained Multi-Task Learning, Multi-Label Learning and Domain Generalization. L0 constraints select the best subset of features in a variety of multi-dataset settigs. The toolkit can (approximately) solve the following two problems
+`sMTL` is a fast toolkit for $\ell_0$-constrained Multi-Task Learning, Multi-Label Learning and Domain Generalization. $\ell_0$ constraints select the best subset of features in a variety of multi-dataset settigs. The toolkit can (approximately) solve the following two problems
 
 $$
 \begin{aligned} 
     &\underset{~\mathbb{B},\bar{\boldsymbol{\beta}} }{\mbox{min }} \sum_{k=1}^K \frac{1}{n_k} ||  \mathbf{y}_k - \mathbb{X}_k \boldsymbol{\beta}_k ||_2^2 +  \lambda_1 ||\mathbb{B}||_2^2 + \lambda_2  \sum_{k=1}^K ||\boldsymbol{\beta}_k - \bar{{\boldsymbol{\beta}}} ||_2^2  \quad \quad \mbox{(Common Support)}  \\
-    & \mbox{subject to: }~\mbox{Supp}(\boldsymbol{\beta}_k) = \mbox{Supp}(\boldsymbol{\beta}) ~~\mbox{for}~~~~ k \in \{1,2,...,K\} \notag  \\
-    & ~~~~~~~~~~~~~~~~~~~ ||\boldsymbol{\beta}_k ||_0 \leq s  ~~~~~~~~~~~~~~~~~~~~~\mbox{for}~ k \in \{1,2,...,K\}   \notag 
+    & \mbox{subject to: }~\mbox{Supp}(\boldsymbol{\beta}_k) = \mbox{Supp}(\boldsymbol{\beta}) ~~~~~~~\mbox{for} ~k \in \{1,2,...,K\} \notag  \\
+    & ~~~~~~~~~~~~~~~~~~~ ||\boldsymbol{\beta}_k ||_0 \leq s  ~~~~~~~~~~~~~~~~~~~~~~\mbox{for}~ k \in \{1,2,...,K\}   \notag 
 \end{aligned} 
 $$
-
+&nbsp;
+&nbsp;
 
 $$
 \begin{aligned} 
     &\underset{\boldsymbol{z},~\mathbb{B},\bar{\boldsymbol{\beta}} }{\mbox{min }} \sum_{k=1}^K \frac{1}{n_k} ||  \mathbf{y}_k - \mathbb{X}_k \boldsymbol{\beta}_k ||_2^2 + \lambda_1 ||\mathbb{B}||_2^2 + \lambda_2  \sum_{k=1}^K ||\boldsymbol{\beta}_k - \bar{{\boldsymbol{\beta}}} ||_2^2 + \lambda_z \sum_{k=1}^K ||\boldsymbol{z}_k - \bar{\boldsymbol{z}}||_2^2 \quad \quad \mbox{(Heterogeneous  Support)}  \\
     & \mbox{subject to: }~ \boldsymbol{z}_k = \mbox{Supp}(\boldsymbol{\beta}_k) ~~~~~~~~~\mbox{for}~ k \in \{1,2,...,K\} \notag  \\
-    & ~~~~~~~~~~~~~~~~~~~ ||\boldsymbol{\beta}_k ||_0 \leq s  ~~~~~~~~~~~ ~~~\mbox{for}~ k \in \{1,2,...,K\}   \notag 
+    & ~~~~~~~~~~~~~~~~~~ ||\boldsymbol{\beta}_k ||_0 \leq s  ~~~~~~~~~~~~~~~\mbox{for}~ k \in \{1,2,...,K\}   \notag 
 \end{aligned} 
 $$
 
@@ -79,38 +80,32 @@ $$
            1.23 \\
            0 \\
            -0.71 \\
-           0 \\
-           \vdots \\
-           1.12
+           0 
          \end{bmatrix}
          ~~~~~~~~~~~~~
          &\mbox{Supp}(\boldsymbol{\beta}) = \boldsymbol{z} = \begin{bmatrix}
            1 \\
            0 \\
            1 \\
-           0 \\
-           \vdots \\
-           1
+           0 
          \end{bmatrix}
 \end{aligned} 
 $$
 
 The Common Support problem ensures that each of the $K$ task-specific (or dataset-specific) $\boldsymbol{\beta}_k$ have the same support. The Heterogeneous Support problem allows each task to have a different support but penalizes the $\boldsymbol{\beta}_k$ for having differing supports using the $\lambda_z \sum_{k=1}^K ||\boldsymbol{z}_k - \bar{\boldsymbol{z}}||_2^2$ penalty. 
 
-The parameter $\lambda_2$ shrinks the $\boldsymbol{\beta}_k$ towards a common $\bar{\boldsymbol{\beta}} = \frac{1}{K}\sum_{k=1}^K \boldsymbol{\beta}_k$. The parameter $\lambda_1$ controls the strength of $\ell_2$ (Ridge) shrinkage where $\lambda_1||\mathbb{B}||_2^2 = \lambda_1 \sum_{k=1}^K ||\boldsymbol{\beta}_k||_2^2$. Adding either of these shrinkage terms can be effective in reducing the risk of overfitting and often results in better predictive models. We recommend using either but not both of these regularization terms. For Hetergeneous Support problems $\lambda_z$ controls the degree to which the $\boldsymbol{z}$, the supports of the $\boldsymbol{\beta}_k$, are shrunk towards $\bar{\boldsymbol{z}} = \sum_{k=1}^K \boldsymbol{z}_k$. When $\lambda_z$ is high, this results in solutions equivalent to the Common Support approach. The fitting is done over a grid of $\lambda$, $\lambda_z$ and $\lambda_1$ values to generate a regularization path. 
-
-`sMTL` also has dedicated code to deal with the "Multi-Label Learning" (a special case of, and sometimes referred to as, "Multi-Task Learning") in which the design matrix is fixed across tasks (i.e., $\mathbb{X}_k = \mathbb{X}~\forall~k~\in\{1,2,...,K\}$), but the outcome is multivariate. While this can be seen as a special case of the above, we include dedicated code that yields gains in efficiency in terms of memory and solve time.
+The parameter $\lambda_2$ shrinks the $\boldsymbol{\beta}_k$ towards a common $\bar{\boldsymbol{\beta}} = \frac{1}{K}\sum_{k=1}^K \boldsymbol{\beta}_k$. The parameter $\lambda_1$ controls the strength of $\ell_2$ (Ridge) shrinkage where $\lambda_1||\mathbb{B}||_2^2 = \lambda_1 \sum_{k=1}^K ||\boldsymbol{\beta}_k||_2^2$. Adding either of these shrinkage terms can be effective in reducing the risk of overfitting and often results in better predictive models. We recommend using either but not both of these regularization terms. For Hetergeneous Support problems $\lambda_z$ controls the degree to which the $\boldsymbol{z}$, the supports of the $\boldsymbol{\beta}_k$, are shrunk towards a common $\bar{\boldsymbol{z}} = \frac{1}{K}\sum_{k=1}^K \boldsymbol{z}_k$. When $\lambda_z$ is high, this results in solutions equivalent to the Common Support approach. The fitting is done over a grid of $\lambda_1$, $\lambda_2$ and $\lambda_z$ values to generate a regularization path. 
 
 The algorithms provided in `sMTL` are based on block coordinate descent and local combinatorial search. Numerous computational tricks and heuristics are used to speed up the algorithms and improve the solution quality. These heuristics include warm starts and active set convergence. For more details on the algorithms used, please refer to our paper [Multi-Task Learning for Sparsity Pattern Heterogeneity: A Discrete Optimization Approach](https://pubsonline.informs.org/doi/10.1287/opre.2019.1919). 
 
-The toolkit is implemented in Julia along with an easy-to-use R interface. In this vignette, we provide a tutorial on using the R interface. Particularly, we will demonstrate how use `sMTL`'s main functions for fitting models and cross-validation.
+The toolkit is implemented in Julia along with an easy-to-use R interface. In this vignette, we provide a tutorial on using the R interface. We demonstrate how use `sMTL`'s main functions for fitting models and cross-validation.
 
 # Installation
 `sMTL` can be installed directly from CRAN by executing:
 ```{r, eval=FALSE}
 install.packages("sMTL")
 ```
-<!-- If you face installation issues, please refer to the [Installation Troubleshooting Wiki](https://github.com/hazimehh/L0Learn/wiki/Installation-Troubleshooting). If the issue is not resolved, you can submit an issue on [L0Learn's Github Repo](https://github.com/hazimehh/L0Learn). -->
+<!-- If you face installation issues, please refer to the [Installation Troubleshooting Wiki](https://github.com/hazimehh/$\ell_0$Learn/wiki/Installation-Troubleshooting). If the issue is not resolved, you can submit an issue on [$\ell_0$Learn's Github Repo](https://github.com/hazimehh/$\ell_0$Learn). -->
 
 The very first time we use `sMTL` we have to keep in mind the following (after this initial setup, subsequent uses of the `sMTL` package do not require any additional steps beyond the standard package load): 
 
@@ -123,7 +118,7 @@ library(sMTL)
 smtl_setup(installJulia = TRUE, installPackages = TRUE)
 ```
 
-2. A few $\texttt{Julia}$ packages are required (e.g., $\texttt{TSVD}$, $\texttt{LinearAlgebra}$, $\texttt{Statistics}$). We include a function to automatically install these if they are not already. If $\texttt{Julia}$ is installed but the packages are not, the function can install them without re-installing $\texttt{Julia}$. If you ran the code for 1. above, you can ignore the rest of the set-up (1-3) and skip to fitting functions.
+2. A few $\texttt{Julia}$ packages are required (e.g., $\texttt{TSVD}$, $~\texttt{LinearAlgebra}$, $~\texttt{Statistics}$). We include a function to automatically install these if they are not already. If $\texttt{Julia}$ is installed but the packages are not, the function can install them without re-installing $\texttt{Julia}$. If you ran the code for 1. above, you can ignore the rest of the set-up (1-3) and skip to fitting functions.
 
 ```{r, eval=FALSE}
 library(sMTL)
@@ -141,7 +136,6 @@ smtl_setup(path = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin")
 The $\texttt{Julia}$ binary path is saved the first time the package is used after downloading, so one does not have to enter the path every time. Every time you load the package henceforth, one only need run the following.   
 ```{r, eval = TRUE}
 library(sMTL)
-library(L0Learn)
 smtl_setup()
 ```
 Failure to run this function above will leave R unable to locate $\texttt{Julia}$ and the `sMTL` package functions will not work. 
@@ -149,11 +143,11 @@ Failure to run this function above will leave R unable to locate $\texttt{Julia}
 # Tutorial Guide
 To illustrate the main `sMTL` functions, we start by generating synthetic datasets and proceed by fitting models. We use terminology from Zhang & Yang, 2021. The package has three main machine learning problems it aims to solve:
 
-1. Multi-Task Learning in which we have a collection of $K$ separate training datasets: $\{\mathbb{X}_1, \mathbb{X}_2,...,\mathbb{X}_K\}$, $\{\mathbf{y}_1, \mathbf{y}_2,...,\mathbf{y}_K\}$ where $\mathbb{X}_k \in \mathbb{R}^{n_k \times p},~ \mathbf{y}_k \in \mathbb{R}^{n_k}$. We jointly train $K$ models, one to each of the $K$ datasets with the goal of making predictions on new observations from task $k$ using model $k$.
+1. Multi-Task Learning in which we have a collection of $K$ separate training datasets defined by their design (feature) matrices, $\{\mathbb{X}_1, \mathbb{X}_2,...,\mathbb{X}_K\}$, and outcome vectors, $\{\mathbf{y}_1, \mathbf{y}_2,...,\mathbf{y}_K\}$, where $\mathbb{X}_k \in \mathbb{R}^{n_k \times p},~ \mathbf{y}_k \in \mathbb{R}^{n_k}$. We jointly train $K$ models, one to each of the $K$ datasets with the goal of making predictions on new observations from task $k$ using model $k$.
 
-2. Multi-Label Learning in which we have a collection of training data with a single common design matrix, $\mathbb{X}$, but a multivariate outcome for each observation, $\{\mathbf{y}_1, \mathbf{y}_2,...,\mathbf{y}_K\}$ and $\mathbb{X} \in \mathbb{R}^{n \times p}, \mathbf{y}_k \in \mathbb{R}^{n}$. We jointly train $K$ models, one to each of the $K$ datasets with the goal of making predictions on new observations from task $k$ (i.e., to predict an observation of out come $k$) using model $k$. This can be viewed as a special case of the above multi-task framework (where $\mathbb{X}_k = \mathbb{X} ~\forall k \in \{1,2,...,K\}$) but we include specialized algorithms for this case.
+2. Multi-Label Learning is a special case of Multi-Task Learning (1) in which we have a collection of tasks with a single common design matrix, $\mathbb{X}\in \mathbb{R}^{n \times p}$, but separate task-specific outcome vectors, $\mathbf{y}_k \in \mathbb{R}^{n}$. One can think of each observation having a $K$ dimensional multivariate outcome. We jointly train $K$ models, one with each of the $K$ outcome vectors, $\mathbf{y}_k$, with the goal of making predictions on new observations from task $k$ (i.e., to predict an observation of outcome $k$) using model $k$. While this is equivalent to (1) for the case that $\mathbb{X}_k = \mathbb{X} ~\forall k \in \{1,2,...,K\}$ but we include specialized algorithms for this case that yield gains in efficiency in terms of memory and solve time.
 
-3. Domain Generalization in which we have a collection of $K$ separate training datasets: $\{\mathbb{X}_1, \mathbb{X}_2,...,\mathbb{X}_K\}$ and $\{\mathbf{y}_1, \mathbf{y}_2,...,\mathbf{y}_K\}$ where $\mathbb{X}_k \in \mathbb{R}^{n_k \times p},~ \mathbf{y}_k \in \mathbb{R}^{n_k}$. The goal is to make predictions on new observations from an unseen ``domain'' or dataset, $K+1$ using an ensemble of $K$ models, each trained on a single dataset. We calculate ensemble weights based upon multi-study stacking and simple average weights. The code to fit models is identical to Case 1 (Multi-Task Learning). The only difference comes in how one tunes the models and makes predictions. 
+3. Domain Generalization in which we have a collection of $K$ separate training datasets: $\{\mathbb{X}_1, \mathbb{X}_2,...,\mathbb{X}_K\}$ and $\{\mathbf{y}_1, \mathbf{y}_2,...,\mathbf{y}_K\}$ where $\mathbb{X}_k \in \mathbb{R}^{n_k \times p},~ \mathbf{y}_k \in \mathbb{R}^{n_k}$. Unlike in (1) and (2), the goal is to make predictions on new observations from an unseen ``domain'' or dataset, $K+1$, using an $ensemble$ of $K$ models, each trained on a single dataset. We calculate ensemble weights based upon multi-study stacking (Patil and Parmigiani, 2018) and simple average weights. The code to fit models is identical to Case 1 (Multi-Task Learning). The only difference comes in how one tunes the models and makes predictions. 
 
 # Multi-Task Learning (Case 1)
 We begin with case 1. We generate $K = 4$ synthetic datasets from a sparse linear model with the following:
@@ -193,7 +187,7 @@ colnames(B) <- paste0("beta_", 1:K)
 rownames(B) <- paste0("X_", 1:(p+1))
 ```
 
-Note that the `task` vector is a $N \times 1$ vector where element $i$ indicates the task index ($\{1,2,...,K\}$) of observation $i$.
+Note that the `task` vector is a $N \times 1$ vector where element $i$ indicates the task index ($\in \{1,2,...,K\}$) of observation $i$.
 
 First let's see the structure of the $\mathbb{B} \in \mathbb{R}^{p+1 \times K}$ where column $k$ is equal to $\boldsymbol{\beta}_k$. As we can see there is heterogeneity across tasks both in the support (which elements are non-zero) and in the magnitude of the coefficients. But there is enough shared structure that borrowing strength across tasks would be expected to improve performance.
 ```{r}
@@ -213,7 +207,7 @@ $$
     & \mbox{subject to: }~ ||\boldsymbol{\beta}_k ||_0 \leq s, ~\forall~k \in \{1,2,...,K\} \notag 
 \end{aligned} 
 $$
-To fit a path of solutions for the Common Support Multi-Task model with 5 non-zero coefficients (i.e., $s=5$) and a ridge penalty $\lambda_1 = 0.001$, we use the `smtl` function and then print out the coefficients stored in `fit`:
+To fit a path of solutions for the Common Support Multi-Task model with 5 non-zero coefficients (i.e., $s=5$) and a ridge penalty $\lambda_1 = 0.001$, we use the `smtl()` function and then print out the coefficients stored in `beta`:
 
 ```{r, eval = TRUE}
 library(sMTL)
@@ -381,7 +375,7 @@ $$
 \end{aligned} 
 $$
 
-To fit a solutions for the Common Support Multi-Task model with 5 non-zero coefficients (i.e., $s=5$) and a Ridge penalty $\lambda_1 = 0.001$, we use the `smtl` function and then print out the coefficients stored in $\texttt{fit}$. Notice here the $y$ object in $\texttt{R}$ is a matrix, and that we do not include the `study=` syntax that we use for Multi-Task learning or Domain Generalization. Instead the columns of the $y$ object are treated as separate ``labels'' (akin to separate tasks). Otherwise the syntax is the exact same.
+To fit a solutions for the Common Support Multi-Task model with 5 non-zero coefficients (i.e., $s=5$) and a Ridge penalty $\lambda_1 = 0.001$, we use the `smtl()` function and then print out the coefficients stored in `beta`. Notice here the $y$ object in $\texttt{R}$ is a matrix, and that we do not include the `study=` syntax that we use for Multi-Task learning or Domain Generalization. Instead the columns of the $y$ object are treated as separate ``labels'' (akin to separate tasks). Otherwise the syntax is the exact same.
 
 ```{r, eval = TRUE}
 mod <- sMTL::smtl(y = y, 
@@ -416,7 +410,7 @@ mod <- sMTL::smtl(y = y,
 print(round(mod$beta[1:8,],2))
 ```
 
-Notice that the predictions are labeled as "task_1",...,"task_K." Since this is a ``Multi-Label'' learning problem, we would interpret "task_j" to mean "label_j."
+Notice that the predictions are labeled as "task_1",...,"task_K." Since this is a ``Multi-Label'' learning problem, we would interpret "task_j" to mean "label_j" (or "otucome_j").
 
 <!-- ########################################################################## -->
 
@@ -482,7 +476,7 @@ $$
 \end{aligned} 
 $$
 
-Here we use the same syntax from Case 1 except for 1) in the `cv.smtl` function we set `multiTask = FALSE` and 2) when making predictions, we set `stack = TRUE` in the `predict` function to use multi-study stacking to generate ensemble weights. The `predict` function then produces aggregate predictions for some new dataset or ``domain'' by either taking a weighted average of the model-specific predictions: $\hat{f}(\boldsymbol{x}) = \sum_{k=1}^K w_k \boldsymbol{x}^T \hat{\boldsymbol{\beta}}_k$. We provide the output using average weights, $w_k$, (i.e., $w_k = 1/K, \forall~ k ~ \in \{1,2,...,K\}$), or multi-study stacking weights, $w_k$.
+Here we use the same syntax from Case 1 except for 1) in the `cv.smtl()` function we set `multiTask = FALSE` and 2) when making predictions, we set `stack = TRUE` in the `predict()` function to use multi-study stacking to generate ensemble weights. The `predict()` function then produces aggregate predictions for some new dataset or ``domain'' by either taking a weighted average of the model-specific predictions: $\hat{f}(\boldsymbol{x}) = \sum_{k=1}^K w_k \boldsymbol{x}^T \hat{\boldsymbol{\beta}}_k$. We provide the output using average weights, $w_k$, (i.e., $w_k = 1/K, \forall~ k ~ \in \{1,2,...,K\}$), or multi-study stacking weights, $w_k$.
 
 ```{r, eval = TRUE}
 # tuning grid
@@ -514,7 +508,7 @@ mod <- sMTL::smtl(y = y,
 
 # Cross Validation
 
-We can use our cross validation function to tune models. The syntax is similar to the `smtl` function except one can specify an optional tuning grid, and the number of folds (`nfolds`). For Domain Generalization problems, one needs to switch `multiTask=FALSE` to change the cross validation to a hold-one-domain-out cross validation approach appropriate for the problem. 
+We can use our cross validation function to tune models. The syntax is similar to the `smtl()` function except one can specify an optional tuning grid, and the number of folds (`nfolds`). For Domain Generalization problems, one needs to switch `multiTask=FALSE` to change the cross validation to a hold-one-domain-out cross validation approach appropriate for the problem. 
 
 Here we show a Multi-Task Learning problem in which we let the `cv.smtl()` function generate a grid of hyperparameters for tuning internally, tune and then we fit a final model with the tuned hyperparameters.
 
@@ -688,7 +682,7 @@ tn <- cv.smtl(y = y,
 
 ## Fitting Whole Paths
 
-Sometimes we may want to fit entire paths of solution for some fixed $s$. The algorithm is coded to fit whole paths to efficiently use warm starts to speed up the code substantially and identify better local minima. For that reason, if solutions for multiple values of tuning parameters, $(\lambda_1, \lambda_2, \lambda_z)$ are desired, it is far better to fit them jointly than to call `smtl` repeatedly. The code is almost identical except that now one or more of the tuning parameter arguments $(\lambda_1, \lambda_2, \lambda_z)$ are a vector not a scalar. Notice that $s$ is a scalar. We cannot put multiple values of $s$ in because the path of solutions is generated independently for each value of $s$.
+Sometimes we may want to fit entire paths of solution for some fixed $s$. The algorithm is coded to fit whole paths to efficiently use warm starts to speed up the code substantially and identify better local minima. For that reason, if solutions for multiple values of tuning parameters, $(\lambda_1, \lambda_2, \lambda_z)$ are desired, it is far better to fit them jointly than to call `smtl()` repeatedly. The code is almost identical except that now one or more of the tuning parameter arguments $(\lambda_1, \lambda_2, \lambda_z)$ are a vector not a scalar. Notice that $s$ is a scalar. We cannot put multiple values of $s$ in because the path of solutions is generated independently for each value of $s$.
 
 
 ```{r}
@@ -717,6 +711,8 @@ preds <- sMTL::predict(model = mod,
 
 
 # References
-Gabriel Loewinger, Kayhan Behdin, Kenneth Kishida, Giovanni Parmigiani and Rahul Mazumder. [Multi-Task Learning for Sparsity Pattern Heterogeneity: A Discrete Optimization Approach](https://scholar.google.com/scholar_url?url=https://arxiv.org/pdf/1707.08114&hl=en&sa=X&ei=6IbIYr7xMo-5yQTW04rIBw&scisig=AAGBfm12ecsT1Wt4UCLfp0fvnw_iHIjZ2w&oi=scholarr). arXiv: (2022).
+Gabriel Loewinger, Kayhan Behdin, Kenneth Kishida, Giovanni Parmigiani and Rahul Mazumder. [Multi-Task Learning for Sparsity Pattern Heterogeneity: A Discrete Optimization Approach](). arXiv: (2022).
+
+Prasad Patil and Giovanni Parmigiani. [Training replicable predictors in multiple studies](https://www.pnas.org/doi/full/10.1073/pnas.1708283115). Proceedings of the National Academy of Sciences (2018).
 
 Yu Zhang and Qiang Yang. [A Survey on Multi-Task Learning](https://scholar.google.com/scholar_url?url=https://arxiv.org/pdf/1707.08114&hl=en&sa=X&ei=6IbIYr7xMo-5yQTW04rIBw&scisig=AAGBfm12ecsT1Wt4UCLfp0fvnw_iHIjZ2w&oi=scholarr). IEEE TRANSACTIONS ON KNOWLEDGE AND DATA ENGINEERING (2021).
