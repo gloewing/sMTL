@@ -10,7 +10,6 @@
 #' @param multiTask A boolean
 #' @return A dataframe
 #' @import JuliaConnectoR
-#' @import dplyr
 #' @export
 
 grid.gen = function(y,

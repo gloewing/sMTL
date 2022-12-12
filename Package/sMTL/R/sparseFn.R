@@ -9,10 +9,7 @@
 #' @param LSitr Integer specifying do <LSitr> local search iterations on parameter values where we do actually do LS; NA does no local search
 #' @param LSspc Integer specifying number of hyperparameters to conduct local search: conduct local search every <LSspc>^th iteration. NA does no local search
 #' @param maxIter Integer specifying max iterations of coordinate descent
-#' @param s An integer
 #' @import JuliaConnectoR
-#' @import dplyr
-#' @importFrom caret createFolds
 #' @export
 #' 
 #######################
@@ -31,6 +28,8 @@ sparseCV <- function(data,
                      maxIter = 2500
                      ){
 
+    L0_MS_z <- juliaPath <- NULL # declare global variable for CRAN checks
+    
     # rename studies from 1:K
     num.trainStudy <- K <- length(unique(data$Study))
     data$Study <- as.numeric( as.factor( data$Study) ) # replace with new study labels from 1:K
@@ -149,7 +148,6 @@ sparseCV <- function(data,
           L0_MS_z3 <- juliaCall("include", paste0(juliaFnPath, "BlockComIHT_inexact_diffAS_tuneTest.jl") ) # separate active sets for each study
         }       
         
-        # maxEigen <- juliaCall("include", paste0(juliaFnPath, "eigen.jl") ) # max eigenvalue
         if(method == "MS2" & !exists("MS2"))       L0_MS2 <- juliaCall("include", paste0(juliaFnPath, "BlockComIHT_tune.jl") ) # \beta - \betaBar penalty
         if(method == "MS" & !exists("MS") )        L0_MS <- juliaCall("include", paste0(juliaFnPath, "BlockIHT_tune.jl") ) # Only L2 penalty
 
@@ -187,7 +185,7 @@ sparseCV <- function(data,
             # initialize warm starts with zeros
             ########################################
             if(fold == 1){
-              b <- matrix( 0, nr = ncol(data) - 1, ncol = Kfold) # for first initialization, initialize matrix
+              b <- matrix( 0, nrow = ncol(data) - 1, ncol = Kfold) # for first initialization, initialize matrix
               b_init <- b # initial warm start with largest cardinality for first fold
             }    
 

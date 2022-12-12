@@ -10,8 +10,6 @@
 #' @param LSspc Integer specifying number of hyperparameters to conduct local search: conduct local search every <LSspc>^th iteration. NA does no local search
 #' @param maxIter Integer specifying max iterations of coordinate descent
 #' @import JuliaConnectoR
-#' @import dplyr
-#' @importFrom caret createFolds
 #' @export
 
 sparseCV_MT <- function(data,
@@ -26,6 +24,8 @@ sparseCV_MT <- function(data,
                      maxIter = 2500
                      ){
 
+    L0_MS_z <- juliaPath <- createFolds <- NULL # declare global variable for CRAN checks
+  
     # rename studies from 1:K
     XY <- substr(colnames(data), 1, 1) # extract first letter and see which one is Y
     K <- length( which(XY == "Y") )
@@ -85,7 +85,7 @@ sparseCV_MT <- function(data,
             indxL[[study]] <- allRows[-Hind]
             
             # make sure no rho's are bigger than the number of covariates with non-zero variance
-            sdVec <- apply( as.matrix( data[ indxL[[study]], Xindx ] ), 2, sd) # standard deviation of features
+            sdVec <- apply( as.matrix( data[ indxL[[study]], Xindx ] ), 2, stats::sd) # standard deviation of features
             sdPos <- sum(sdVec > 0) # number of features with non-zero variance
             
             if( max(tune.grid$rho) > sdPos ){
@@ -172,7 +172,7 @@ sparseCV_MT <- function(data,
             ###################################################
             # remove features with no variability in this fold
             ###################################################
-            sdVec <- apply( as.matrix(data[indxList, Xindx ]), 2, sd) # standard deviation of features
+            sdVec <- apply( as.matrix(data[indxList, Xindx ]), 2, stats::sd) # standard deviation of features
             
             if( sum(sdVec == 0) > 0 ){
               
@@ -193,7 +193,7 @@ sparseCV_MT <- function(data,
             # randomly initialize warm starts
             ########################################
             if(fold == 1){
-              b <- matrix( 0, nr = ( length( Xindx2 ) + 1 ), ncol = length(Yindx) ) 
+              b <- matrix( 0, nrow = ( length( Xindx2 ) + 1 ), ncol = length(Yindx) ) 
               b_init <- b # initial warm start with largest cardinality for first fold
             } 
             # end warm start

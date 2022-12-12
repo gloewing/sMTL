@@ -4,7 +4,7 @@
 #' @param X A design (feature) matrix
 #' @param study An integer vector specifying the task ID
 #' @param grid A dataframe with column names "s", "lambda_1", "lambda_2" and "lambda_z" (if commonSupp = FALSE) with tuning values
-#' @param nfold An integer specifying number of CV folds
+#' @param nfolds An integer specifying number of CV folds
 #' @param commonSupp A boolean specifying whether the task models should have the same support
 #' @param multiTask A boolean only used if study/task indices are provided: used to distinguish between a Multi-Task Learning Tuning (TRUE) or Domain Generalization Tuning (FALSE)
 #' @param lambda_1 An optional boolean: if a grid is not provided, then set to TRUE if you want an automatic grid to be generated with non-zero values for this hyperparameter
@@ -17,6 +17,10 @@
 #' @param independent.regs A boolean of whether models are completely indpendent (only set to TRUE for benchmarks)
 #' @return A list
 #' @examples
+#' 
+#' # load package
+#' library(sMTL)
+#' smtl_setup()
 #' 
 #' #####################################################################################
 #' ##### simulate data
@@ -104,7 +108,6 @@
 #'     print(round(mod$beta[1:8,],2))
 #'     
 #' @import JuliaConnectoR
-#' @import dplyr
 #' @export
 
 cv.smtl = function(y, 
@@ -128,7 +131,7 @@ cv.smtl = function(y,
     nobs <- as.integer(np[1])
     p <- as.integer(np[2])
     
-    
+    lambda1 <- s <- NULL # global variable declaration for CRAN checks
     
     #########################################
     # tuning grid - generate if not provided
@@ -218,7 +221,7 @@ cv.smtl = function(y,
     ####################################
     if( is.matrix(y) ){
         
-        if( any( apply(y, 2, var)  == 0 ) )   stop("At least one task's y is constant")
+        if( any( apply(y, 2, stats::var)  == 0 ) )   stop("At least one task's y is constant")
         
         
         # make sure y is a matrix with multiple columns
@@ -234,7 +237,7 @@ cv.smtl = function(y,
     
     if( is.vector(y) ){
         
-        if( var(y) == 0 )   stop("y is constant")
+        if( stats::var(y) == 0 )   stop("y is constant")
         
         # y is a vector and no studies given then just L0 problem
         if( anyNA(study) ){

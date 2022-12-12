@@ -16,7 +16,7 @@ output:
 vignette: >
   %\VignetteIndexEntry{sMTL Vignette}
   %\VignetteEncoding{UTF-8}
-  %\VignetteEngine{rmarkdown::render}
+  %\VignetteEngine{knitr::rmarkdown} 
 ---
 
 ```{r setup, include = FALSE}
@@ -128,13 +128,13 @@ smtl_setup(installJulia = FALSE, installPackages = TRUE)
 3. The $\texttt{Julia}$ binary path must be set. If $\texttt{Julia}$ is installed with our function (item 1), this should be set automatically. If $\texttt{Julia}$ is already installed, simply open $\texttt{Julia}$ and type `>> println(Sys.BINDIR)` and this will show the binary path.
 
 The following code can be used where the string (instead of <>) after the code `path=` should be replaced with your computer's path for Julia's binary.
-```{r, eval=FALSE}
+```{r, eval=TRUE, show = TRUE}
 library(sMTL)
 smtl_setup(path = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin")
 ```
 
 The $\texttt{Julia}$ binary path is saved the first time the package is used after downloading, so one does not have to enter the path every time. Every time you load the package henceforth, one only need run the following.   
-```{r, eval = TRUE}
+```{r, eval = FALSE, show = TRUE}
 library(sMTL)
 smtl_setup()
 ```
@@ -210,9 +210,6 @@ $$
 To fit a path of solutions for the Common Support Multi-Task model with 5 non-zero coefficients (i.e., $s=5$) and a ridge penalty $\lambda_1 = 0.001$, we use the `smtl()` function and then print out the coefficients stored in `beta`:
 
 ```{r, eval = TRUE}
-library(sMTL)
-sMTL::smtl_setup(path = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin")
-
 mod <- sMTL::smtl(y = y, 
                 X = X, 
                 study = task, 

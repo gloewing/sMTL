@@ -1,4 +1,6 @@
 #' rhoScale: scale lambda_z depending on magnitude. For internal package use only.
+#' @param K An integer - number of tasks
+#' @param p An integer - dimension of covariates
 #' @param rhoVec A vector of integers
 #' @param itrs An integer
 #' @param seed An integer
@@ -6,7 +8,9 @@
 
 
 # finds scaling factors for lambda_z based on how big penalty can be
-rhoScale <- function(K, p, rhoVec, 
+rhoScale <- function(K, 
+                     p, 
+                     rhoVec, 
                      itrs = 10000,
                      seed = 1){
     
@@ -53,7 +57,7 @@ rhoScale <- function(K, p, rhoVec,
                 }
                 
                 # calcualte distance
-                resVec[itr] <- sum( dist( t(m) )^2 ) / 4
+                resVec[itr] <- sum( stats::dist( t(m) )^2 ) / 4
                 
             }
             

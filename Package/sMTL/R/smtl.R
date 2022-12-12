@@ -2,8 +2,10 @@
 #'
 #' @param y A numeric outcome vector (for multi-task/domain generalization problems) or a numeric outcome matrix (for multi-label problems)
 #' @param X A matrix of covariates
+#' @param study A vector of integers specifying task (or study/domain) ID. This should be set to NA for Multi-Label problems, but is required for Multi-Task and Domain Generalization problems.
 #' @param s An integer specifying the sparsity level
 #' @param commonSupp A boolean specifying whether to constrain solutions to have a common support
+#' @param warmStart A boolean specifying whether a warm start model is fit internally before the final model. Warm starts improve solution quality but will be slower.
 #' @param lambda_1 A numeric vector of ridge penalty hyperparameter values
 #' @param lambda_2 A numeric vector of betaBar (to borrow strength across coefficient values) penalty hperparameter values
 #' @param lambda_z A numeric vector zBar (to borrow strength across coefficient supports) penalty hperparameter values
@@ -15,6 +17,10 @@
 #' @param messageInd A boolean specifying whether to include messages (verbose)
 #' @return A model object (list)
 #' @examples
+#' 
+#' # load package
+#' library(sMTL)
+#' smtl_setup()
 #' 
 #' #####################################################################################
 #' ##### simulate data
@@ -103,6 +109,8 @@ smtl = function(y,
                 independent.regs = FALSE # shared active sets
                 ) {
     
+    var <- NULL # global variable declaration for CRAN checks
+    
     ###################
     # sanity checks
     ###################
@@ -168,7 +176,7 @@ smtl = function(y,
     
     if( is.vector(y) ){
         
-        if( var(y) == 0 )   stop("y is constant")
+        if( stats::var(y) == 0 )   stop("y is constant")
         
         # y is a vector and no studies given then just L0 problem
         if( anyNA(study) ){
@@ -203,10 +211,10 @@ smtl = function(y,
     if( length(lambda_z) == 1)   lambda_z <- rep(lambda_z, gridLen)
     
     # check if they are of the same length
-    if( var( c(length(lambda_1),
-               length(lambda_2),
-               length(lambda_z)) 
-             ) != 0 )    stop("Lengths of vectors lambda_1, lambda_2 and lambda_z must be of the same length")
+    if( stats::var( c(length(lambda_1),
+                       length(lambda_2),
+                       length(lambda_z)) 
+                        ) != 0 )    stop("Lengths of vectors lambda_1, lambda_2 and lambda_z must be of the same length")
     
     grid <- data.frame(lambda_1 = lambda_1,
                        lambda_2 = lambda_2,

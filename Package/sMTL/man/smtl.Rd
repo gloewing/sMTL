@@ -27,9 +27,13 @@ smtl(
 
 \item{X}{A matrix of covariates}
 
+\item{study}{A vector of integers specifying task (or study/domain) ID. This should be set to NA for Multi-Label problems, but is required for Multi-Task and Domain Generalization problems.}
+
 \item{s}{An integer specifying the sparsity level}
 
 \item{commonSupp}{A boolean specifying whether to constrain solutions to have a common support}
+
+\item{warmStart}{A boolean specifying whether a warm start model is fit internally before the final model. Warm starts improve solution quality but will be slower.}
 
 \item{lambda_1}{A numeric vector of ridge penalty hyperparameter values}
 
@@ -56,6 +60,10 @@ A model object (list)
 smtl: make model-fitting function
 }
 \examples{
+
+# load package
+library(sMTL)
+smtl_setup()
 
 #####################################################################################
 ##### simulate data

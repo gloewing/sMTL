@@ -3,7 +3,6 @@
 #' @param beta A matrix
 #' @export
 
-
 multiTaskRmse <- function(data, beta){
     K <- length( unique( data$Study ) ) # number of studies
     trainSet <- vector(length = K) # list for indices

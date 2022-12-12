@@ -37,8 +37,6 @@ sparseL0Tn_iht(
 \item{LSspc}{Integer specifying number of hyperparameters to conduct local search: conduct local search every <LSspc>^th iteration. NA does no local search}
 
 \item{maxIter}{Integer specifying max iterations of coordinate descent}
-
-\item{method}{Sting specifying regression method}
 }
 \description{
 sparseCV_L0: cross-validation functions. For internal package use only.

@@ -9,6 +9,8 @@
 
 reName_cv <- function(x){
     
+    lambda1 <- lambda2 <- rho <- NULL # global variable declaration for CRAN checks
+    
     # rename parameters for tuning function
     if(is.object(x$best)){
         x$best <- dplyr::rename(x$best, s = rho)

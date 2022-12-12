@@ -2,7 +2,6 @@
 #' @param data Matrix with outcome and design matrix
 #' @param tune.grid A data.frame of tuning values
 #' @param hoso String specifying tuning type
-#' @param method Sting specifying regression method
 #' @param nfolds String or integer specifying number of folds
 #' @param juliaFnPath String specifying path to Julia binary
 #' @param trainingStudy Integer specifying index of training study
@@ -11,7 +10,6 @@
 #' @param LSspc Integer specifying number of hyperparameters to conduct local search: conduct local search every <LSspc>^th iteration. NA does no local search
 #' @param maxIter Integer specifying max iterations of coordinate descent
 #' @import JuliaConnectoR
-#' @importFrom caret createFolds
 #' @export
 
 # this function is called upon by sparseCV above and does L0 tuning with L2 penalty with various

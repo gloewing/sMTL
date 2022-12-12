@@ -1,11 +1,14 @@
 #' seReturn: find smallest rho within 1 se of smallest cv error. For internal package use.
 #' @param x dataframe
+#' @import dplyr
 #' @export
 
 # 1se rule for selecting rho
 
 seReturn <- function(x){
     
+    rho <- avg <- NULL # global variable declaration for CRAN checks
+        
     # pre-process
     e <- x %>% 
         dplyr::as_tibble() %>% 
@@ -18,7 +21,7 @@ seReturn <- function(x){
         dplyr::group_by(rho) %>% 
         dplyr::summarise(m = min(avg)) # get the minimum for each rho
     
-    sdVal <- sd(minVec$m) # get standard deviation across minima
+    sdVal <- stats::sd(minVec$m) # get standard deviation across minima
     
     mindx <- which(minVec$m <= min(minVec$m) + sdVal )[1] # get smallest rho that is within rrange
     rhoStar <- minVec$rho[mindx] # index of  best tuning values for this rho

@@ -21,14 +21,16 @@ smtl_setup: setup Julia path and/or install Julia or Julia packages
 }
 \examples{
 
-#####################################################################################
-##### First Time Loading, Julia is Installed and Julia Path is Known ######
-#####################################################################################
-smtl_setup(path = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin", installJulia = FALSE, installPackages = FALSE)"
+##################################################################
+# First Time Loading, Julia is Installed and Julia Path is Known 
+##################################################################
+smtl_setup(path = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin", 
+           installJulia = FALSE, 
+           installPackages = FALSE)"
 
-#######################################################################################################
-##### If you have run smtl_setup() before, then path specification shouldn't be necessary ######
-#######################################################################################################
+#####################################################################################
+# If you have run smtl_setup() before, then path specification shouldn't be necessary
+#####################################################################################
 smtl_setup(path = NULL, installJulia = FALSE, installPackages = FALSE)"
 
 #####################################################################################
@@ -39,5 +41,7 @@ smtl_setup(path = NULL, installJulia = TRUE, installPackages = FALSE)"
 #####################################################################################
 ##### First Time Loading, Julia is Installed But Packages NEED INSTALLATION  ######
 #####################################################################################
-smtl_setup(path = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin", installJulia = TRUE, installPackages = TRUE)"
+smtl_setup(path = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin", 
+           installJulia = TRUE, 
+           installPackages = TRUE)"
 }

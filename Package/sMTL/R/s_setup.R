@@ -6,14 +6,16 @@
 #' @return A message
 #' @examples
 #' 
-#' #####################################################################################
-#' ##### First Time Loading, Julia is Installed and Julia Path is Known ######
-#' #####################################################################################
-#' smtl_setup(path = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin", installJulia = FALSE, installPackages = FALSE)"
+#' ##################################################################
+#' # First Time Loading, Julia is Installed and Julia Path is Known 
+#' ##################################################################
+#' smtl_setup(path = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin", 
+#'            installJulia = FALSE, 
+#'            installPackages = FALSE)"
 #' 
-#' #######################################################################################################
-#' ##### If you have run smtl_setup() before, then path specification shouldn't be necessary ######
-#' #######################################################################################################
+#' #####################################################################################
+#' # If you have run smtl_setup() before, then path specification shouldn't be necessary
+#' #####################################################################################
 #' smtl_setup(path = NULL, installJulia = FALSE, installPackages = FALSE)"
 #' 
 #' #####################################################################################
@@ -24,7 +26,9 @@
 #' #####################################################################################
 #' ##### First Time Loading, Julia is Installed But Packages NEED INSTALLATION  ######
 #' #####################################################################################
-#' smtl_setup(path = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin", installJulia = TRUE, installPackages = TRUE)"
+#' smtl_setup(path = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin", 
+#'            installJulia = TRUE, 
+#'            installPackages = TRUE)"
 #' @import JuliaCall
 #' @export
 
@@ -40,7 +44,7 @@ smtl_setup = function(path = NULL, installJulia = FALSE, installPackages = FALSE
         smtl_path <- paste0( .libPaths("sMTL"), "/sMTL/julia_path/" )
         
         # read julia path
-        julia_path <- as.character( read.table(paste0(smtl_path, "julia.path.txt"),  stringsAsFactor = FALSE ) )
+        julia_path <- as.character( utils::read.table(paste0(smtl_path, "julia.path.txt"),  stringsAsFactor = FALSE ) )
         
         if(julia_path == "NA"){
             # if no path given and julia is not to be installed and the path has not been updated then use code from XRJulia to find path

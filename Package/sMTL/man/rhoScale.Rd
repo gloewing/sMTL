@@ -7,6 +7,10 @@
 rhoScale(K, p, rhoVec, itrs = 10000, seed = 1)
 }
 \arguments{
+\item{K}{An integer - number of tasks}
+
+\item{p}{An integer - dimension of covariates}
+
 \item{rhoVec}{A vector of integers}
 
 \item{itrs}{An integer}

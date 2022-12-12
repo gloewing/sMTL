@@ -31,6 +31,8 @@ cv.smtl(
 
 \item{grid}{A dataframe with column names "s", "lambda_1", "lambda_2" and "lambda_z" (if commonSupp = FALSE) with tuning values}
 
+\item{nfolds}{An integer specifying number of CV folds}
+
 \item{commonSupp}{A boolean specifying whether the task models should have the same support}
 
 \item{multiTask}{A boolean only used if study/task indices are provided: used to distinguish between a Multi-Task Learning Tuning (TRUE) or Domain Generalization Tuning (FALSE)}
@@ -50,8 +52,6 @@ cv.smtl(
 \item{messageInd}{A boolean (verbose) of whether to print messages}
 
 \item{independent.regs}{A boolean of whether models are completely indpendent (only set to TRUE for benchmarks)}
-
-\item{nfold}{An integer specifying number of CV folds}
 }
 \value{
 A list
@@ -60,6 +60,10 @@ A list
 cv.smtl: cross-validation function
 }
 \examples{
+
+# load package
+library(sMTL)
+smtl_setup()
 
 #####################################################################################
 ##### simulate data

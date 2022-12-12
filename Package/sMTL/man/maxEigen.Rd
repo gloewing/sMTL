@@ -10,8 +10,6 @@ maxEigen(X, intercept = TRUE)
 \item{X}{A matrix.}
 
 \item{intercept}{A boolean.}
-
-\item{path}{A string.}
 }
 \value{
 A scalar.
@@ -29,5 +27,6 @@ set.seed(1)
 # create training dataset with 2 covariates
 X <- matrix(rnorm(2000), ncol = 2)
 
-e <- maxEigen(X = as.matrix( X, intercept = FALSE), path = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin)"
+e <- maxEigen(X = as.matrix( X, intercept = FALSE), 
+     path = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin)"
 }

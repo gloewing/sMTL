@@ -115,7 +115,7 @@ predict = function(model,
                                        thresh = 1e-10,
                                        lower.limits = 0)
                 
-                w <- coef(fitW)
+                w <- glmnet::coef.glmnet(fitW)
                 rm(fitW)
                 
                 avg_preds <- rowMeans(preds)
