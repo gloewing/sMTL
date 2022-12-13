@@ -7,13 +7,9 @@
 reName_cv(x)
 }
 \arguments{
-\item{x}{A list}
+\item{x}{A list
+@return A list with elements renamed}
 }
 \description{
 reName_cv: rename output from CV. For internal package use only.
-}
-\examples{
-
-reName_cv(list(best = testLambda, best.1se = se1, rmse = rmseMat, avg = avg))
- @return A list with elements renamed
 }

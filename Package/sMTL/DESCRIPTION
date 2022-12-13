@@ -14,9 +14,11 @@ Depends: R (>= 3.4.0)
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Imports: dplyr,
+Imports: glmnet,
 	JuliaCall,
-	JuliaConnectoR
+	JuliaConnectoR,
+	caret,
+	dplyr
 RoxygenNote: 7.1.1
 Suggests: 
     knitr,

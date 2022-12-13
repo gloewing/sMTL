@@ -1,9 +1,6 @@
 #' reName_cv: rename output from CV. For internal package use only.
 #'
 #' @param x A list
-#' @examples
-#' 
-#' reName_cv(list(best = testLambda, best.1se = se1, rmse = rmseMat, avg = avg))
 #'  @return A list with elements renamed
 #' @export
 

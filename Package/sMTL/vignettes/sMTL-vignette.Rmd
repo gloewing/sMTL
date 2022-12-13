@@ -128,8 +128,9 @@ smtl_setup(installJulia = FALSE, installPackages = TRUE)
 3. The $\texttt{Julia}$ binary path must be set. If $\texttt{Julia}$ is installed with our function (item 1), this should be set automatically. If $\texttt{Julia}$ is already installed, simply open $\texttt{Julia}$ and type `>> println(Sys.BINDIR)` and this will show the binary path.
 
 The following code can be used where the string (instead of <>) after the code `path=` should be replaced with your computer's path for Julia's binary.
-```{r, eval=TRUE, show = TRUE}
+```{r, eval=TRUE, show = FALSE}
 library(sMTL)
+# Jpath <- system.file("julia.path.txt", package="sMTL")
 smtl_setup(path = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin")
 ```
 

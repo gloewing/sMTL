@@ -62,6 +62,7 @@ smtl: make model-fitting function
 \examples{
 
 # load package
+\dontrun{
 library(sMTL)
 smtl_setup()
 
@@ -101,8 +102,7 @@ for(j in 1:K){
 #####################################################################################
 ##### fit Multi-Task Learning Model for Heterogeneous Support
 #####################################################################################
-    library(sMTL)
-    sMTL::smtl_setup(path = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin")
+  
     mod <- sMTL::smtl(y = y, 
                       X = X, 
                       study = task, 
@@ -131,5 +131,6 @@ for(j in 1:K){
                       lambda_2 = 0.5)
     
     print(round(mod$beta[1:8,],2))
+    }
     
 }

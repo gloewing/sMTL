@@ -19,6 +19,7 @@
 #' @examples
 #' 
 #' # load package
+#' \dontrun{
 #' library(sMTL)
 #' smtl_setup()
 #' 
@@ -58,8 +59,7 @@
 #' #####################################################################################
 #' ##### fit Multi-Task Learning Model for Heterogeneous Support
 #' #####################################################################################
-#'     library(sMTL)
-#'     sMTL::smtl_setup(path = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin")
+#'   
 #'     mod <- sMTL::smtl(y = y, 
 #'                       X = X, 
 #'                       study = task, 
@@ -88,6 +88,7 @@
 #'                       lambda_2 = 0.5)
 #'     
 #'     print(round(mod$beta[1:8,],2))
+#'     }
 #'     
 #' @import JuliaConnectoR
 #' @export

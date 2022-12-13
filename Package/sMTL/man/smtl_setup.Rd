@@ -21,6 +21,7 @@ smtl_setup: setup Julia path and/or install Julia or Julia packages
 }
 \examples{
 
+\dontrun{
 ##################################################################
 # First Time Loading, Julia is Installed and Julia Path is Known 
 ##################################################################
@@ -44,4 +45,7 @@ smtl_setup(path = NULL, installJulia = TRUE, installPackages = FALSE)"
 smtl_setup(path = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin", 
            installJulia = TRUE, 
            installPackages = TRUE)"
+           
+           }
+           
 }

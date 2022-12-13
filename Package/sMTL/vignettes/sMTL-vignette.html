@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2022-12-11" />
+<meta name="date" content="2022-12-12" />
 
 <title>sMTL Vignette</title>
 
@@ -330,7 +330,7 @@ div.tocify {
 <h1 class="title toc-ignore">sMTL Vignette</h1>
 <h4 class="author">Gabriel Loewinger, Kayhan Behdin, Giovanni Parmigiani, Rahul Mazumder</h4>
 <h4 class="author">National Institute on Mental Health (NIH), Harvard University, Massachusetts Institute of Technology (MIT)</h4>
-<h4 class="date">2022-12-11</h4>
+<h4 class="date">2022-12-12</h4>
 
 </div>
 
@@ -399,7 +399,8 @@ div.tocify {
 </ol>
 <p>The following code can be used where the string (instead of &lt;&gt;) after the code <code>path=</code> should be replaced with your computer’s path for Julia’s binary.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sMTL)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">smtl_setup</span>(<span class="at">path =</span> <span class="st">&quot;/Applications/Julia-1.5.app/Contents/Resources/julia/bin&quot;</span>)</span></code></pre></div>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Jpath &lt;- system.file(&quot;julia.path.txt&quot;, package=&quot;sMTL&quot;)</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">smtl_setup</span>(<span class="at">path =</span> <span class="st">&quot;/Applications/Julia-1.5.app/Contents/Resources/julia/bin&quot;</span>)</span></code></pre></div>
 <p>The <span class="math inline">\(\texttt{Julia}\)</span> binary path is saved the first time the package is used after downloading, so one does not have to enter the path every time. Every time you load the package henceforth, one only need run the following.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sMTL)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">smtl_setup</span>()</span></code></pre></div>
@@ -473,17 +474,14 @@ div.tocify {
     &amp; \mbox{subject to: }~ ||\boldsymbol{\beta}_k ||_0 \leq s, ~\forall~k \in \{1,2,...,K\} \notag 
 \end{aligned} 
 \]</span> To fit a path of solutions for the Common Support Multi-Task model with 5 non-zero coefficients (i.e., <span class="math inline">\(s=5\)</span>) and a ridge penalty <span class="math inline">\(\lambda_1 = 0.001\)</span>, we use the <code>smtl()</code> function and then print out the coefficients stored in <code>beta</code>:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sMTL)</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>sMTL<span class="sc">::</span><span class="fu">smtl_setup</span>(<span class="at">path =</span> <span class="st">&quot;/Applications/Julia-1.5.app/Contents/Resources/julia/bin&quot;</span>)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> sMTL<span class="sc">::</span><span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">X =</span> X, </span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">study =</span> task, </span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>                <span class="at">s =</span> <span class="dv">5</span>, </span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>                <span class="at">commonSupp =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>                <span class="at">lambda_1 =</span> <span class="fl">0.001</span>)</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>(mod<span class="sc">$</span>beta[<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>,],<span class="dv">2</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> sMTL<span class="sc">::</span><span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">X =</span> X, </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">study =</span> task, </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">s =</span> <span class="dv">5</span>, </span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">commonSupp =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">lambda_1 =</span> <span class="fl">0.001</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>(mod<span class="sc">$</span>beta[<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>,],<span class="dv">2</span>))</span></code></pre></div>
 <pre><code>#&gt;           beta_1 beta_2 beta_3 beta_4
 #&gt; Intercept  -0.37  -0.60   0.36   1.13
 #&gt; V1          1.51  -0.11   1.16   1.49

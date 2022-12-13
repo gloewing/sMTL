@@ -4,7 +4,6 @@
 #' @param intercept A boolean.
 #' @return A scalar.
 #' @examples
-#' set.seed(1)
 #'
 #' ##########################
 #' ##### Simulate Data ######
@@ -13,8 +12,10 @@
 #' # create training dataset with 2 covariates
 #' X <- matrix(rnorm(2000), ncol = 2)
 #'
+#' \dontrun{
 #' e <- maxEigen(X = as.matrix( X, intercept = FALSE), 
-#'      path = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin)"
+#'      path = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin)" }
+#'      
 #' @import JuliaConnectoR
 #' @export
 

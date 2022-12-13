@@ -13,6 +13,7 @@
 #' ##### First Time Loading, Julia is Installed and Julia Path is Known ######
 #' #####################################################################################
 #' # fit model
+#' \dontrun{
 #' mod <- smtl(y = y, 
 #'             X = X, 
 #'             study = task, 
@@ -25,7 +26,7 @@
 #' preds <- sMTL::predict(model = mod, 
 #'                        X = X, 
 #'                        lambda_1 = 0.1, 
-#'                        lambda_z = 0.01)
+#'                        lambda_z = 0.01) }
 
 predict = function(model, 
                     X, 

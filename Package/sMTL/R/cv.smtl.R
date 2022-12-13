@@ -18,10 +18,6 @@
 #' @return A list
 #' @examples
 #' 
-#' # load package
-#' library(sMTL)
-#' smtl_setup()
-#' 
 #' #####################################################################################
 #' ##### simulate data
 #' #####################################################################################
@@ -49,11 +45,12 @@
 #'     e <- rnorm(n_k)
 #'     y[indx] <- B[1, j] + X[indx,] %*% B[-1,j] + e
 #'     }
-#'     colnames(B) <- paste0("beta_", 1:K)
-#'     rownames(B) <- paste0("X_", 1:(p+1))
 #'     
-#'     print("Betas")
-#'     print(round(B[1:8,],2))
+#' colnames(B) <- paste0("beta_", 1:K)
+#' rownames(B) <- paste0("X_", 1:(p+1))
+#'     
+#' print("Betas")
+#' print(round(B[1:8,],2))
 #'     
 #'     ###########################
 #'     # custom tuning grid
@@ -66,6 +63,7 @@
 #'     #################################################
 #'     # cross validation with custom tuning grid
 #'     ##################################################
+#'     \dontrun{
 #'     tn <- cv.smtl(y = y, 
 #'                   X = X, 
 #'                   study = task, 
@@ -105,7 +103,9 @@
 #'                    lambda_1 = tn$best.1se$lambda_1,
 #'                    lambda_z = tn$best.1se$lambda_z)
 #'                    
-#'     print(round(mod$beta[1:8,],2))
+#'      print(round(mod$beta[1:8,],2))
+#'                    }
+#'                    
 #'     
 #' @import JuliaConnectoR
 #' @export
