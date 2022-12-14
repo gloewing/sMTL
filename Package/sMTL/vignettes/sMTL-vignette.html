@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2022-12-12" />
+<meta name="date" content="2022-12-13" />
 
 <title>sMTL Vignette</title>
 
@@ -330,7 +330,7 @@ div.tocify {
 <h1 class="title toc-ignore">sMTL Vignette</h1>
 <h4 class="author">Gabriel Loewinger, Kayhan Behdin, Giovanni Parmigiani, Rahul Mazumder</h4>
 <h4 class="author">National Institute on Mental Health (NIH), Harvard University, Massachusetts Institute of Technology (MIT)</h4>
-<h4 class="date">2022-12-12</h4>
+<h4 class="date">2022-12-13</h4>
 
 </div>
 
@@ -399,8 +399,7 @@ div.tocify {
 </ol>
 <p>The following code can be used where the string (instead of &lt;&gt;) after the code <code>path=</code> should be replaced with your computer’s path for Julia’s binary.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sMTL)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Jpath &lt;- system.file(&quot;julia.path.txt&quot;, package=&quot;sMTL&quot;)</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">smtl_setup</span>(<span class="at">path =</span> <span class="st">&quot;/Applications/Julia-1.5.app/Contents/Resources/julia/bin&quot;</span>)</span></code></pre></div>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">smtl_setup</span>(<span class="at">path =</span> <span class="st">&quot;/Applications/Julia-1.5.app/Contents/Resources/julia/bin&quot;</span>)</span></code></pre></div>
 <p>The <span class="math inline">\(\texttt{Julia}\)</span> binary path is saved the first time the package is used after downloading, so one does not have to enter the path every time. Every time you load the package henceforth, one only need run the following.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sMTL)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">smtl_setup</span>()</span></code></pre></div>
