@@ -7,7 +7,7 @@ Authors@R: c(person("Gabriel", "Loewinger", email = "gloewinger@gmail.com", role
 		person("Rahul", "Mazumder", email = "rahulmaz@mit.edu", role = c("ths")),
 		person("National Science Foundation", "Grant DMS1810829", role = c("fnd")),
 		person("National Institutes of Health", "Grant T32 AI 007358", role = c("fnd")))
-Description: Implements sparse multi-Task learning and sparse domain generalization algorithms.
+Description: Implements sparse Multi-Task Learning and sparse domain generalization algorithms.
 		<doi:10.1101/856385>.
 Maintainer: Gabriel Loewinger <gloewinger@gmail.com>
 Depends: R (>= 3.4.0)
