@@ -1,7 +1,14 @@
 # Multi-Task Learning for Sparsity Pattern Heterogeneity: A Discrete Optimiztion Approach (sMTL)
 ## Repository Description
 
-Repository for code for R Package `sMTL` under development and for code to run analyses and reproduce figures in the paper.
+Repository for the development version of the R Package `sMTL` as well as code to run analyses and reproduce figures in the paper.
+
+The development version of the R Package `sMTL` can be downloaded as follows:
+
+```{R}
+library(devtools)
+install_github("gloewing/sMTL", subdir = "Package/sMTL")
+```
 
 <br />
 <br />
