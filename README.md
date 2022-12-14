@@ -11,7 +11,7 @@ install_github("gloewing/sMTL", subdir = "Package/sMTL")
 ```
 
 ##  Usage
-For a tutorial, please download the html version of [sMTL's Vignette](https://github.com/gloewing/sMTL/tree/main/Package/sMTL/vignettes). 
+For a tutorial, please refer to [sMTL's Vignette](https://github.com/gloewing/sMTL/tree/main/Package/sMTL/vignettes). 
 
 <br />
 <br />
