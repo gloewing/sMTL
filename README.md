@@ -3,6 +3,10 @@
 
 Repository for the development version of the R Package `sMTL` as well as code to run analyses and reproduce figures in the associated manuscript.
 
+## sMTL R Package
+
+## Installation
+
 The development version of the R Package `sMTL` can be downloaded as follows:
 
 ```{R}
@@ -10,7 +14,7 @@ library(devtools)
 install_github("gloewing/sMTL", subdir = "Package/sMTL")
 ```
 
-##  Usage
+###  Package Usage
 For a tutorial, please refer to [sMTL's Vignette](https://github.com/gloewing/sMTL/tree/main/Package/sMTL/vignettes). 
 
 <br />
