@@ -19,8 +19,10 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown} 
 ---
 
-```{r setup, include = FALSE}
+```{r setup, echo = FALSE}
 knitr::opts_chunk$set(comment = "#>", warning=FALSE, message=FALSE)
+library(sMTL)
+# output: rmarkdown::html_vignette
 ```
 
 ```{r echo = FALSE}
@@ -72,7 +74,7 @@ $$
 \end{aligned} 
 $$
 
-where $\boldsymbol{\beta}_k$ is the vector of coefficients associated with dataset $k$, and $\mbox{Supp}(\boldsymbol{\beta}_k) =\boldsymbol{z}_k = \mathbb{1}{(\boldsymbol{\beta}_k \neq \mathbf{1})}$, the ``support'' of $\boldsymbol{\beta}_k$, i.e., a $p \times 1$ indicator vector of whether the entries of $\boldsymbol{\beta}_k$ are non-zero. Note $||\boldsymbol{\beta}_k||_0 = \sum_{j=1}^p z_{k,j}$, where the $\ell_0$ norm, $||\boldsymbol{u}||_0$, equals the number of non-zero entries in the vector $\boldsymbol{u}$. For example,
+where $\boldsymbol{\beta}_k$ is the vector of coefficients associated with dataset (task) $k$, and $\mbox{Supp}(\boldsymbol{\beta}_k) =\boldsymbol{z}_k = \mathbb{1}{(\boldsymbol{\beta}_k \neq \mathbf{1})}$, the ``support'' of $\boldsymbol{\beta}_k$, i.e., a $p \times 1$ indicator vector of whether the entries of $\boldsymbol{\beta}_k$ are non-zero. Note $||\boldsymbol{\beta}_k||_0 = \sum_{j=1}^p z_{k,j}$, where the $\ell_0$ norm, $||\boldsymbol{u}||_0$, equals the number of non-zero entries in the vector $\boldsymbol{u}$. For example,
 
 $$
 \begin{aligned} 
@@ -96,18 +98,29 @@ The Common Support problem ensures that each of the $K$ task-specific (or datase
 
 The parameter $\lambda_2$ shrinks the $\boldsymbol{\beta}_k$ towards a common $\bar{\boldsymbol{\beta}} = \frac{1}{K}\sum_{k=1}^K \boldsymbol{\beta}_k$. The parameter $\lambda_1$ controls the strength of $\ell_2$ (Ridge) shrinkage where $\lambda_1||\mathbb{B}||_2^2 = \lambda_1 \sum_{k=1}^K ||\boldsymbol{\beta}_k||_2^2$. Adding either of these shrinkage terms can be effective in reducing the risk of overfitting and often results in better predictive models. We recommend using either but not both of these regularization terms. For Hetergeneous Support problems $\lambda_z$ controls the degree to which the $\boldsymbol{z}$, the supports of the $\boldsymbol{\beta}_k$, are shrunk towards a common $\bar{\boldsymbol{z}} = \frac{1}{K}\sum_{k=1}^K \boldsymbol{z}_k$. When $\lambda_z$ is high, this results in solutions equivalent to the Common Support approach. The fitting is done over a grid of $\lambda_1$, $\lambda_2$ and $\lambda_z$ values to generate a regularization path. 
 
-The algorithms provided in `sMTL` are based on block coordinate descent and local combinatorial search. Numerous computational tricks and heuristics are used to speed up the algorithms and improve the solution quality. These heuristics include warm starts and active set convergence. For more details on the algorithms used, please refer to our paper [Multi-Task Learning for Sparsity Pattern Heterogeneity: A Discrete Optimization Approach](https://pubsonline.informs.org/doi/10.1287/opre.2019.1919). 
+The algorithms provided in `sMTL` are based on block coordinate descent and local combinatorial search. Numerous computational tricks and heuristics are used to speed up the algorithms and improve the solution quality. These heuristics include warm starts and active set convergence. For more details on the algorithms used, please refer to our paper "Multi-Task Learning for Sparsity Pattern Heterogeneity: A Discrete Optimization Approach."
+<!-- [Multi-Task Learning for Sparsity Pattern Heterogeneity: A Discrete Optimization Approach](https://pubsonline.informs.org/doi/10.1287/opre.2019.1919). -->
 
 The toolkit is implemented in Julia along with an easy-to-use R interface. In this vignette, we provide a tutorial on using the R interface. We demonstrate how use `sMTL`'s main functions for fitting models and cross-validation.
+
+Note that model functions assume the design (feature) matrices are a $\texttt{matrix}$ data-type (not $\texttt{data.frames}$). Thus any conversion of factors/categorical variables to the corresponding design matrix must be down before using the `sMTL` functions.
+  
 
 # Installation
 `sMTL` can be installed directly from CRAN by executing:
 ```{r, eval=FALSE}
 install.packages("sMTL")
 ```
+
+The development version of `sMTL` can be downloaded from github by executing:
+
+```{r, eval=FALSE}
+library(devtools)
+install_github("gloewing/sMTL", subdir = "Package/sMTL")
+```
 <!-- If you face installation issues, please refer to the [Installation Troubleshooting Wiki](https://github.com/hazimehh/$\ell_0$Learn/wiki/Installation-Troubleshooting). If the issue is not resolved, you can submit an issue on [$\ell_0$Learn's Github Repo](https://github.com/hazimehh/$\ell_0$Learn). -->
 
-The very first time we use `sMTL` we have to keep in mind the following (after this initial setup, subsequent uses of the `sMTL` package do not require any additional steps beyond the standard package load): 
+The very first time we use `sMTL` we have to keep in mind the following: 
 
 # Package Setup
 
@@ -118,28 +131,28 @@ library(sMTL)
 smtl_setup(installJulia = TRUE, installPackages = TRUE)
 ```
 
-2. A few $\texttt{Julia}$ packages are required (e.g., $\texttt{TSVD}$, $~\texttt{LinearAlgebra}$, $~\texttt{Statistics}$). We include a function to automatically install these if they are not already. If $\texttt{Julia}$ is installed but the packages are not, the function can install them without re-installing $\texttt{Julia}$. If you ran the code for 1. above, you can ignore the rest of the set-up (1-3) and skip to fitting functions.
+2. A few $\texttt{Julia}$ packages are required (e.g., $\texttt{TSVD}$, $~\texttt{LinearAlgebra}$, $~\texttt{Statistics}$). We include a function to automatically install these if they are not already. If $\texttt{Julia}$ is installed but the packages are not, the function can install them without re-installing $\texttt{Julia}$. If you ran the code for 1. above, you can ignore the rest of the set-up (2-3) and skip to fitting functions.
 
 ```{r, eval=FALSE}
 library(sMTL)
 smtl_setup(installJulia = FALSE, installPackages = TRUE)
 ```
 
-3. The $\texttt{Julia}$ binary path must be set. If $\texttt{Julia}$ is installed with our function (item 1), this should be set automatically. If $\texttt{Julia}$ is already installed, simply open $\texttt{Julia}$ and type `>> println(Sys.BINDIR)` and this will show the binary path.
+3. The $\texttt{Julia}$ binary path must be set. If $\texttt{Julia}$ is installed with our function (item 1), this should be set automatically. If $\texttt{Julia}$ was already installed, simply open $\texttt{Julia}$ and type `>> println(Sys.BINDIR)` and this will show the binary path.
 
-The following code can be used where the string (instead of <>) after the code `path=` should be replaced with your computer's path for Julia's binary.
-```{r, eval=TRUE, show = FALSE}
+The following code can be used where the string after the code `path=` should be replaced with your computer's path for Julia's binary.
+```{r, eval=FALSE}
 library(sMTL)
 smtl_setup(path = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin")
 ```
 
-The $\texttt{Julia}$ binary path is saved the first time the package is used after downloading, so one does not have to enter the path every time. Every time you load the package henceforth, one only need run the following.   
-```{r, eval = FALSE, show = TRUE}
+The $\texttt{Julia}$ binary path is saved internally the first time `smtl_setup()` is called, so one does not have to enter the binary path every time (assuming the initial binary path is correct). Every time you load the package henceforth, one only need run the following.   
+```{r, eval = FALSE}
 library(sMTL)
 smtl_setup()
 ```
 Failure to run this function above will leave R unable to locate $\texttt{Julia}$ and the `sMTL` package functions will not work. 
-
+  
 # Tutorial Guide
 To illustrate the main `sMTL` functions, we start by generating synthetic datasets and proceed by fitting models. We use terminology from Zhang & Yang, 2021. The package has three main machine learning problems it aims to solve:
 
@@ -184,7 +197,7 @@ for(j in 1:K){
     y[indx] <- B[1, j] + X[indx,] %*% B[-1,j] + e
 }
 colnames(B) <- paste0("beta_", 1:K)
-rownames(B) <- paste0("X_", 1:(p+1))
+rownames(B) <- c("Intercept", paste0( "X_", 1:p ) )
 ```
 
 Note that the `task` vector is a $N \times 1$ vector where element $i$ indicates the task index ($\in \{1,2,...,K\}$) of observation $i$.
@@ -198,18 +211,18 @@ We will use `sMTL` to estimate $\mathbb{B}$ from the data.
 
 We will start with fitting Common Support models.
 
-##  1) Common Support Models with Ridge Penalty
+##  1a) Common Support Models with Ridge Penalty
 We start with the following model where we abbreviate the constraints above for conciseness.
 
 $$
 \begin{aligned} 
-    &\underset{\boldsymbol{z},~\mathbb{B} }{\mbox{min }} \sum_{k=1}^K \frac{1}{n_k} ||  \mathbf{y}_k - \mathbb{X}_k \boldsymbol{\beta}_k ||_2^2 + \lambda_1 ||\mathbb{B}||_2^2 \quad \quad \mbox{(Common ~Support)}  \\
+    &\underset{\boldsymbol{z},~\mathbb{B} }{\mbox{min }} \sum_{k=1}^K \frac{1}{n_k} ||  \mathbf{y}_k - \mathbb{X}_k \boldsymbol{\beta}_k ||_2^2 + \lambda_1 ||\mathbb{B}||_2^2 \quad \quad \mbox{(Common Support)}  \\
     & \mbox{subject to: }~ ||\boldsymbol{\beta}_k ||_0 \leq s, ~\forall~k \in \{1,2,...,K\} \notag 
 \end{aligned} 
 $$
 To fit a path of solutions for the Common Support Multi-Task model with 5 non-zero coefficients (i.e., $s=5$) and a ridge penalty $\lambda_1 = 0.001$, we use the `smtl()` function and then print out the coefficients stored in `beta`:
 
-```{r, eval = TRUE}
+```{r, eval = FALSE}
 mod <- sMTL::smtl(y = y, 
                 X = X, 
                 study = task, 
@@ -220,41 +233,61 @@ mod <- sMTL::smtl(y = y,
 print(round(mod$beta[1:8,],2))
 ```
 
-As we can see the solutions have a common support, that is each row is either all zeros or all non-zeros.
+```{r, echo = FALSE}
+# use saved estimates to output so vignette does not depend on Rmarkdown identifying Julia path independently
+# write.csv(mod$beta, "/Users/gabeloewinger/Desktop/Research Final/Sparse Multi-Study/CRAN Package/Original Code used to Build Package/sMTL/vignettes/b1.csv")
 
-##  1) Common Support Models with Cross-Task Coefficient Shrinkage
+# b1 <- read.csv("b1.csv")
+b1 <- read.csv("b1.csv", row.names = 1)
+print(round(b1[1:8,],2))
+```
+As we can see the solutions have a common support. That is, each task $\boldsymbol{\beta}_k$ has the same sparsity pattern (support): each row is either all zeros or all non-zeros.
 
-Let's now try a model where we shrink the $\boldsymbol{\beta}_k$ towards each other:
+##  1b) Common Support Models with Cross-Task Coefficient Shrinkage
+
+Let's now try a model where we shrink the $\boldsymbol{\beta}_k$ $values$ towards each other:
 $$
 \begin{aligned} 
-    &\underset{\boldsymbol{z},~\mathbb{B},\bar{\boldsymbol{\beta}} }{\mbox{min }} \sum_{k=1}^K \frac{1}{n_k} ||  \mathbf{y}_k - \mathbb{X}_k \boldsymbol{\beta}_k ||_2^2 +\lambda_2  \sum_{k=1}^K ||\boldsymbol{\beta}_k - \bar{{\boldsymbol{\beta}}} ||_2^2\quad \quad \mbox{(Common ~Support)}  \\
+    &\underset{\boldsymbol{z},~\mathbb{B},\bar{\boldsymbol{\beta}} }{\mbox{min }} \sum_{k=1}^K \frac{1}{n_k} ||  \mathbf{y}_k - \mathbb{X}_k \boldsymbol{\beta}_k ||_2^2 +\lambda_2  \sum_{k=1}^K ||\boldsymbol{\beta}_k - \bar{{\boldsymbol{\beta}}} ||_2^2\quad \quad \mbox{(Common Support)}  \\
     & \mbox{subject to: }~ ||\boldsymbol{\beta}_k ||_0 \leq s, ~\forall~k \in \{1,2,...,K\} \notag 
 \end{aligned} 
 $$
 
-```{r}
+
+```{r, eval = FALSE}
 mod <- smtl(y = y, 
             X = X, 
             study = task, 
             s = 5, 
             commonSupp = TRUE,
-            lambda_2 = 0.1)
+            lambda_2 = 2.75)
 
 print(round(mod$beta[1:8,],2))
 ```
 
-##  1) Heterogeneous Support Models with Ridge Penalty
+```{r, eval = TRUE, echo = FALSE}
+# use saved estimates to output so vignette does not depend on Rmarkdown identifying Julia path independently
+# write.csv(mod$beta, "/Users/gabeloewinger/Desktop/Research Final/Sparse Multi-Study/CRAN Package/Original Code used to Build Package/sMTL/vignettes/b2.csv")
 
-At times, we may not believe the supports are the same across the different $\boldsymbol{\beta}_k$. All we have to do is set `commonSupp = FALSE` and we end up with the Heterogeneous Support problem. Let's start with a simple model with a Ridge penalty:
+b2 <- read.csv("b2.csv", row.names = 1)
+print(round(b2[1:8,],2))
+```
+
+We can see that within a row (across columns) the coefficient estimates have far more similar values than the estimates we obtained from a model that included only a Ridge penalty. 
+
+##  1c) Heterogeneous Support Models with Ridge Penalty
+
+In some applications, it may not be justifiable to assume the sparsity patterns (supports) are identical across the $\boldsymbol{\beta}_k$ of the different tasks. In such cases, all we have to do is set `commonSupp = FALSE` and the function will fit a Heterogeneous Support model. Let's start with a simple model with a Ridge penalty:
 
 $$
 \begin{aligned} 
-    &\underset{\boldsymbol{z},~\mathbb{B} }{\mbox{min }} \sum_{k=1}^K \frac{1}{n_k} ||  \mathbf{y}_k - \mathbb{X}_k \boldsymbol{\beta}_k ||_2^2 + \lambda_1 ||\mathbb{B}||_2^2 \quad \quad \mbox{(Heterogeneous ~Support)}  \\
+    &\underset{\boldsymbol{z},~\mathbb{B} }{\mbox{min }} \sum_{k=1}^K \frac{1}{n_k} ||  \mathbf{y}_k - \mathbb{X}_k \boldsymbol{\beta}_k ||_2^2 + \lambda_1 ||\mathbb{B}||_2^2 \quad \quad \mbox{(Heterogeneous Support)}  \\
     & \mbox{subject to: }~ ||\boldsymbol{\beta}_k ||_0 \leq s, ~\forall~k \in \{1,2,...,K\} \notag 
 \end{aligned} 
 $$
 
-```{r}
+
+```{r, eval = FALSE}
 mod <- smtl(y = y, 
             X = X, 
             study = task, 
@@ -265,22 +298,31 @@ mod <- smtl(y = y,
 print(round(mod$beta[1:8,],2))
 ```
 
-We can see that now many rows have a mix of zero and non-zero entries. With this model, however, we have essentially fit $K$ independent sparse regression models. In the next section, we borrow information across the supports of the models by adding in a penalty.
+```{r, eval = TRUE, echo = FALSE}
+# use saved estimates to output so vignette does not depend on Rmarkdown identifying Julia path independently
+# write.csv(mod$beta, "/Users/gabeloewinger/Desktop/Research Final/Sparse Multi-Study/CRAN Package/Original Code used to Build Package/sMTL/vignettes/b3.csv")
 
-##  1) Heterogeneous Support Models with Support Heterogeneity Regularization
+b3 <- read.csv("b3.csv", row.names = 1)
+print(round(b3[1:8,],2))
+```
 
-We now shrink the supports of the $\boldsymbol{\beta}_k$, $\boldsymbol{z}_k$, towards each other. We leave the full constraints in the formulation to emphasize the role of the $\boldsymbol{z}_k$:
+We can see that now many rows have a mix of zero and non-zero entries. With this model, however, we have essentially fit $K$ independent sparse regression models: the models are not sharign strength across tasks. In the next section, we borrow information across the supports of the models by adding in a penalty.
+
+##  1d) Heterogeneous Support Models with Support Heterogeneity Regularization
+
+We now shrink the supports of the $\boldsymbol{\beta}_k$, $\boldsymbol{z}_k$, towards each other. 
 
 
 $$
 \begin{aligned} 
-    &\underset{\boldsymbol{z},~\mathbb{B},\bar{\boldsymbol{\beta}} }{\mbox{min }} \sum_{k=1}^K \frac{1}{n_k} ||  \mathbf{y}_k - \mathbb{X}_k \boldsymbol{\beta}_k ||_2^2 + \lambda_1 ||\mathbb{B}||_2^2 + \lambda_2  \sum_{k=1}^K ||\boldsymbol{\beta}_k - \bar{{\boldsymbol{\beta}}} ||_2^2 + \lambda_z \sum_{k=1}^K ||\boldsymbol{z}_k - \bar{\boldsymbol{z}}||_2^2 \quad \quad \mbox{(Heterogeneous  Support)}  \\
+    &\underset{\boldsymbol{z},~\mathbb{B},\bar{\boldsymbol{\beta}} }{\mbox{min }} \sum_{k=1}^K \frac{1}{n_k} ||  \mathbf{y}_k - \mathbb{X}_k \boldsymbol{\beta}_k ||_2^2 + \lambda_1 ||\mathbb{B}||_2^2 + \lambda_z \sum_{k=1}^K ||\boldsymbol{z}_k - \bar{\boldsymbol{z}}||_2^2 \quad \quad \mbox{(Heterogeneous  Support)}  \\
     & \mbox{subject to: }~ \boldsymbol{z}_k = \mbox{Supp}(\boldsymbol{\beta}_k) ~~~~~~~~~\mbox{for}~ k \in \{1,2,...,K\} \notag  \\
     & ~~~~~~~~~~~~~~~~~~~ ||\boldsymbol{\beta}_k ||_0 \leq s  ~~~~~~~~~~~ ~~~\mbox{for}~ k \in \{1,2,...,K\}   \notag 
 \end{aligned} 
 $$
 
-```{r}
+
+```{r, eval = FALSE}
 mod <- smtl(y = y, 
             X = X, 
             study = task, 
@@ -292,9 +334,18 @@ mod <- smtl(y = y,
 print(round(mod$beta[1:8,], 2))
 ```
 
+```{r, eval = TRUE, echo = FALSE}
+# use saved estimates to output so vignette does not depend on Rmarkdown identifying Julia path independently
+# write.csv(mod$beta, "/Users/gabeloewinger/Desktop/Research Final/Sparse Multi-Study/CRAN Package/Original Code used to Build Package/sMTL/vignettes/b4.csv")
+
+b4 <- read.csv("b4.csv", row.names = 1)
+print(round(b4[1:8,],2))
+```
+
 As we can see, the additional penalty reduced the support heterogeneity. Most rows are now either all zeros or all non-zeros. Now let's turn the $\lambda_z$ penalty up to show that the Common Support problem is a special case when $\lambda_z \rightarrow \infty$ (although in practice $\lambda_z$ does not need to be very big to induce a solution with a common support).
 
-```{r}
+
+```{r, eval = FALSE}
 mod <- smtl(y = y, 
             X = X, 
             study = task, 
@@ -306,15 +357,48 @@ mod <- smtl(y = y,
 print(round( mod$beta[1:8,], 2))
 ```
 
-##  1) Predictions
+```{r, eval = TRUE, echo = FALSE}
+# use saved estimates to output so vignette does not depend on Rmarkdown identifying Julia path independently
+# write.csv(mod$beta, "/Users/gabeloewinger/Desktop/Research Final/Sparse Multi-Study/CRAN Package/Original Code used to Build Package/sMTL/vignettes/b5.csv")
 
-Now that we have a model let's make predictions and see the output. We feed `predict()` a model object and some new data `X`. Here we make predictions on the training data for simplicity but in practice we would likely be more interested in predictions on new observations.
-
-```{r, eval = FALSE, show = TRUE}
-preds <- sMTL::predict(model = mod, X = X[1:5,])
+b5 <- read.csv("b5.csv", row.names = 1)
+print(round(b5[1:8,],2))
 ```
 
-We used each model to make predictions on the new data producing a $n^* \times K$ matrix where $n^*$ is the sample size of the data we make predictions on. In practice we may only want the predictions associated with one of the tasks in which we would pick out the corresponding column.
+Now we see all rows have the same sparsity patterns across columns (tasks). Note that in the above example we did not include the $\lambda_2  \sum_{k=1}^K ||\boldsymbol{\beta}_k - \bar{{\boldsymbol{\beta}}} ||_2^2$. 
+
+##  1e) Heterogeneous Support Models with Support Heterogeneity Regularization and Bbar Penalty
+
+If we wanted to include penalties that share information both across the coefficient values and the coefficient supports, we could fit the following model where we replace the Ridge penalty (we do not recommend including both this penalty and the Ridge because both shrink the coefficient values):
+
+$$
+\begin{aligned} 
+    &\underset{\boldsymbol{z},~\mathbb{B},\bar{\boldsymbol{\beta}} }{\mbox{min }} \sum_{k=1}^K \frac{1}{n_k} ||  \mathbf{y}_k - \mathbb{X}_k \boldsymbol{\beta}_k ||_2^2 + \lambda_2  \sum_{k=1}^K ||\boldsymbol{\beta}_k - \bar{{\boldsymbol{\beta}}} ||_2^2 + \lambda_z \sum_{k=1}^K ||\boldsymbol{z}_k - \bar{\boldsymbol{z}}||_2^2 \quad \quad \mbox{(Heterogeneous  Support)}  \\
+    & \mbox{subject to: }~ \boldsymbol{z}_k = \mbox{Supp}(\boldsymbol{\beta}_k) ~~~~~~~~~\mbox{for}~ k \in \{1,2,...,K\} \notag  \\
+    & ~~~~~~~~~~~~~~~~~~~ ||\boldsymbol{\beta}_k ||_0 \leq s  ~~~~~~~~~~~ ~~~\mbox{for}~ k \in \{1,2,...,K\}   \notag 
+\end{aligned} 
+$$
+
+```{r, eval = FALSE}
+mod <- smtl(y = y, 
+            X = X, 
+            study = task, 
+            s = 5, 
+            commonSupp = FALSE,
+            lambda_2 = 0.5,
+            lambda_z = 0.1)
+```
+
+##  1f) Predictions
+
+Now that we fit a model, let's make predictions and see the output. We feed `predict()` a model object and some new data `X`. Here we make predictions on the training data for simplicity but in practice we would likely be more interested in predictions on new observations.
+
+```{r, eval = FALSE}
+preds <- sMTL::predict(model = mod, X = X[1:5,])
+print( head(preds) )
+```
+
+We used each model to make predictions on the new data producing a $n^* \times K$ matrix where $n^*$ is the sample size of the data we make predictions on. In practice we may only want the predictions associated with one of the tasks in which we would pick out the corresponding column. Note that the `predict()` function assumes the column orders of the features/covariates in the design matrix are the same as those when the model was fit with the `smtl()` function (it does not use column names to order the columns).
 
 
 # Multi-Label Learning (Case 2)
@@ -348,7 +432,7 @@ for(j in 1:K){
     y[,j] <- B[1, j] + X %*% B[-1,j] + e
 }
 colnames(B) <- paste0("beta_", 1:K)
-rownames(B) <- paste0("X_", 1:(p+1))
+rownames(B) <- c("Intercept", paste0( "X_", 1:p ) )
 ```
 
 Note that we do not have a `task` vector here. Instead we concatenate the outcomes $\boldsymbol{y}_k$ into a matrix, $\mathbb{Y} \in \mathbb{R}^{n \times K}$.
@@ -362,19 +446,20 @@ We will use `sMTL` to estimate $\mathbb{B}$ from the data.
 
 We will start with fitting Common Support models.
 
-##  2) Common Support Models with Ridge Penalty
-We start with the following model where we abbreviate the constraints above for conciseness. Notice that there is a single $\mathbb{X}$ for all tasks.
+##  2a) Common Support Models with Ridge Penalty
+We start with the following model where we abbreviate the constraints above for conciseness (we assume the constraint that all models have the same support is implicit). Notice that there is a single $\mathbb{X}$ for all tasks.
 
 $$
 \begin{aligned} 
-    &\underset{\boldsymbol{z},~\mathbb{B} }{\mbox{min }} \sum_{k=1}^K \frac{1}{n_k} ||  \mathbf{y}_k - \mathbb{X} \boldsymbol{\beta}_k ||_2^2 + \lambda_1 ||\mathbb{B}||_2^2 \quad \quad \mbox{(Common ~Support)}  \\
+    &\underset{\boldsymbol{z},~\mathbb{B} }{\mbox{min }} \sum_{k=1}^K \frac{1}{n_k} ||  \mathbf{y}_k - \mathbb{X} \boldsymbol{\beta}_k ||_2^2 + \lambda_1 ||\mathbb{B}||_2^2 \quad \quad \mbox{(Common Support)}  \\
     & \mbox{subject to: }~ ||\boldsymbol{\beta}_k ||_0 \leq s, ~\forall~k \in \{1,2,...,K\} \notag 
 \end{aligned} 
 $$
 
 To fit a solutions for the Common Support Multi-Task model with 5 non-zero coefficients (i.e., $s=5$) and a Ridge penalty $\lambda_1 = 0.001$, we use the `smtl()` function and then print out the coefficients stored in `beta`. Notice here the $y$ object in $\texttt{R}$ is a matrix, and that we do not include the `study=` syntax that we use for Multi-Task learning or Domain Generalization. Instead the columns of the $y$ object are treated as separate ``labels'' (akin to separate tasks). Otherwise the syntax is the exact same.
 
-```{r, eval = TRUE}
+
+```{r, eval = FALSE}
 mod <- sMTL::smtl(y = y, 
                 X = X, 
                 s = 5, 
@@ -384,7 +469,15 @@ mod <- sMTL::smtl(y = y,
 print(round(mod$beta[1:8,],2))
 ```
 
-##  2) Heterogeneous Support Models
+```{r, eval = TRUE, echo = FALSE}
+# use saved estimates to output so vignette does not depend on Rmarkdown identifying Julia path independently
+# write.csv(mod$beta, "/Users/gabeloewinger/Desktop/Research Final/Sparse Multi-Study/CRAN Package/Original Code used to Build Package/sMTL/vignettes/b6.csv")
+
+b6 <- read.csv("b6.csv", row.names = 1)
+print(round(b6[1:8,],2))
+```
+
+##  2b) Heterogeneous Support Models
 
 We next show code for the Heterogeneous Support case. As we have already introduced predictions above, we include the prediction code in the same block.
 
@@ -396,15 +489,24 @@ $$
 \end{aligned} 
 $$
 
-```{r}
+
+```{r, eval = FALSE, show = FALSE}
 mod <- sMTL::smtl(y = y, 
                 X = X, 
                 s = 5, 
-                commonSupp = TRUE,
+                commonSupp = FALSE,
                 lambda_1 = 0.001,
                 lambda_z = 0.1)
 
 print(round(mod$beta[1:8,],2))
+```
+
+```{r, eval = TRUE, echo = FALSE}
+# use saved estimates to output so vignette does not depend on Rmarkdown identifying Julia path independently
+# write.csv(mod$beta, "/Users/gabeloewinger/Desktop/Research Final/Sparse Multi-Study/CRAN Package/Original Code used to Build Package/sMTL/vignettes/b7.csv")
+
+b7 <- read.csv("b7.csv", row.names = 1)
+print(round(b7[1:8,],2))
 ```
 
 Notice that the predictions are labeled as "task_1",...,"task_K." Since this is a ``Multi-Label'' learning problem, we would interpret "task_j" to mean "label_j" (or "otucome_j").
@@ -449,7 +551,7 @@ for(j in 1:K){
     y[indx] <- B[1, j] + X[indx,] %*% B[-1,j] + e
 }
 colnames(B) <- paste0("beta_", 1:K)
-rownames(B) <- paste0("X_", 1:(p+1))
+rownames(B) <- c("Intercept", paste0( "X_", 1:p ) )
 ```
 
 Note that the `task` vector is a $N \times 1$ vector where element $i$ indicates the task index ($\{1,2,...,K\}$) of observation $i$. This is equivalent to a "Domain" or "Study."
@@ -463,19 +565,20 @@ We will use `sMTL` to estimate $\mathbb{B}$ from the data.
 
 We will start with fitting Common Support models.
 
-##  3) Heterogeneous Support Model with Ridge Penalty
+##  3a) Heterogeneous Support Model with Ridge Penalty
 We start with the following model where we abbreviate the constraints above for conciseness.
 
 $$
 \begin{aligned} 
-    &\underset{\boldsymbol{z},~\mathbb{B} }{\mbox{min }} \sum_{k=1}^K \frac{1}{n_k} ||  \mathbf{y}_k - \mathbb{X}_k \boldsymbol{\beta}_k ||_2^2 + \lambda_1 ||\mathbb{B}||_2^2 \quad \quad \mbox{(Heterogeneous ~Support)}  \\
+    &\underset{\boldsymbol{z},~\mathbb{B} }{\mbox{min }} \sum_{k=1}^K \frac{1}{n_k} ||  \mathbf{y}_k - \mathbb{X}_k \boldsymbol{\beta}_k ||_2^2 + \lambda_1 ||\mathbb{B}||_2^2 \quad \quad \mbox{(Heterogeneous Support)}  \\
     & \mbox{subject to: }~ ||\boldsymbol{\beta}_k ||_0 \leq s, ~\forall~k \in \{1,2,...,K\} \notag 
 \end{aligned} 
 $$
 
 Here we use the same syntax from Case 1 except for 1) in the `cv.smtl()` function we set `multiTask = FALSE` and 2) when making predictions, we set `stack = TRUE` in the `predict()` function to use multi-study stacking to generate ensemble weights. The `predict()` function then produces aggregate predictions for some new dataset or ``domain'' by either taking a weighted average of the model-specific predictions: $\hat{f}(\boldsymbol{x}) = \sum_{k=1}^K w_k \boldsymbol{x}^T \hat{\boldsymbol{\beta}}_k$. We provide the output using average weights, $w_k$, (i.e., $w_k = 1/K, \forall~ k ~ \in \{1,2,...,K\}$), or multi-study stacking weights, $w_k$.
 
-```{r, eval = TRUE}
+
+```{r, eval = FALSE}
 # tuning grid
 grid <- data.frame(s = c(4, 4, 5, 5), 
                    lambda_1 = c(0.01, 0.1, 0.01, 0.1), 
@@ -509,7 +612,7 @@ We can use our cross validation function to tune models. The syntax is similar t
 
 Here we show a Multi-Task Learning problem in which we let the `cv.smtl()` function generate a grid of hyperparameters for tuning internally, tune and then we fit a final model with the tuned hyperparameters.
 
-```{r, eval = FALSE, show = TRUE}
+```{r, eval = FALSE}
 # cross validation with internally generated grid
 tn <- cv.smtl(y = y, 
               X = X, 
@@ -535,7 +638,7 @@ We see that instead of providing a grid, we chose which hyperparameters we wante
 ## User Specified Grids
 We highly recommend specifying your own grids as good ranges for hyperparameter values may be very problem-specific. Next we show the same Multi-Task Learning problem with a custom grid and then fit a final model with the tuned hyperparameters.
 
-```{r, eval = FALSE, show = TRUE}
+```{r, eval = FALSE}
 # generate grid
 grid <- data.frame(s = c(4,4,5,5), 
                    lambda_1 = c(0.01, 0.1,0.01, 0.1), 
@@ -564,7 +667,7 @@ Now we show a Domain-Generalization problem with a custom grid and then fit a fi
 
 For illustrative purposes, we also choose the `best.1se` parameter values which chooses the smallest $s$ that achieves an average cross validated prediction error within 1 standard error of the parameters with the best cross validated (and the best regularization parameters for that $s$). This can result in sparser models and is an alternative option.
 
-```{r, eval = FALSE, show = TRUE}
+```{r, eval = FALSE}
 # generate grid
 grid <- data.frame(s = c(4,4,5,5), 
                    lambda_1 = c(0.01, 0.1,0.01, 0.1), 
@@ -595,7 +698,7 @@ mod <- smtl(y = y,
 ## Local Search Options for Cross Validation
 There are a few advanced options for users looking to adjust the speed of the algorithms and quality of solutions. The `maxIter` argument can be increased to improve the quality of the coordinate descent algorithm or reduced to improve speed (at a cost to the solution quality). Similarly, `LocSrch_maxIter` argument specifies the number of local search iterations and increasing cit an improve the quality of the solutions, but can slow down the algorithm substantially. Setting `LocSrch_maxIter=0` tells the package to use no local search and may even be preferable for some problems. Finally, increasing `LocSrch_skip` to an integer above 1 will increase the speed of the algorithm by only conducting local search on a subset of parameter values on the solution path. For example, `LocSrch_skip=3` only uses local search on every $3^{rd}$ parameter value. If some local search is desirable, but one wishes to avoid using it at every parameter value because it is too slow, setting `LocSrch_skip` to somewhere between 2 and 5 could speed up cross-validation substantially while still retaining some of the benefits of local search.
 
-```{r, eval = FALSE, show = TRUE}
+```{r, eval = FALSE}
 # cross validation with custom grid using 
 tn <- cv.smtl(y = y, 
               X = X, 
@@ -611,7 +714,7 @@ tn <- cv.smtl(y = y,
 ## Two Stage Cross Validation for Solution Quality and Speed
 Discrete optimization offers modeling richness at the cost of additional tuning parameters. For example, tuning a Heterogeneous Support model with a Zbar penalty has 3 hyperparameters ($s$, $\lambda_a$ and $\lambda_z$) and thus tuning across a full tuning grid may incur a large computational cost. One solution to tune hyperparameters with a lower computational burden is to tune in two stages. First, in stage 1 we tune across a smaller grid with just $s$ and $\lambda_z$ and a small, fixed $lambda_1$ for numerical reasons. Then in stage 2, we take the optimal hyperparameter values and create a second grid built around a neighborhood of the optimal hyperparameter values from stage 1 and perform a second cross validation. This way we avoid making a large grid with all three hyperparameters $s$, $\lambda_a$ and $\lambda_z$.
 
-```{r, eval = FALSE, show = TRUE}
+```{r, eval = FALSE, show = FALSE}
 ######################################
 # generate initial tuning grid
 ######################################
@@ -682,7 +785,8 @@ tn <- cv.smtl(y = y,
 Sometimes we may want to fit entire paths of solution for some fixed $s$. The algorithm is coded to fit whole paths to efficiently use warm starts to speed up the code substantially and identify better local minima. For that reason, if solutions for multiple values of tuning parameters, $(\lambda_1, \lambda_2, \lambda_z)$ are desired, it is far better to fit them jointly than to call `smtl()` repeatedly. The code is almost identical except that now one or more of the tuning parameter arguments $(\lambda_1, \lambda_2, \lambda_z)$ are a vector not a scalar. Notice that $s$ is a scalar. We cannot put multiple values of $s$ in because the path of solutions is generated independently for each value of $s$.
 
 
-```{r}
+
+```{r, eval = FALSE, show = FALSE}
 mod <- smtl(y = y, 
             X = X, 
             study = task, 
@@ -699,7 +803,8 @@ Now the solutions in `mod$beta` is a $K \times p \times T$ array where $T$ is th
 
 Now we many solutions so if we want to make predictions we have to specify which one or else the package will issue a warning and return no predictions.
 
-```{r, eval = FALSE}
+
+```{r, eval = FALSE, show = FALSE}
 preds <- sMTL::predict(model = mod, 
                        X = X, 
                        lambda_1 = 0.1, 
