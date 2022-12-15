@@ -1,17 +1,20 @@
 # Optimization Code
-## Block IHT for the common support problem with strength sharing (problem (3) in the write-up)
-## b: n*K observation matrix
-## A: n*p*K data tensor
-## s: Sparsity level (integer)
-## x0: p*K initial solution
-## lambda1>=0 the ridge coefficient
-## lambda2>=0 the strength sharing coefficient
+## X: n x p design matrix (feature matrix)
+## y: n x K outcome matrix
+## rho: Sparsity level (integer)
+## βhat: p*K initial solution
+## K: number of tasks
+## L: Lipschitz constant
+## n: sample size
+## lambda1>=0: the ridge coefficient
+## lambda2>=0: the coefficient value strength sharing coefficient (Bbar penalty)
+## p: num covariates/features
+## maxIter: number of max coordinate descent iterations
 
 # sparse regression with IHT
 function BlockComIHT_opt_MT(; X::Array{Float64,2},
                     y::Array{Float64,2},
                     rho::Integer,
-                    # indxList::Array{Array{Int64,1}},
                     βhat::Array{Float64,2},
                     K::Integer,
                     L::Float64,
@@ -26,10 +29,7 @@ function BlockComIHT_opt_MT(; X::Array{Float64,2},
     ncol = p + 1
 
     # initialize
-    #βhat = zeros(ncol, K) # initialize at 0
-    #βhat = beta; # current solution β
-    #beta = 0; # delete to save memory
-    r = zeros(n, K) #[Vector{Any}() for i in 1:K]; # list of vectors of indices of studies
+    r = zeros(n, K) # list of vectors of indices of studies
     g = zeros(ncol, K);
 
     t = 1;
@@ -44,7 +44,6 @@ function BlockComIHT_opt_MT(; X::Array{Float64,2},
 
     while (iter <= maxIter)
         objPrev = obj
-        # βprev = copy(βhat) # previous
         obj = 0
         bbar = sum(βhat[2:end, :], dims=2 ) / K
         bbar = bbar[:]
@@ -66,7 +65,7 @@ function BlockComIHT_opt_MT(; X::Array{Float64,2},
                         lambda2 / (2) * (βhat[2:end, k] - bbar)' * (βhat[2:end, k] - bbar)
         end
 
-      if ( abs(obj - objPrev)/objPrev < 1e-4 && iter > 10 ) # originally ()/obj0
+      if ( abs(obj - objPrev)/objPrev < 1e-4 && iter > 10 )
           break
       end
 
@@ -96,18 +95,3 @@ function BlockComIHT_opt_MT(; X::Array{Float64,2},
     return βhat;
 
 end
-
-#
-# using CSV, DataFrames
-# dat = CSV.read("/Users/gabeloewinger/Desktop/Research/dat_ms", DataFrame);
-# X = Matrix(dat[:,3:end]);
-# y = (dat[:,2]);
-# fit = BlockComIHT(X = X,
-#         y = y,
-#         study = dat[:,1],
-#                     beta =  ones(51, 2),#beta;#
-#                     rho = 9,
-#                     lambda1 = 0.3,
-#                     lambda2 = 0.2,
-#                     scale = false,
-#                     eig = nothing)

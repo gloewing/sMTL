@@ -1,11 +1,17 @@
 # Optimization Code
-## Block IHT for separate support and separate active sets (across studies)
-## b: n*K observation matrix
-## A: n*p*K data tensor
-## s: Sparsity level (integer)
-## x0: p*K initial solution
-## lambda1>=0 the ridge coefficient
-## lambda2>=0 the strength sharing coefficient
+## X: n x p design matrix (feature matrix)
+## y: n x K outcome matrix
+## rho: Sparsity level (integer)
+## B: p*K initial solution
+## K: number of tasks
+## n: sample size
+## eig: max eigenvalue of design matrices
+## p: number of features/covariates
+## lambda1>=0: the ridge coefficient
+## lambda2>=0: the coefficient value strength sharing coefficient (Bbar penalty)
+## lambda_z>=0: the coefficient support strength sharing coefficient (Zbar penalty)
+## maxIter_in: number of inner coordinate descent iterations (within active sets)
+## maxIter_out: number of outer coordinate descent iterations
 
 #### Active set
 # sparse regression with IHT
@@ -56,9 +62,9 @@ function BlockComIHT_inexactAS_diff_old_opt_MT(; X::Array{Float64,2},
                               by=abs,
                               rev=true)
 
-        idxInt = Int.( [1; idx[k] .+ 1 ] ) # cat(1, idx[k] .+ 1, dims = 1) # add one for intercept # AS_Change - change to be matrix for each K
+        idxInt = Int.( [1; idx[k] .+ 1 ] ) # AS_Change - change to be matrix for each K
 
-        r = zeros( n ); # list of vectors of indices of studies # [Vector{Any}() for i in 1:K]
+        r = zeros( n ); # list of vectors of indices of studies
         g = zeros(ncol);
 
         obj = 1e20;
@@ -78,8 +84,8 @@ function BlockComIHT_inexactAS_diff_old_opt_MT(; X::Array{Float64,2},
             end
 
             B_bar_active = zeros(length(idxInt))
-            r_active = zeros(n) #[Vector{Any}() for i in 1:K]
-            g_active = zeros(ncol) #zeros( length(idxInt ), K )
+            r_active = zeros(n)
+            g_active = zeros(ncol)
             B_active = B[idxInt, k]
 
             # inner while loop
@@ -134,7 +140,7 @@ function BlockComIHT_inexactAS_diff_old_opt_MT(; X::Array{Float64,2},
             # objective for kth study
             f = f + r' * r / (2 * n) +
                         lambda1 / 2 * B[2:end, k]' * B[2:end, k] +
-                        lambda2 / 2 * (B[2:end, k] - B_bar)' * (B[2:end, k] - B_bar) #+
+                        lambda2 / 2 * (B[2:end, k] - B_bar)' * (B[2:end, k] - B_bar)
 
             obj = f
 
@@ -171,21 +177,8 @@ function BlockComIHT_inexactAS_diff_old_opt_MT(; X::Array{Float64,2},
     # end for loop across studies for individual active sets
 ######################################################################
 
-    return B #, idx
+    return B
 
 end
 
 #
-# using CSV, DataFrames
-# dat = CSV.read("/Users/gabeloewinger/Desktop/Research/dat_ms", DataFrame);
-# X = Matrix(dat[:,3:end]);
-# y = (dat[:,2]);
-# fit = BlockComIHT(X = X,
-#         y = y,
-#         study = dat[:,1],
-#                     beta =  ones(51, 2),#beta;#
-#                     rho = 9,
-#                     lambda1 = 0.3,
-#                     lambda2 = 0.2,
-#                     scale = false,
-#                     eig = nothing)

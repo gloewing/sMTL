@@ -1,8 +1,14 @@
-## y: N x K outcome
-## X: N x p design matrix
+# Model Fitting Code
+## X: n x p design matrix (feature matrix)
+## y: n x 1 outcome vector
 ## rho: Sparsity level (integer)
+## study: dummy variable
 ## beta: p*K initial solution
-## lambda>=0 the ridge coefficient
+## scale: whether to center scale features
+## lambda>=0: the ridge coefficient
+## maxIter: number of max coordinate descent iterations
+## localIter: max number of local search iterations
+## eig: max eigenvalue for Lipschitz constant
 
 using TSVD, Statistics
 include("BlockIHT_opt.jl")
@@ -21,22 +27,9 @@ function BlockIHT(; X::Array{Float64,2},
                     eig = nothing
                     )::Array
 
-    # rho is number of non-zero coefficient
-    # beta is a feasible initial solution
-    # scale -- if true then scale covaraites before fitting model
-    # maxIter is maximum number of iterations
-    # max eigenvalue for Lipschitz constant
-    # localIter is number of local search iterations
-
-    # y = Array(y);
-    # X = Matrix(X);
     n, p = size(X); # number of covaraites
-    #beta = Matrix(beta); # initial value
-    # rho = Int64(rho);
-    #study = Int.(study);
     K = length( unique(study) ); # number of studies
     indxList = [Vector{Int64}() for i in 1:K]; # list of vectors of indices of studies
-    #nVec = zeros(K); # vector of sample sizes of studies
     nVec = Vector{Int}(undef, K)
 
     # scale covariates
@@ -53,18 +46,14 @@ function BlockIHT(; X::Array{Float64,2},
             Xsd = std(X[indx,:], dims=1) .* (n_k - 1) / n_k; # glmnet style MLE of sd
             sdMat[:,i] = Xsd[1,:]; # save std of covariates of ith study in ith row of matrix
             X[indx,:] .= X[indx,:] ./ Xsd; # standardize ith study's covariates
-            # Ysd[i] = std(y[indx]) * (n_k - 1) / n_k; # glmnet style MLE of sd of y_k
         end
 
         sdMat = vcat(1, sdMat); # add row of ones so standardize intercept by ones
         beta = beta .* sdMat; # current solution β
 
-        # lambda = lambda / mean(Ysd); # scale tuning parameter for L2 norm by average std of y_k
-
     else
         # otherwise just make this a vector of ones for multiplication
         # by coefficient estimates later
-        # sdMat = ones(p, K); # K x p matrix to save std of covariates of each study
 
         for i = 1:K
             indxList[i] = findall(x -> x == i, study); # indices of rows for ith study
@@ -160,18 +149,3 @@ function BlockIHT(; X::Array{Float64,2},
     end
 
 end
-#
-# # # # # #
-# using CSV, DataFrames
-# dat = CSV.read("/Users/gabeloewinger/Desktop/Research/dat_ms", DataFrame);
-# X = Matrix(dat[:,3:end]);
-# y = Array(dat[:,2]);
-# fit = BlockIHT(X = X,
-#         y = y,
-#         study = dat[:,1],
-#                     beta =  ones(51, 2),#beta;#
-#                     rho = 5,
-#                     lambda = collect(0:.1:1),
-#                     scale = true,
-#                     localIter = 5,
-#                     eig = nothing)

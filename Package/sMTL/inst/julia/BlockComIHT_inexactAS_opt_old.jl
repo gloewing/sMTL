@@ -1,11 +1,17 @@
 # Optimization Code
-## Block IHT for the common support problem with strength sharing (problem (3) in the write-up)
-## b: n*K observation matrix
-## A: n*p*K data tensor
-## s: Sparsity level (integer)
-## x0: p*K initial solution
-## lambda1>=0 the ridge coefficient
-## lambda2>=0 the strength sharing coefficient
+## X: n x p design matrix (feature matrix)
+## y: n x 1 outcome vec
+## rho: Sparsity level (integer)
+## B: p*K initial solution
+## K: number of tasks
+## L: Lipschitz constant
+## nVec: vector of sample sizes
+## lambda1>=0: the ridge coefficient
+## lambda2>=0: the coefficient value strength sharing coefficient (Bbar penalty)
+## lambda_z>=0: the coefficient support strength sharing coefficient (Zbar penalty)
+## p: number of features/covariates
+## maxIter_in: number of inner coordinate descent iterations (within active sets)
+## maxIter_out: number of outer coordinate descent iterations
 
 #### Active set
 # sparse regression with IHT
@@ -38,7 +44,7 @@ function BlockComIHT_inexactAS_opt_old(; X::Array{Float64,2},
     z_bar = zeros(p)
     Z_bar = zeros(p, K)
 
-    r = [ zeros( nVec[i] ) for i in 1:K]; # list of vectors of indices of studies # [Vector{Any}() for i in 1:K]
+    r = [ zeros( nVec[i] ) for i in 1:K]; # list of vectors of indices of studies
     g = zeros(ncol, K);
 
     obj = 1e20;
@@ -48,7 +54,6 @@ function BlockComIHT_inexactAS_opt_old(; X::Array{Float64,2},
     B_summed = sum( B.^2, dims = 2)
     B_summed = B_summed[:]
 
-    ## test kayhan--- make 1:rho into 1:(4*rho) and see how that works
     # projection step
     idx = partialsortperm(B_summed[2:end], # do not include intercept
                           1:rho,
@@ -125,7 +130,7 @@ function BlockComIHT_inexactAS_opt_old(; X::Array{Float64,2},
             z_active = zeros(length(idx), K)
 
             for k=1:K
-                costAct_k = B_temp_active[2:end, k].^2 + nVec[k] * cost_active[:,k] # nVec[k] * cost_active[:,k] **** removed the nVec[k] on 10/7/21  # scale by nVec since our objective is altered
+                costAct_k = B_temp_active[2:end, k].^2 + nVec[k] * cost_active[:,k]  # scale by nVec since our objective is altered
                 idx1 = partialsortperm(costAct_k, 1:rho, rev=true)
                 z_active[idx1, k] = ones(size(idx1))
             end
@@ -172,7 +177,6 @@ function BlockComIHT_inexactAS_opt_old(; X::Array{Float64,2},
         z = zeros(p, K)
         idx1 = findall(x-> x.>1e-9, abs.(B_temp[2:end,:]) )
         z[idx1] = ones(size(idx1))
-        # cost =  lambda_z * Z_bar.^2/L + B_temp[2:end,:].^2 - lambda_z * (z-Z_bar).^2 / L
         cost =  lambda_z / L * (Z_bar.^2 - (z-Z_bar).^2) # scale by nVec (below) since our objective is altered
         z = zeros(p, K)
         flag = 0

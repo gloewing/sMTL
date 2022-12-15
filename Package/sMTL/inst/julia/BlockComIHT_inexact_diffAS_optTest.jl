@@ -1,11 +1,20 @@
 # Optimization Code
-## Block IHT for separate support and separate active sets (across studies)
-## b: n*K observation matrix
-## A: n*p*K data tensor
-## s: Sparsity level (integer)
-## x0: p*K initial solution
-## lambda1>=0 the ridge coefficient
-## lambda2>=0 the strength sharing coefficient
+## X: n x p design matrix (feature matrix)
+## y: n x 1 outcome matrix
+## rho: Sparsity level (integer)
+## B: p*K initial solution
+## idxList: list of task row indices
+## K: number of tasks
+## L: Lipschitz constant
+## nVec: vector of task sample sizes
+## eigVec: vector of max eigenvalue of each design matrices
+## idx: active set indices
+## lambda1>=0: the ridge coefficient
+## lambda2>=0: the coefficient value strength sharing coefficient (Bbar penalty)
+## lambda_z>=0: the coefficient support strength sharing coefficient (Zbar penalty)
+## p: number of features/covariates
+## maxIter_in: number of inner coordinate descent iterations (within active sets)
+## maxIter_out: number of outer coordinate descent iterations
 
 #### Active set
 # sparse regression with IHT
@@ -18,7 +27,7 @@ function BlockComIHT_inexactAS_diff_opt(; X::Array{Float64,2},
                     L::Float64,
                     nVec::Array{Int64,1},
                     eigenVec,
-                    idx::Array{Array{Int64,1}}, # may need to fix type
+                    idx::Array{Array{Int64,1}},
                     lambda1::Float64,
                     lambda2::Float64,
                     lambda_z::Float64,
@@ -27,22 +36,17 @@ function BlockComIHT_inexactAS_diff_opt(; X::Array{Float64,2},
                     maxIter_out::Integer = 1000
                     ) # ::Array{Float64,2}
 
-    #eig = L # initialize for active set
-    #L = L + lambda1 + lambda2 # L for complete dataset for outer loop
+
     idxFlag = true # indicates whether indices have changed and whether we nee to recalculate eigenvalues
 
     ncol = p + 1
 
     # initialize
-    # B = beta
-    # beta = 0 # delete to save memory
-    #z = zeros(p, K)
     B_bar = zeros(ncol)
 
     iter_in = 1
     iter_out = 1
 
-    #idx = findall(x-> x.>1e-9, abs.(B[2:end,:]) ) # do not calculate for intercept -- initialize based on beta warm start
     B_summed = sum( B.^2, dims = 2)
     B_summed = B_summed[:]
 
@@ -53,9 +57,9 @@ function BlockComIHT_inexactAS_diff_opt(; X::Array{Float64,2},
 
         L = eigenVec[k]^2 / nVec[k] + lambda1 + lambda2 # L for complete dataset for outer loop
 
-        idxInt = Int.( [1; idx[k] .+ 1 ] ) # cat(1, idx[k] .+ 1, dims = 1) # add one for intercept # AS_Change - change to be matrix for each K
+        idxInt = Int.( [1; idx[k] .+ 1 ] ) #  add one for intercept # AS_Change - change to be matrix for each K
 
-        r = zeros( nVec[k] ); # list of vectors of indices of studies # [Vector{Any}() for i in 1:K]
+        r = zeros( nVec[k] ); # list of vectors of indices of studies
         g = zeros(ncol);
 
         obj = 1e20;
@@ -70,14 +74,14 @@ function BlockComIHT_inexactAS_diff_opt(; X::Array{Float64,2},
                 L_active = tsvd( X[ indxList[k], idxInt ]  )[2][1];
 
                 L_active = L_active^2 / nVec[k] + lambda1 + lambda2
-                #println(L_active)
+
                 idxFlag = false # default to see if we need to recalculate eigenvalues
 
             end
 
             B_bar_active = zeros(length(idxInt))
-            r_active = zeros(nVec[k]) #[Vector{Any}() for i in 1:K]
-            g_active = zeros(ncol) #zeros( length(idxInt ), K )
+            r_active = zeros(nVec[k])
+            g_active = zeros(ncol)
             B_active = B[idxInt, k]
 
             # inner while loop
@@ -132,7 +136,7 @@ function BlockComIHT_inexactAS_diff_opt(; X::Array{Float64,2},
             # objective for kth study
             f = f + r' * r / (2 * nVec[k]) +
                         lambda1 / 2 * B[2:end, k]' * B[2:end, k] +
-                        lambda2 / 2 * (B[2:end, k] - B_bar)' * (B[2:end, k] - B_bar) #+
+                        lambda2 / 2 * (B[2:end, k] - B_bar)' * (B[2:end, k] - B_bar)
 
             obj = f
 
@@ -172,18 +176,3 @@ function BlockComIHT_inexactAS_diff_opt(; X::Array{Float64,2},
     return B, idx
 
 end
-
-#
-# using CSV, DataFrames
-# dat = CSV.read("/Users/gabeloewinger/Desktop/Research/dat_ms", DataFrame);
-# X = Matrix(dat[:,3:end]);
-# y = (dat[:,2]);
-# fit = BlockComIHT(X = X,
-#         y = y,
-#         study = dat[:,1],
-#                     beta =  ones(51, 2),#beta;#
-#                     rho = 9,
-#                     lambda1 = 0.3,
-#                     lambda2 = 0.2,
-#                     scale = false,
-#                     eig = nothing)

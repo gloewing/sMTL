@@ -1,4 +1,16 @@
 # Local Search for exact common support
+## X: n x p design matrix (feature matrix)
+## y: n x 1 outcome vec
+## s: Sparsity level (integer)
+## B: p x K initial solution
+## K: number of tasks
+## nVec: vector of sample sizes
+## lambda1>=0: the ridge coefficient
+## lambda2>=0: the coefficient value strength sharing coefficient (Bbar penalty)
+## idxList: list of task row indices
+## p: number of features/covariates
+## maxIter: number of coordinate descent iterations
+
 using LinearAlgebra
 
 # beta must have exactly rho nonzero rows.
@@ -14,11 +26,6 @@ function BlockLS(; X::Array{Float64,2},
                     p::Integer,
                     maxIter::Integer = 50)::Array{Float64,2}
 
-    # p is number of covariates not including intercept
-    # s = rho; #
-    # n, p, K = size(X)
-    #B = copy(beta)
-    #beta = 0; # save memory
     S = zeros(p, p ,K)
     Aq = zeros(s, p-s)
     Bq = zeros(s, p-s)
@@ -88,9 +95,8 @@ function BlockLS(; X::Array{Float64,2},
                 X0 = X[ indxList[k], 2:end] # do not include intercept
                 y0 = y[ indxList[k] ]
                 S0 = S[:,:,k]
-                beta = B[2:end, k] # ask Kayhan -- residuals include contribution of interept but other terms below do now
+                beta = B[2:end, k]
                 r = r0[k] # residuals include contribution of intercept
-
 
 
                 Aq2 = diag(S0[idx2,idx2])./ nVec[k] + lambda1*ones(p-stilde)
@@ -145,7 +151,7 @@ function BlockLS(; X::Array{Float64,2},
                 X0 = X[ indxList[k], 2:end] # do not include intercept
                 y0 = y[ indxList[k] ]
                 S0 = S[:,:,k]
-                beta = B[2:end, k] # ask Kayhan -- residuals include contribution of interept but other terms below do now
+                beta = B[2:end, k]
                 r = r0[k] # residuals include contribution of intercept
 
                 # constant matrix in quadratic program (QP)

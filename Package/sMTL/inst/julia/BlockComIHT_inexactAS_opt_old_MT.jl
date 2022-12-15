@@ -1,11 +1,19 @@
 # Optimization Code
-## Block IHT for the common support problem with strength sharing (problem (3) in the write-up)
-## b: n*K observation matrix
-## A: n*p*K data tensor
-## s: Sparsity level (integer)
-## x0: p*K initial solution
-## lambda1>=0 the ridge coefficient
-## lambda2>=0 the strength sharing coefficient
+## X: n x p design matrix (feature matrix)
+## y: n x K outcome matrix
+## rho: Sparsity level (integer)
+## B: p*K initial solution
+## K: number of tasks
+## L: Lipschitz constant
+## n: sample size
+## eig: max eigenvalue of all design matrix
+## p: number of features/covariates
+## idx: vector of active sets
+## lambda1>=0: the ridge coefficient
+## lambda2>=0: the coefficient value strength sharing coefficient (Bbar penalty)
+## lambda_z>=0: the coefficient support strength sharing coefficient (Zbar penalty)
+## maxIter_in: number of inner coordinate descent iterations (within active sets)
+## maxIter_out: number of outer coordinate descent iterations
 
 #### Active set
 # sparse regression with IHT
@@ -44,7 +52,7 @@ function BlockComIHT_inexactAS_opt_old_MT(; X::Array{Float64,2},
     iter_in = 1
     iter_out = 1
 
-    #idx = findall(x-> x.>1e-9, abs.(B[2:end,:]) ) # do not calculate for intercept -- initialize based on beta warm start
+    # do not calculate for intercept -- initialize based on beta warm start
     B_summed = sum( B.^2, dims = 2)
     B_summed = B_summed[:]
 
@@ -75,7 +83,7 @@ function BlockComIHT_inexactAS_opt_old_MT(; X::Array{Float64,2},
 
         B_bar_active = zeros(length(idxInt))
         z_bar_active = zeros(length(idx))
-        r_active = zeros(n, K) # Vector{Any}() for i in 1:K]
+        r_active = zeros(n, K)
         g_active = zeros(length(idxInt) ,K)
         B_active = B[idxInt,:]
         z_active = z[idx, :]
@@ -102,7 +110,6 @@ function BlockComIHT_inexactAS_opt_old_MT(; X::Array{Float64,2},
             end
 
             obj = f
-            # println(obj)
 
             if (abs(obj - objPrev)/objPrev < 1e-6)
                 break
@@ -118,7 +125,7 @@ function BlockComIHT_inexactAS_opt_old_MT(; X::Array{Float64,2},
             z_active = zeros(length(idx), K)
 
             for k=1:K
-                costAct_k = B_temp_active[2:end, k].^2 + n * cost_active[:,k] # nVec[k] * cost_active[:,k] **** removed the nVec on 10/7/21  # scale by nVec since our objective is altered
+                costAct_k = B_temp_active[2:end, k].^2 + n * cost_active[:,k] # scale by nVec since our objective is altered
                 idx1 = partialsortperm(costAct_k, 1:rho, rev=true)
                 z_active[idx1, k] = ones(size(idx1))
             end

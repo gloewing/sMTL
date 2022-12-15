@@ -1,5 +1,18 @@
 # Local Search for exact common support
+## X: n x p design matrix (feature matrix)
+## y: n x 1 outcome vec
+## s: Sparsity level (integer)
+## B: p x K initial solution
+## K: number of tasks
+## nVec: vector of sample sizes
+## lambda1>=0: the ridge coefficient
+## lambda2>=0: the coefficient value strength sharing coefficient (Bbar penalty)
+## idxList: list of task row indices
+## p: number of features/covariates
+## maxIter: number of coordinate descent iterations
+
 using LinearAlgebra
+
 # beta must have exactly rho nonzero rows.
 function BlockLS_MT(; X::Array{Float64,2},
                     y::Array{Float64,2},
@@ -13,12 +26,6 @@ function BlockLS_MT(; X::Array{Float64,2},
                     maxIter::Integer = 50
                     )::Array{Float64,2}
 
-    # p is number of covariates not including intercept
-    # s = rho; #
-    #n = size(X, 1)
-    #B = copy(beta)
-    #beta = 0; # save memory
-    #S = zeros(p, p ,K)
     Aq = zeros(s, p-s)
     Bq = zeros(s, p-s)
     Cq = zeros(s, p-s)
@@ -36,7 +43,7 @@ function BlockLS_MT(; X::Array{Float64,2},
     delta_cost = 0
 
     obj = 0
-    r0 = zeros(n, K) #[Vector{Any}() for i in 1:K]; # list of vectors of residuals # zeros(n,K)
+    r0 = zeros(n, K)  # list of vectors of residuals # zeros(n,K)
 
     for k = 1:K
         r0[:,k] = y[:, k] - X * B[:,k]
@@ -86,8 +93,7 @@ function BlockLS_MT(; X::Array{Float64,2},
             costq2 = zeros(p-stilde, K)
 
             for k = 1:K
-                # y0 = y[ :, k ]
-                beta = B[2:end, k] # ask Kayhan -- residuals include contribution of interept but other terms below do now
+                beta = B[2:end, k]
                 r = r0[k] # residuals include contribution of intercept
 
                 Aq2 = diag(S[idx2,idx2])./ n + lambda1*ones(p-stilde)
@@ -139,9 +145,7 @@ function BlockLS_MT(; X::Array{Float64,2},
             # ident
             for k = 1:K
 
-                # y0 = y[ :, k ]
-                #S0 = S[:,:,k]
-                beta = B[2:end, k] # ask Kayhan -- residuals include contribution of interept but other terms below do now
+                beta = B[2:end, k]
                 r = r0[:,k] # residuals include contribution of intercept
 
                 # constant matrix in quadratic program (QP)

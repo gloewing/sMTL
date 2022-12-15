@@ -1,12 +1,17 @@
-## Block IHT for the common support problem with strength sharing (problem (3) in the write-up)
-## b: n*K observation matrix
-## A: n*p*K data tensor
-## s: Sparsity level (integer)
-## x0: p*K initial solution
-## lambda1>=0 the ridge coefficient
-## lambda2>=0 the strength sharing coefficient
+# Model Fitting Code
+## X: n x p design matrix (feature matrix)
+## y: n x 1 outcome vector
+## rho: Sparsity level (integer)
+## beta: p*K initial solution
+## scale: whether to center scale features
+## eig: max eigenvalue of all design matrices
+## idx: active set indices
+## lambda1>=0: the ridge coefficient
+## lambda2>=0: the coefficient value strength sharing coefficient (Bbar penalty)
+## maxIter: number of max coordinate descent iterations
+## localIter: max number of local search iterations
 
-using TSVD, Statistics #, LinearAlgebra, Statistics
+using TSVD, Statistics
 
 include("BlockComIHT_opt.jl") # IHT
 include("BlockComIHT_opt_cvx.jl") # IHT
@@ -26,24 +31,11 @@ function BlockComIHT(; X::Array{Float64,2},
                     localIter = 50
                     )::Array
 
-    # rho is number of non-zero coefficient
-    # beta is a feasible initial solution
-    # scale -- if true then scale covaraites before fitting model
-    # maxIter is maximum number of iterations
-    # max eigenvalue for Lipschitz constant
-    # localIter is a vector as long as lambda1/lambda2 and specifies the number of local search iterations for each lambda
 
-    # y = Array(y);
-    # X = Matrix(X);
     n, p = size(X); # number of covaraites
-    # beta = Matrix(beta); # initial value
-    # rho = Int64(rho);
-    # study = Int.(study);
     localIter = Int.(localIter);
     K = length( unique(study) ); # number of studies
-    # indxList = [Vector{Any}() for i in 1:K]; # list of vectors of indices of studies
     indxList = [Vector{Int64}() for i in 1:K]; # list of vectors of indices of studies
-    #nVec = zeros(K); # vector of sample sizes of studies
     nVec = Vector{Int}(undef, K)
 
 
@@ -61,19 +53,15 @@ function BlockComIHT(; X::Array{Float64,2},
             Xsd = std(X[indx,:], dims=1) .* (n_k - 1) / n_k; # glmnet style MLE of sd
             sdMat[:,i] = Xsd[1,:]; # save std of covariates of ith study in ith row of matrix
             X[indx,:] .= X[indx,:] ./ Xsd; # standardize ith study's covariates
-            # Ysd[i] = std(y[indx]) * (n_k - 1) / n_k; # glmnet style MLE of sd of y_k
 
         end
 
         sdMat = vcat(1, sdMat); # add row of ones so standardize intercept by ones
         beta = beta .* sdMat; # scale warm start solution
 
-        # lambda1 = lambda1 / mean(Ysd); # scale tuning parameter for L2 norm by average std of y_k
-
     else
         # otherwise just make this a vector of ones for multiplication
         # by coefficient estimates later
-        # sdMat = ones(p, K); # K x p matrix to save std of covariates of each study
 
         for i = 1:K
             indxList[i] = findall(x -> x == i, study); # indices of rows for ith study
@@ -206,53 +194,3 @@ function BlockComIHT(; X::Array{Float64,2},
     end
 
 end
-#
-# using CSV, DataFrames
-#
-# # # #
-# dat = CSV.read("/Users/gabeloewinger/Desktop/Research/dat_ms", DataFrame);
-# X = Matrix(dat[:,3:end]);
-# y = Array(dat[:,2]);
-# lambda1 = [1 2 3]
-# lambda2 = [1 2 3]
-# fit = BlockComIHT(X = X,
-#         y = y,
-#         study = dat[:,1],
-#                     beta =  zeros(51, 2),#beta;#
-#                     rho = 9,
-#                     lambda1 = lambda1,
-#                     lambda2 = lambda2,
-#                     scale = true,
-#                     eig = nothing,
-#                     localIter = [100 100 100])
-
-#
-# lambda1 =  ones(4)
-# lambda2 = ones(4) #ones(4)
-#
-# fit = BlockComIHT(X = X,
-#         y = y,
-#         study = dat[:,1],
-#                     beta =  zeros(51, 2),#beta;#
-#                     rho = 8,
-#                     lambda1 = lambda1,
-#                     lambda2 = lambda2,
-#                     maxIter = 10000,
-#                     scale = true,
-#                     eig = nothing,
-#                     localIter = [0 10 0 10])
-#
-# include("objFun.jl") # local search
-#
-# itr = 2
-# objFun( X = X,
-#         y = y,
-#         study = dat[:,1],
-#                     beta = fit[:,:, itr],
-#                     lambda1 = lambda1[ itr ],
-#                     lambda2 = lambda2[ itr ],
-#                     lambda_z = 0,
-#                     )
-#
-# # number of non-zeros per study (not including intercept)
-# size(findall(x -> x.> 1e-9, abs.(fit[2:end, :,1])))[1] / K

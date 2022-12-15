@@ -1,11 +1,18 @@
 # Optimization Code
-## Block IHT for separate support and separate active sets (across studies)
-## b: n*K observation matrix
-## A: n*p*K data tensor
-## s: Sparsity level (integer)
-## x0: p*K initial solution
-## lambda1>=0 the ridge coefficient
-## lambda2>=0 the strength sharing coefficient
+## X: n x p design matrix (feature matrix)
+## y: n x K outcome matrix
+## rho: Sparsity level (integer)
+## B: p*K initial solution
+## indxList: list of task row indices
+## K: number of tasks
+## nVec: vector of task sample sizes
+## eig: vector of max eigenvalue of each design matrix
+## lambda1>=0: the ridge coefficient
+## lambda2>=0: the coefficient value strength sharing coefficient (Bbar penalty)
+## lambda_z>=0: the coefficient support strength sharing coefficient (Zbar penalty)
+## p: number of features/covariates
+## maxIter_in: number of inner coordinate descent iterations (within active sets)
+## maxIter_out: number of outer coordinate descent iterations
 
 #### Active set
 # sparse regression with IHT
@@ -26,7 +33,7 @@ function BlockComIHT_inexactAS_diff_old_opt(; X::Array{Float64,2},
                     )::Array{Float64,2}
 
     idxFlag = true # indicates whether indices have changed and whether we nee to recalculate eigenvalues
-    idx = [ Vector{Int64}(undef, rho) for i in 1:K]; # list of vectors of indices of studies#zeros(p, K)
+    idx = [ Vector{Int64}(undef, rho) for i in 1:K]; # list of vectors of indices of studies
 
     ncol = p + 1
 
@@ -56,9 +63,9 @@ function BlockComIHT_inexactAS_diff_old_opt(; X::Array{Float64,2},
                               by=abs,
                               rev=true)
 
-        idxInt = Int.( [1; idx[k] .+ 1 ] ) # cat(1, idx[k] .+ 1, dims = 1) # add one for intercept # AS_Change - change to be matrix for each K
+        idxInt = Int.( [1; idx[k] .+ 1 ] ) #  add one for intercept # AS_Change - change to be matrix for each K
 
-        r = zeros( nVec[k] ); # list of vectors of indices of studies # [Vector{Any}() for i in 1:K]
+        r = zeros( nVec[k] ); # list of vectors of indices of studies
         g = zeros(ncol);
 
         obj = 1e20;
@@ -73,14 +80,14 @@ function BlockComIHT_inexactAS_diff_old_opt(; X::Array{Float64,2},
                 L_active = tsvd( X[ indxList[k], idxInt ]  )[2][1];
 
                 L_active = L_active^2 / nVec[k] + lambda1 + lambda2
-                #println(L_active)
+
                 idxFlag = false # default to see if we need to recalculate eigenvalues
 
             end
 
             B_bar_active = zeros(length(idxInt))
-            r_active = zeros(nVec[k]) #[Vector{Any}() for i in 1:K]
-            g_active = zeros(ncol) #zeros( length(idxInt ), K )
+            r_active = zeros(nVec[k])
+            g_active = zeros(ncol)
             B_active = B[idxInt, k]
 
             # inner while loop
@@ -97,7 +104,7 @@ function BlockComIHT_inexactAS_diff_old_opt(; X::Array{Float64,2},
                 g_active[2:end] = g_active[2:end] + lambda1 * B_active[2:end] + lambda2 * (B_active[2:end] - B_bar_active) # gradient update for non-intercept
                 f = f + r_active' * r_active / (2 * nVec[k]) +
                         lambda1 * B_active[2:end]' * B_active[2:end] / 2 +
-                        lambda2 * (B_active[2:end] - B_bar_active)' * (B_active[2:end] - B_bar_active) / 2 # +
+                        lambda2 * (B_active[2:end] - B_bar_active)' * (B_active[2:end] - B_bar_active) / 2
 
 
                 obj = f
@@ -172,21 +179,6 @@ function BlockComIHT_inexactAS_diff_old_opt(; X::Array{Float64,2},
     # end for loop across studies for individual active sets
 ######################################################################
 
-    return B #, idx
+    return B
 
 end
-
-#
-# using CSV, DataFrames
-# dat = CSV.read("/Users/gabeloewinger/Desktop/Research/dat_ms", DataFrame);
-# X = Matrix(dat[:,3:end]);
-# y = (dat[:,2]);
-# fit = BlockComIHT(X = X,
-#         y = y,
-#         study = dat[:,1],
-#                     beta =  ones(51, 2),#beta;#
-#                     rho = 9,
-#                     lambda1 = 0.3,
-#                     lambda2 = 0.2,
-#                     scale = false,
-#                     eig = nothing)

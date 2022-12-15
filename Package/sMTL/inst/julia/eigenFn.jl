@@ -1,4 +1,9 @@
-# finds max eigenvalues for multi study or single study
+# finds max eigenvalues for multi study/task or single study
+## X: n x p design matrix (feature matrix)
+## study: vector of row task or study indices
+## intercept: boolean of whether to add a vector of 1s to design matrix
+
+
 using TSVD
 
 # sparse regression with IHT
@@ -40,11 +45,3 @@ function maxEigen(; X::Matrix,
     return L;
 
 end
-
-#
-# dat = CSV.read("/Users/gabeloewinger/Desktop/Research/dat_ms", DataFrame);
-# X = Matrix(dat[:,3:end]);
-# study = Int.(dat[:,1]);
-# L = maxEigen(X = X,
-#              study = study, # nothing
-#              intercept = true)

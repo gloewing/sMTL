@@ -1,9 +1,15 @@
-## y: N x K outcome
-## X: N x p design matrix
+# Optimization Code
+## X: n x p design matrix (feature matrix)
+## y: n x 1 outcome vector
 ## rho: Sparsity level (integer)
-## beta: p*K initial solution
-## lambda>=0 the ridge coefficient
-
+## idxList: list of task row indices
+## beta: p x K initial solution
+## K: number of tasks
+## L: Lipschitz constant
+## nVec: vector of sample sizes
+## lambda>=0: the ridge coefficient
+## p: num covariates/features
+## maxIter: number of max coordinate descent iterations
 
 # sparse regression with IHT -- Block IHT
 function BlockIHT_opt(; X::Array{Float64,2},
@@ -27,16 +33,12 @@ function BlockIHT_opt(; X::Array{Float64,2},
     ncol = p + 1
 
     # initialize at 0
-    # βhat = zeros(ncol, K)
     βprev = zeros(ncol, K)
     b = zeros(ncol, K)
 
     # initial solution
     b = copy(beta); # current solution β
-    # βhat = beta
-    # beta = 0; # delete to save memory
 
-    #r = [Vector{Any}() for i in 1:K]; # list of vectors of indices of studies
     r = [ zeros( nVec[i] ) for i in 1:K];
     g = zeros(ncol, K);
 

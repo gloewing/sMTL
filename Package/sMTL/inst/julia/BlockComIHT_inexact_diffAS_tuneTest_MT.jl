@@ -1,14 +1,28 @@
-## Block IHT INEXACT for NO common support problem with strength sharing (problem (3) in the write-up)
-## has different supports for active sets!!
-## b: n*K observation matrix
-## A: n*p*K data tensor
-## s: Sparsity level (integer)
-## x0: p*K initial solution
-## lambda1>=0 the ridge coefficient
-## lambda2>=0 the strength sharing coefficient
-## lambda_z>=0 the strength sharing coefficient for support
+# Model Fitting Code
+## X: n x p design matrix (feature matrix)
+## y: n x K outcome matrix
+## rho: Sparsity level (integer)
+## study: study/task row indices
+## beta: p*K initial solution
+## scale: whether to center scale features
+## idxList: list of task row indices
+## eig: max eigenvalue of all design matrices
+## idx: active set indices
+## lambda1>=0: the ridge coefficient
+## lambda2>=0: the coefficient value strength sharing coefficient (Bbar penalty)
+## lambda_z>=0: the coefficient support strength sharing coefficient (Zbar penalty)
+## p: number of features/covariates
+## maxIter: max iterations of coordiante descent
+## localIter: local search iterations
+## maxIter_in: number of inner coordinate descent iterations (within active sets)
+## maxIter_out: number of outer coordinate descent iterations
+## maxIter: max iterations of coordinate descent
+## WSmethod: dummy variable
+## ASpass: dummy variable
+## ASmultiplier: dummy variable
+## svdFlag: dummy variable
 
-using TSVD, Statistics #, LinearAlgebra, Statistics
+using TSVD, Statistics
 
 include("BlockComIHT_inexact_diffAS_optTest_MT.jl") # IHT algorithm
 include("BlockComIHT_inexact_diffAS_opt_oldTest_MT.jl") # IHT algorithm but active set constructed inside IHT
@@ -31,33 +45,16 @@ function BlockComIHT_inexactAS_diff_MT(; X::Array{Float64,2},
                     maxIter_in = nothing,
                     maxIter_out = nothing,
                     eig = nothing,
-                    eigenVec = nothing, # dummy variable that does nothing
-                    WSmethod::Integer = 2, # dummy variable that does nothing
-                    ASpass::Bool = true, # dummy variable that does nothing
+                    eigenVec = nothing, # dummy variable
+                    WSmethod::Integer = 2, # dummy variable
+                    ASpass::Bool = true, # dummy variable
                     ASmultiplier::Integer = 4,
                     svdFlag::Bool = false,
                     )::Array
 
-    # rho is number of non-zero coefficient
-    # beta is a feasible initial solution
-    # scale -- if true then scale covaraites before fitting model
-    # maxIter is maximum number of iterations
-    # max eigenvalue for Lipschitz constant
-    # localIter is a vector as long as lambda1/lambda2 and specifies the number of local search iterations for each lambda
-    # idx -- if nothing then fit individual l0 regressions to find it
-    # ASmultiplier is number that we multiple rho by to get size of initial active set for first lambda in path
-    # unlike other versions, WSmethod == 2 means that we use the old version that does not set warm starts before hand
-    # ASpass means the active sets are passed between subsequent tuning values
 
-    # y = Matrix(y);
-    # X = Matrix(X);
     n, p = size(X); # number of covaraites
-    # beta = Matrix(beta); # initial value
-    # rho = Int64(rho);
-    # study = Int.(study);
-    K = size(y, 2); # length( unique(study) ); # number of studies
-    #indxList = [Vector{Int64}() for i in 1:K]; # list of vectors of indices of studies
-    #nVec = Vector{Int64}(undef, K) #nVec = zeros(K); # vector of sample sizes of studies
+    K = size(y, 2);  # number of studies
 
     if isnothing(maxIter_in)
         maxIter_in = maxIter
@@ -76,32 +73,9 @@ function BlockComIHT_inexactAS_diff_MT(; X::Array{Float64,2},
         Xsd = std(X, dims=1) .* (n - 1) / n; # glmnet style MLE of sd
         sdMat = Xsd; # save std of covariates of ith study in ith row of matrix
         X .= X ./ Xsd; # standardize ith study's covariates
-        #
-        # for i = 1:K
-        #     # indx = findall(x -> x == i, study); # indices of rows for ith study
-        #     # indxList[i] = indx; # save indices
-        #     # n_k = length(indx); # study k sample size
-        #     # nVec[i] = n_k; # save sample size
-        #
-        #     # Ysd[i] = std(y[indx]) * (n_k - 1) / n_k; # glmnet style MLE of sd of y_k
-        # end
 
         sdMat = hcat(1, sdMat); # add row of ones so standardize intercept by ones
         beta = beta .* sdMat'; # current solution β
-
-        # lambda = lambda / mean(Ysd); # scale tuning parameter for L2 norm by average std of y_k
-
-    # else
-    #     # otherwise just make this a vector of ones for multiplication
-    #     # by coefficient estimates later
-    #     # sdMat = ones(p, K); # K x p matrix to save std of covariates of each study
-    #
-    #     for i = 1:K
-    #         indxList[i] = findall(x -> x == i, study); # indices of rows for ith study
-    #         indx = indxList[i];
-    #         n_k = length(indx); # study k sample size
-    #         nVec[i] = n_k; # save sample size
-    #     end
 
     end
 
@@ -114,25 +88,16 @@ function BlockComIHT_inexactAS_diff_MT(; X::Array{Float64,2},
     if isnothing(eig)
 
         if svdFlag
-            _, singVals, _ = svd( X, alg = LinearAlgebra.QRIteration() ) #
-            eig = singVals[1] #svdvals( X[ indxList[i], :] )[1] #singVals[1]#svdvals( X[ indxList[i], :] )[1] #singVals[1]
+            _, singVals, _ = svd( X, alg = LinearAlgebra.QRIteration() )
+            eig = singVals[1]
         else
             eig = tsvd( X )[2][1]; # max eigenvalue of X^T X
         end
 
-        # if not provided by user
-        # for i = 1:K
-        #     indx = findall(x -> x == i, study); # indices of rows for ith study
-        #     a2 = tsvd(X[indx,:])[2][1]; # max eigenvalue of X^T X
-        #     if (a2 > eig)
-        #         eig = a2
-        #     end
-        # end
     else
         eig = Float64(eig)
     end
 
-    # L = eig^2 * sqrt(K) / maximum(nVec) # L without regularization terms (updated in optimization fn below)
 
     # optimization
     vals = length(lambda1)
@@ -181,10 +146,8 @@ function BlockComIHT_inexactAS_diff_MT(; X::Array{Float64,2},
             beta, idx1 = BlockComIHT_inexactAS_diff_opt_MT(X = X,
                                             y = y,
                                             rho = rho,
-                                            # indxList = indxList,
                                             B = beta,
                                             K = K,
-                                            #L = L,
                                             eig = eig,
                                             n = n,
                                             maxIter_in = maxIter_in,
@@ -204,10 +167,8 @@ function BlockComIHT_inexactAS_diff_MT(; X::Array{Float64,2},
             beta = BlockComIHT_inexactAS_diff_old_opt_MT(X = X,
                                             y = y,
                                             rho = rho,
-                                            #indxList = indxList,
                                             B = beta,
                                             K = K,
-                                            #L = L,
                                             eig = eig,
                                             n = n,
                                             maxIter_in = maxIter_in,
@@ -215,7 +176,6 @@ function BlockComIHT_inexactAS_diff_MT(; X::Array{Float64,2},
                                             lambda1 = Float64(lambda1[v]),
                                             lambda2 = Float64(lambda2[v]),
                                             lambda_z = Float64(lambda_z[v]),
-                                            #idx = idx,
                                             p = p
                                             );
         end
@@ -232,7 +192,6 @@ function BlockComIHT_inexactAS_diff_MT(; X::Array{Float64,2},
                                 lambda1 = lambda1[v],
                                 lambda2 = lambda2[v],
                                 lambda_z = lambda_z[v],
-                                # indxList = indxList,
                                 K = K,
                                 n = n,
                                 p = p,
@@ -255,53 +214,3 @@ function BlockComIHT_inexactAS_diff_MT(; X::Array{Float64,2},
     end
 
 end
-#
-#  using CSV, DataFrames
-# # #
-# # # # # # # #
-# dat = CSV.read("/Users/gabeloewinger/Desktop/Research/dat_ms", DataFrame);
-# # dat = CSV.read("/Users/gabeloewinger/Desktop/Research/iht_error.csv", DataFrame);
-#
-# X = Matrix(dat[:,4:end]);
-# y = Array(dat[:,2:3]);
-# # # #
-# # # # itrs = 4
-# lambda1 = 1 #ones(itrs)
-# lambda2 = 0 #ones(itrs)
-# lambda_z = 0.01 #ones(itrs) * 0.01
-# fit = BlockComIHT_inexactAS_diff_MT(X = X,
-#         y = y,
-#         study = dat[:,1],
-#                     beta =  ones(50, 2),#beta;#
-#                     rho = 5,
-#                     lambda1 = lambda1,
-#                     maxIter = 5000,
-#                     lambda2 = lambda2,
-#                     lambda_z = lambda_z,
-#                     localIter = 50,
-#                     scale = true,
-#                     idx = nothing,
-#                     eig = nothing,
-#                     #eigenVec = [0.1 0.1 0.1],
-#                     svdFlag = false,
-#                     WSmethod = 2,
-#                     ASpass = false
-# )
-
-# include("objFun.jl") # local search
-# #
-# itr = 1
-# objFun( X = X,
-#         y = y,
-#         study = dat[:,1],
-#                     beta = fit[:,:, itr],
-#                     lambda1 = lambda1[ itr ],
-#                     lambda2 = lambda2[ itr ],
-#                     lambda_z = 0,
-#                     )
-# #
-# # number of non-zeros per study (not including intercept)
-# size(findall(x -> x.> 1e-9, abs.(fit[2:end, :,1])))[1] / K
-
-# X2 = randn(size(X))
-# y2 = randn(size(y))

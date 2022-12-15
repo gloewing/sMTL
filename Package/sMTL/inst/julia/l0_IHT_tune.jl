@@ -1,4 +1,15 @@
-using TSVD, Statistics # MatrixImpute, Ipopt, DataFrames,
+# model fitting of sparse regression (single task/dataset)
+## X: n x p design matrix (feature matrix)
+## y: n x 1 outcome matrix
+## rho: Sparsity level (integer)
+## beta: p*K initial solution
+## scale: whether to center scale features
+## lambda>=0: the ridge coefficient
+## maxIter: number of max coordinate descent iterations
+## localIter: max number of local search iterations
+## eig: max eigenvalue for Lipschitz constant
+
+using TSVD, Statistics
 
 include("l0_IHT_opt.jl")
 include("l0_IHT_cvx_opt.jl") # convex
@@ -16,18 +27,9 @@ function L0_iht(; X::Array{Float64,2},
                     eig = nothing
                     )::Array
 
-    # rho is number of non-zero coefficient
-    # beta is a feasible initial solution
-    # scale -- if true then scale covaraites before fitting model
-    # maxIter is maximum number of iterations
 
-    # X = Matrix(X);
     n, p = size(X); # number of covaraites
-    # beta = Array(beta[:,1]); # initial value
     beta = Array(beta[:,1]); # initial value
-    # y = Array(y);
-    #lambda = Array(lambda);
-    # rho = Int64(rho);
 
     # scale covariates
     if scale
@@ -36,8 +38,6 @@ function L0_iht(; X::Array{Float64,2},
         X = X ./ Xsd;
         Xsd = Xsd'; # transpose
         Xsd = Xsd[:,1]; # reformat dimensions
-        # Ysd = std(y) * (n - 1) / n; # glmnet style MLE of sd
-        # lambda = lambda / Ysd; # scale tuning parameter by std of y
 
         Xsd = vcat(1, Xsd); # add row of ones so standardize intercept by one
         beta .= beta .* Xsd; # rescale warm starts (if not scaled Xsd is a vector of ones)
@@ -144,20 +144,3 @@ function L0_iht(; X::Array{Float64,2},
 
 
 end
-
-# ###############################
-# using CSV, Random, DataFrames, Statistics
-# dat = CSV.read("/Users/gabeloewinger/Desktop/Research Final/Mas-o-Menos/dat", DataFrame);
-# X = Matrix(dat[:,2:end]);
-# y = (dat[:,1]);
-# lambda = collect(0:.1:10)
-# LS = zeros( length(lambda) )
-# LS[ [1 3 5] ] .= 5
-# fit1 = L0_iht(X = X,
-#                     y = y,
-#                     rho = 5,
-#                     beta = ones(size(X,2) + 1),
-#                     scale = true,
-#                     lambda = lambda,
-#                     localIter = LS
-#                     );

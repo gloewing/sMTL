@@ -1,3 +1,14 @@
+# Local Search for single task/dataset
+## X: n x p design matrix (feature matrix)
+## y: n x 1 outcome vec
+## s: Sparsity level (integer)
+## B: p*K initial solution
+## K: number of tasks
+## n: sample size
+## lambda>=0: the ridge coefficient
+## p: number of features/covariates
+## maxIter: number of coordinate descent iterations
+
 using LinearAlgebra
 
 # Local Search for exact common support
@@ -11,11 +22,6 @@ function SingleLS(; X::Matrix,
                     p::Integer,
                     maxIter::Integer = 1000)
 
-    # p is number of covariates not including intercept
-    # s = rho; #
-    # # n, p, K = size(X)
-    # B = copy(beta)
-    # beta = 0; # save memory
     S = zeros(p, p)
     Aq = zeros(s, p-s)
     Bq = zeros(s, p-s)
@@ -29,7 +35,7 @@ function SingleLS(; X::Matrix,
     delta_cost = 0
 
     obj = 0
-    r = zeros(n); #Vector{Any}(); # list of vectors of residuals # zeros(n,K)
+    r = zeros(n); # list of vectors of residuals
 
     r = y - X * B
     obj = obj + r' * r / (2 * n)
@@ -69,7 +75,6 @@ function SingleLS(; X::Matrix,
 
             betaq2 = -Bq2 ./ (2 * Aq2) # find argmin of each decision variable as univariate problem (thats why doing elementwise division)
             costq2 = Cq2 - (Bq2.^2) ./ (4 * Aq2) # cost function evaluated at argmin
-
 
 
             minc = minimum(costq2[:]) # find lowest cost

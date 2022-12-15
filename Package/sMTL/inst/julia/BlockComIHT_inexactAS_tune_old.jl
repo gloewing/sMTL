@@ -1,13 +1,21 @@
-## Block IHT INEXACT for the common support problem with strength sharing (problem (3) in the write-up)
-## b: n*K observation matrix
-## A: n*p*K data tensor
-## s: Sparsity level (integer)
-## x0: p*K initial solution
-## lambda1>=0 the ridge coefficient
-## lambda2>=0 the strength sharing coefficient
-## lambda_z>=0 the strength sharing coefficient for support
+# Model Fitting Code
+## X: n x p design matrix (feature matrix)
+## y: n x 1 outcome vec
+## rho: Sparsity level (integer)
+## beta: p*K initial solution
+## scale: whether to center scale features
+## eig: max eigenvalue of all design matrices
+## idx: active set indices
+## lambda1>=0: the ridge coefficient
+## lambda2>=0: the coefficient value strength sharing coefficient (Bbar penalty)
+## lambda_z>=0: the coefficient support strength sharing coefficient (Zbar penalty)
+## maxIter_in: number of inner coordinate descent iterations (within active sets)
+## maxIter_out: number of outer coordinate descent iterations
+## eigenVec: dummy variable
+## WSmethod: dummy variable
+## ASpass: dummy variable
 
-using TSVD, Statistics #, LinearAlgebra, Statistics
+using TSVD, Statistics
 
 include("BlockComIHT_inexactAS_opt_old.jl") # IHT algorithm
 include("BlockInexactLS.jl") # local search algorithm
@@ -27,23 +35,16 @@ function BlockComIHT_inexactAS_old(; X::Array{Float64,2},
                     maxIter_in = nothing,
                     maxIter_out = nothing,
                     eig = nothing,
-                    eigenVec = nothing, # dummy variable that does nothing
-                    WSmethod::Integer = 1, # dummy variable that does nothing
-                    ASpass::Bool = false # dummy variable that does nothing
+                    eigenVec = nothing, # dummy variable
+                    WSmethod::Integer = 1, # dummy variable
+                    ASpass::Bool = false # dummy variable
                     )::Array
 
-    # rho is number of non-zero coefficient
-    # beta is a feasible initial solution
-    # scale -- if true then scale covaraites before fitting model
-    # maxIter is maximum number of iterations
-    # max eigenvalue for Lipschitz constant
-    # localIter is a vector as long as lambda1/lambda2 and specifies the number of local search iterations for each lambda
-    # eigenVec, WSmethod, ASpass are all dummy variables to make this version "_tune_old.jl" work with the "_tuneTest.jl" versions
 
     n, p = size(X); # number of covaraites
     K = length( unique(study) ); # number of studies
     indxList = [Vector{Int64}() for i in 1:K]; # list of vectors of indices of studies
-    nVec = Vector{Int64}(undef, K) #nVec = zeros(K); # vector of sample sizes of studies
+    nVec = Vector{Int64}(undef, K) # vector of sample sizes of studies
 
     if isnothing(maxIter_in)
         maxIter_in = maxIter
@@ -67,14 +68,11 @@ function BlockComIHT_inexactAS_old(; X::Array{Float64,2},
             Xsd = std(X[indx,:], dims=1) .* (n_k - 1) / n_k; # glmnet style MLE of sd
             sdMat[:,i] = Xsd[1,:]; # save std of covariates of ith study in ith row of matrix
             X[indx,:] .= X[indx,:] ./ Xsd; # standardize ith study's covariates
-            # Ysd[i] = std(y[indx]) * (n_k - 1) / n_k; # glmnet style MLE of sd of y_k
 
         end
 
         sdMat = vcat(1, sdMat); # add row of ones so standardize intercept by ones
         beta = beta .* sdMat; # scale warm start solution
-
-        # lambda1 = lambda1 / mean(Ysd); # scale tuning parameter for L2 norm by average std of y_k
 
     else
         # otherwise just make this a vector of ones for multiplication
@@ -174,46 +172,3 @@ function BlockComIHT_inexactAS_old(; X::Array{Float64,2},
     end
 
 end
-#
-# using CSV, DataFrames
-# #
-# # # # # #
-# dat = CSV.read("/Users/gabeloewinger/Desktop/Research/dat_ms", DataFrame);
-# X = Matrix(dat[:,3:end]);
-# y = (dat[:,2]);
-#
-# itrs = 4
-# lambda1 = 0 #ones(itrs)
-# lambda2 = 0 #ones(itrs)
-# lambda_z = 0.01 #ones(itrs) * 0.01
-# fit = BlockComIHT_inexactAS_old(X = X,
-#         y = y,
-#         study = dat[:,1],
-#                     beta =  ones(51, 2),#beta;#
-#                     rho = 5,
-#                     lambda1 = lambda1,
-#                     maxIter = 5000,
-#                     lambda2 = lambda2,
-#                     lambda_z = lambda_z,
-#                     localIter = [10],
-#                     scale = true,
-#                     eig = nothing
-# )
-
-# include("objFun.jl") # local search
-#
-# itr = 4
-# objFun( X = X,
-#         y = y,
-#         study = dat[:,1],
-#                     beta = fit[:,:, itr],
-#                     lambda1 = lambda1[ itr ],
-#                     lambda2 = lambda2[ itr ],
-#                     lambda_z = 0,
-#                     )
-#
-# # number of non-zeros per study (not including intercept)
-# size(findall(x -> x.> 1e-9, abs.(fit[2:end, :,1])))[1] / K
-
-# X2 = randn(size(X))
-# y2 = randn(size(y))

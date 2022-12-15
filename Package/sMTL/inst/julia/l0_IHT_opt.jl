@@ -1,5 +1,15 @@
-
 # sparse regression with IHT
+# Optimization Code
+## X: n x p design matrix (feature matrix)
+## y: n x 1 outcome vector
+## rho: sparsity level
+## beta: p x K initial solution
+## n: sample size
+## L: Lipschitz constant
+## lambda>=0: the ridge coefficient
+## p: num covariates/features
+## maxIter: number of max coordinate descent iterations
+
 function L0_iht_opt(; X::Matrix,
                     y::Array,
                     rho::Integer,
@@ -11,10 +21,6 @@ function L0_iht_opt(; X::Matrix,
                     maxIter::Integer = 1000
                     )::Array
 
-    # rho is number of non-zero coefficient
-    # beta is a feasible initial solution
-    # scale -- if true then scale covaraites before fitting model
-    # maxIter is maximum number of iterations
 
     L = L + lambda;
     ncol = p + 1
@@ -22,7 +28,6 @@ function L0_iht_opt(; X::Matrix,
     # initialize
     βprev = zeros(p); # previous β
     βhat = copy(beta); # current solution β
-    # b = beta; # update
 
     t = 1;
     obj = 1e20;
@@ -74,17 +79,3 @@ function L0_iht_opt(; X::Matrix,
     return βhat;
 
 end
-
-# ###############################
-# using CSV, Random, DataFrames, Statistics
-# dat = CSV.read("/Users/gabeloewinger/Desktop/Research Final/Mas-o-Menos/dat", DataFrame);
-# X = Matrix(dat[:,2:end]);
-# y = (dat[:,1]);
-#
-# fit1 = L0_iht(X = X,
-#                     y = y,
-#                     rho = 5,
-#                     beta = ones(size(X,2) + 1),
-#                     scale = true,
-#                     lambda = 0.1
-#                     );

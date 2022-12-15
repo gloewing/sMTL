@@ -1,24 +1,34 @@
 # Local Search for exact non-common support
+## X: n x p design matrix (feature matrix)
+## y: n x 1 outcome vec
+## s: Sparsity level (integer)
+## beta: p*K initial solution
+## K: number of tasks
+## nVec: vector of sample sizes
+## lambda1>=0: the ridge coefficient
+## lambda2>=0: the coefficient value strength sharing coefficient (Bbar penalty)
+## lambda_z>=0: the coefficient support strength sharing coefficient (Zbar penalty)
+## idxList: list of task row indices
+## p: number of features/covariates
+## maxIter: number of coordinate descent iterations
+
 using LinearAlgebra
 # beta must have exactly rho nonzero rows.
-function BlockInexactLS(; X::Array{Float64,2},
-                    y::Array{Float64,1},
-                    s::Integer,
-                    beta::Array{Float64,2},
-                    lambda1::Float64,
-                    lambda2::Float64,
-                    lambda_z::Float64,
-                    indxList::Array{Array{Int64,1}},
-                    nVec::Array{Int64,1},
-                    K::Integer,
-                    p::Integer,
-                    maxIter::Integer = 50)::Array{Float64,2}
 
-    # p is number of covariates not including intercept
-    #s = rho; #
-    # n, p, K = size(X)
+function BlockInexactLS(; X::Array{Float64,2},
+                        y::Array{Float64,1},
+                        s::Integer,
+                        beta::Array{Float64,2},
+                        lambda1::Float64,
+                        lambda2::Float64,
+                        lambda_z::Float64,
+                        indxList::Array{Array{Int64,1}},
+                        nVec::Array{Int64,1},
+                        K::Integer,
+                        p::Integer,
+                        maxIter::Integer = 50)::Array{Float64,2}
+
     B = copy(beta)
-    #beta = 0; # save memory
     S = zeros(p, p ,K)
     Aq = zeros(s, p-s)
     Bq = zeros(s, p-s)
@@ -43,7 +53,7 @@ function BlockInexactLS(; X::Array{Float64,2},
     B_bar = B_bar[:]
 
     obj = 0
-    r0 = [ zeros( nVec[i] ) for i in 1:K]; # list of vectors of residuals # zeros(n,K)
+    r0 = [ zeros( nVec[i] ) for i in 1:K]; # list of vectors of residuals
 
     for k = 1:K
         r0[k] = y[indxList[k]] - X[indxList[k], :] * B[:,k]
@@ -72,9 +82,6 @@ function BlockInexactLS(; X::Array{Float64,2},
 
     while(iter <= maxIter)
 
-        # sumB = sum( abs.( B[2:end, :] ), dims=2 )
-        # sumB = sumB[:]
-
         flag = 0
 
         for k = 1:K
@@ -85,7 +92,7 @@ function BlockInexactLS(; X::Array{Float64,2},
             X0 = X[ indxList[k], 2:end] # do not include intercept
             y0 = y[ indxList[k] ]
             S0 = S[:,:,k]
-            beta = B[2:end, k] # ask Kayhan -- residuals include contribution of interept but other terms below do now
+            beta = B[2:end, k]
             r = r0[k] # residuals include contribution of intercept
 
             ################################################################################################################## START OF NEW BLOCK
@@ -176,15 +183,13 @@ function BlockInexactLS(; X::Array{Float64,2},
                 if (lambda2 > 0)
                     # beta - betaBar penalty
 
-                    Aq = Aq + lambda2 * ( (K-1)^2 / K^2 + (K-1) / K^2 ) * ones(s, p-s) # DOESNT MATCH -- ASK KAYHAN
+                    Aq = Aq + lambda2 * ( (K-1)^2 / K^2 + (K-1) / K^2 ) * ones(s, p-s)
 
                     beta_cut = B[idx2 .+ 1, :] # +1 for intercept
                     B_bar_cut = B_bar[idx2]
 
-                     # DOESNT MATCH -- ASK KAYHAN
                     Bq = Bq + ones(s) *
                         (2 * lambda2 * ( B_bar_cut * (K-1) - sum(beta_cut, dims=2) ) / K - 2 * lambda2 * (K-1) *  B_bar_cut / K )'
-                        # I got the equivalent of (2 * lambda2 * (K-1)/K) * ( B_cut - B_bar_cut)
                     # cost of beta - betaBar penalty BEFORE swap (only including fixed terms that do not depend on decision variable)
                     b_bar_temp = B_bar[idx1]
                     B_temp = B[idx1 .+ 1, :] # add one for intercept
@@ -196,7 +201,6 @@ function BlockInexactLS(; X::Array{Float64,2},
                     B_temp[:,k] = zeros( length(idx1) )
                     delta_cost = delta_cost + lambda2 * sum( (B_temp - b_bar_temp * ones(K)').^2, dims=2) * ones(length(idx2))'
 
-                     # ASK KAYHAN to confirm that we are just taking difference of cost before and cost after
                     Cq = Cq + delta_cost
                 end
 
