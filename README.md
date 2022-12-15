@@ -26,6 +26,8 @@ For a tutorial, please refer to [sMTL's Vignette](https://github.com/gloewing/sM
 
 3) The 'sMTL_paper_Fig1_demo' folder contains code that can be used as a short self-contained demo/introduction to many of the methods proposed in the paper. This code should reproduce Figures 1 and 3 in the manuscript. It includes R code for data simulation, calls the algorithms (through Julia) to tune and fit models on the data and then generate figures.
 
+<br />
+
 ## Dataset Links
 Links to the data repositories for the neuroscience and cancer genomics applications can be found at:
 
