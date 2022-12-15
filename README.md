@@ -7,7 +7,7 @@ Repository for the development version of the R Package `sMTL` as well as code t
 
 ## Installation
 
-The development version of the R Package `sMTL` can be downloaded as follows:
+The development version of the $\texttt{R}$ Package `sMTL` can be downloaded as follows:
 
 ```{R}
 library(devtools)
@@ -15,18 +15,18 @@ install_github("gloewing/sMTL", subdir = "Package/sMTL")
 ```
 
 ###  Package Usage
-*** The first time `sMTL` is used, an initial setup step is required to link $\texttt{R}$ and 'Julia' (where the algorithms are coded) or else the package functions will not work. ***
+*** The first time `sMTL` is used, an initial setup step is required to link $\texttt{R}$ and $\texttt{Julia}$ (where the algorithms are coded) or else the package functions will not work. ***
 
 For these steps and a tutorial on package functions, please refer to [sMTL's Vignette](https://github.com/gloewing/sMTL/tree/main/Package/sMTL/vignettes). 
 
 <br />
 
 ## Repository Folders
-1) The 'Package' folder has code for the `sMTL` R package that is current under development. This includes Julia code to run algorithms and R wrapper code to tune and fit these models. This package is still under development and has not been widely tested.
+1) The 'Package' folder has code for the `sMTL` $\texttt{R}$ package that is current under development. This includes $\texttt{Julia}$ code to run algorithms and an $\texttt{R}$ wrapper code to tune and fit these models. This package is still under development and has not been widely tested.
 
 2) The 'sMTL_Paper' folder has code to run analyses and make figures for the manuscript. Some files will require changing path names. Please feel free to reach out to the author for more annotation or help with reproducing any analyses.
 
-3) The 'sMTL_paper_Fig1_demo' folder contains code that can be used as a short self-contained demo/introduction to many of the methods proposed in the paper. This code should reproduce Figures 1 and 3 in the manuscript. It includes R code for data simulation, calls the algorithms (through Julia) to tune and fit models on the data and then generate figures.
+3) The 'sMTL_paper_Fig1_demo' folder contains code that can be used as a short self-contained demo/introduction to many of the methods proposed in the paper. This code should reproduce Figures 1 and 3 in the manuscript. It includes $\texttt{R}$ code for data simulation, calls the algorithms (through $\texttt{Julia}$) to tune and fit models on the data and then generate figures.
 
 <br />
 
