@@ -3,7 +3,7 @@
 
 Repository for the development version of the R Package `sMTL` as well as code to run analyses and reproduce figures in the associated manuscript.
 
-## sMTL R Package
+## `sMTL` R Package
 
 ## Installation
 
@@ -15,12 +15,12 @@ install_github("gloewing/sMTL", subdir = "Package/sMTL")
 ```
 
 ###  Package Usage
-*** The first time `sMTL` is used, an initial setup step is required to link 'R' and 'Julia' (where the algorithms are coded) or else the package functions will not work. For these steps and a tutorial on package functions, please refer to [sMTL's Vignette](https://github.com/gloewing/sMTL/tree/main/Package/sMTL/vignettes). 
+*** The first time `sMTL` is used, an initial setup step is required to link $\texttt{R} and 'Julia' (where the algorithms are coded) or else the package functions will not work. For these steps and a tutorial on package functions, please refer to [sMTL's Vignette](https://github.com/gloewing/sMTL/tree/main/Package/sMTL/vignettes). 
 
 <br />
 
 ## Repository Folders
-1) The 'Package' folder has code for the 'sMTL' R package that is current under development. This includes Julia code to run algorithms and R wrapper code to tune and fit these models. This package is still under development and has not been widely tested.
+1) The 'Package' folder has code for the `sMTL` R package that is current under development. This includes Julia code to run algorithms and R wrapper code to tune and fit these models. This package is still under development and has not been widely tested.
 
 2) The 'sMTL_Paper' folder has code to run analyses and make figures for the manuscript. Some files will require changing path names. Please feel free to reach out to the author for more annotation or help with reproducing any analyses.
 
