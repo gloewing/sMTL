@@ -17,7 +17,7 @@ install_github("gloewing/sMTL", subdir = "Package/sMTL")
 ###  Package Usage
 *** The first time `sMTL` is used, an initial setup step is required to link $\texttt{R}$ and $\texttt{Julia}$ (where the algorithms are coded) or else the package functions will not work. ***
 
-For these steps and a tutorial on package functions, please refer to [sMTL's Vignette](https://github.com/gloewing/sMTL/tree/main/Package/sMTL/vignettes). 
+For these steps and a tutorial on package functions, please refer to [sMTL's Vignette](https://rpubs.com/gloewinger/984630). 
 
 <br />
 
