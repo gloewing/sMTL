@@ -23,10 +23,13 @@
 #'             lambda_z = c(0.01, 0.05, 0.1))
 #' 
 #' # make predictions
-#' preds <- sMTL::predict(model = mod, 
+#' preds <- sMTL::predict.smtl(model = mod, 
 #'                        X = X, 
 #'                        lambda_1 = 0.1, 
 #'                        lambda_z = 0.01) }
+#'                        
+#' @export
+#'                        
 
 predict = function(model, 
                     X, 
