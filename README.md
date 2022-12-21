@@ -44,4 +44,4 @@ Hierarchical resampling for bagging in multistudy prediction with applications t
 
 Note that this data was a pre-processed version of data from:
 
-PLANEY, K. (2020). curatedBreastData: Curated breast cancer gene expression data with survival and treatment information R package version 2.18.0.
+Katie Planey. (2020). curatedBreastData: Curated breast cancer gene expression data with survival and treatment information R package version 2.18.0.
