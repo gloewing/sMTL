@@ -2,7 +2,7 @@
 % Please edit documentation in R/s_setup.R
 \name{smtl_setup}
 \alias{smtl_setup}
-\title{smtl_setup: setup Julia path and/or install Julia or Julia packages}
+\title{smtl_setup: setup Julia path and/or install Julia or Julia packages using functions based on external package JuliaCall::julia_setup().}
 \usage{
 smtl_setup(path = NULL, installJulia = FALSE, installPackages = FALSE)
 }
@@ -17,7 +17,7 @@ smtl_setup(path = NULL, installJulia = FALSE, installPackages = FALSE)
 A message
 }
 \description{
-smtl_setup: setup Julia path and/or install Julia or Julia packages
+smtl_setup: setup Julia path and/or install Julia or Julia packages using functions based on external package JuliaCall::julia_setup().
 }
 \examples{
 
