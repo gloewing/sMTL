@@ -1,4 +1,4 @@
-#' smtl_setup: setup Julia path and/or install Julia or Julia packages
+#' smtl_setup: setup Julia path and/or install Julia or Julia packages using functions based on external package JuliaCall::julia_setup().
 #'
 #' @param path A string
 #' @param installJulia A boolean.
@@ -85,8 +85,7 @@ smtl_setup = function(path = NULL, installJulia = FALSE, installPackages = FALSE
       }
       
       # julia_path <- findJulia() # use this to find path
-      # Sys.setenv(JULIA_BINDIR = julia_path )
-      
+
       return( message(paste0("Julia Path Not Specified", #  So We Tried to Find It. Julia Path Found: ", julia_path, 
                              "\n If incorrect, then do one of the following: ", 
                              "\n 1) Install Julia by reruning smtl_setup() and set installJulia = TRUE \n 
@@ -105,7 +104,7 @@ smtl_setup = function(path = NULL, installJulia = FALSE, installPackages = FALSE
   
   # if install=TRUE, use JuliaCall to install
   if(installJulia){
-    JuliaCall::julia_setup(installJulia = TRUE, path = path) # which will invoke install_julia automatically if Julia is not found and also do initialization of JuliaCall.
+    JuliaCall::julia_setup(installJulia = TRUE, JULIA_HOME = path) # which will invoke install_julia automatically if Julia is not found and also do initialization of JuliaCall.
     
     # install packages
     JuliaCall::julia_install_package_if_needed("TSVD")
@@ -137,11 +136,13 @@ smtl_setup = function(path = NULL, installJulia = FALSE, installPackages = FALSE
       
       message("Installing Julia Packages, Make Sure Path is Correctly Specified")
       
-      JuliaCall::julia_setup(installJulia = FALSE, JULIA_HOME = path) # which will invoke install_julia automatically if Julia is not found and also do initialization of JuliaCall.
+      JuliaCall::julia_setup(installJulia = FALSE, 
+                             JULIA_HOME = path) # which will invoke install_julia automatically if Julia is not found and also do initialization of JuliaCall.
       
       # install packages
       JuliaCall::julia_install_package_if_needed("TSVD")
       JuliaCall::julia_install_package_if_needed("Statistics")
+      JuliaCall::julia_install_package_if_needed("LinearAlgebra")
       
       message("Julia Packages Installed")
       
@@ -167,20 +168,5 @@ smtl_setup = function(path = NULL, installJulia = FALSE, installPackages = FALSE
     return( message(paste0("Julia Path Loaded Successfully: No Installation of Julia Necessary \n
                             Julia Path: ", path) ) )
   }
-  
-  
-  # if it doesnt work (cant find julia then specify path and set up)
-  # julia_setup(JULIA_HOME = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin") # for JuliaCall
-  # https://cran.r-project.org/web/packages/JuliaCall/readme/README.html
-  
-  # install packages
-  #julia_install_package_if_needed("TSVD")
-  #julia_install_package_if_needed("Statistics")
-  
-  # a = julia_command("a = Sys.BINDIR;")
-  # juliaPath = julia_eval("a")
-  # 
-  # library(JuliaConnectoR)
-  # Sys.setenv(JULIA_BINDIR = juliaPath)
   
 }
