@@ -7,7 +7,7 @@ Repository for the development version of the R Package `sMTL` as well as code t
 
 ## Installation
 
-The development version of the `s`parse `M`ulti-`T`ask `L`earning $\texttt{R}$ Package `sMTL` can be downloaded as follows:
+The development version of the $\texttt{s}$parse $\texttt{M}$ulti-$\texttt{T}$ask $\texttt{L}$earning $\texttt{R}$ Package `sMTL` can be downloaded as follows:
 
 ```{R}
 library(devtools)
@@ -17,7 +17,7 @@ install_github("gloewing/sMTL", subdir = "Package/sMTL")
 ###  Package Usage
 *** The first time `sMTL` is used, an initial setup step is required to link $\texttt{R}$ and $\texttt{Julia}$ (where the algorithms are coded) or else the package functions will not work. ***
 
-For these steps and a tutorial on package functions, please refer to [sMTL's Vignette](https://rpubs.com/gloewinger/984630). 
+For these steps and a tutorial on package functions, please refer to [sMTL's Vignette](https://rpubs.com/gloewinger/986302). 
 
 <br />
 
