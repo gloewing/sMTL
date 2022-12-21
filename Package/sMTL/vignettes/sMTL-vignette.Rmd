@@ -98,7 +98,7 @@ The Common Support problem ensures that each of the $K$ task-specific (or datase
 
 The parameter $\lambda_2$ shrinks the $\boldsymbol{\beta}_k$ $values$ towards a common $\bar{\boldsymbol{\beta}} = \frac{1}{K}\sum_{k=1}^K \boldsymbol{\beta}_k$. The parameter $\lambda_1$ controls the strength of $\ell_2$ (Ridge) shrinkage where $\lambda_1||\mathbb{B}||_2^2 = \lambda_1 \sum_{k=1}^K ||\boldsymbol{\beta}_k||_2^2$. Adding either of these shrinkage terms can be effective in reducing the risk of overfitting and often results in better predictive models. We recommend using either but not both of these regularization terms. For Hetergeneous Support problems $\lambda_z$ controls the degree to which the $\boldsymbol{z}_k$, the supports of the $\boldsymbol{\beta}_k$, are shrunk towards a common $\bar{\boldsymbol{z}} = \frac{1}{K}\sum_{k=1}^K \boldsymbol{z}_k$. When $\lambda_z$ is high, this results in solutions equivalent to the Common Support approach. The fitting of all methods is conducted over a grid of $\lambda_1$, $\lambda_2$ and $\lambda_z$ values to generate a solution path. 
 
-The algorithms provided in `sMTL` are based on block coordinate descent and local combinatorial search. Numerous computational tricks and heuristics are used to speed up the algorithms and improve the solution quality. These heuristics include warm starts and active set convergence. For more details on the algorithms used, please refer to our paper "Multi-Task Learning for Sparsity Pattern Heterogeneity: A Discrete Optimization Approach."
+The algorithms provided in `sMTL` are based on block coordinate descent and local combinatorial search. Numerous computational tricks and heuristics are used to speed up the algorithms and improve the solution quality. These heuristics include warm starts and active set convergence. For more details on the algorithms used, please refer to our paper [Multi-Task Learning for Sparsity Pattern Heterogeneity: A Discrete Optimization Approach](https://arxiv.org/abs/2212.08697).
 <!-- [Multi-Task Learning for Sparsity Pattern Heterogeneity: A Discrete Optimization Approach](https://pubsonline.informs.org/doi/10.1287/opre.2019.1919). -->
 
 The toolkit is implemented in Julia along with an easy-to-use R interface. In this vignette, we provide a tutorial on using the R interface. We demonstrate how use `sMTL`'s main functions for fitting models and cross-validation.
@@ -130,7 +130,7 @@ library(sMTL)
 smtl_setup(installJulia = TRUE, installPackages = TRUE)
 ```
 
-2. A few $\texttt{Julia}$ packages are required (e.g., $\texttt{TSVD}$, $~\texttt{LinearAlgebra}$, $~\texttt{Statistics}$). We include a function to automatically install these if they are not already. If $\texttt{Julia}$ is installed but the packages are not, the function can install them without re-installing $\texttt{Julia}$. If you ran the code for 1. above, you can ignore the rest of the set-up (2-3) and skip to fitting functions.
+2. Three $\texttt{Julia}$ packages are required ($\texttt{TSVD}$, $~\texttt{LinearAlgebra}$ and $~\texttt{Statistics}$). We include a function to automatically install these if they are not already. If $\texttt{Julia}$ is installed but the packages are not, the function can install them without re-installing $\texttt{Julia}$. If you ran the code for 1. above, you can ignore the rest of the set-up (2-3) and skip to fitting functions.
 
 ```{r, eval=FALSE}
 library(sMTL)
@@ -139,7 +139,7 @@ smtl_setup(installJulia = FALSE, installPackages = TRUE)
 
 3. The $\texttt{Julia}$ binary path must be set. If $\texttt{Julia}$ is installed with our function (item 1), this should be set automatically. If $\texttt{Julia}$ was already installed, simply open $\texttt{Julia}$ and type `>> println(Sys.BINDIR)` and this will show the binary path.
 
-The following code can be used where the string after the code `path=` should be replaced with your computer's path for Julia's binary.
+The following code is an example. Note the string after the code `path=` should be replaced with your computer's path for Julia's binary. 
 ```{r, eval=FALSE}
 library(sMTL)
 smtl_setup(path = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin")
@@ -721,7 +721,7 @@ tn <- cv.smtl(y = y,
 ## Two Stage Cross Validation for Solution Quality and Speed
 The optimization framework proposed here offers modeling richness at the cost of additional tuning parameters. For example, tuning a Heterogeneous Support model with a Zbar penalty and a Ridge penalty has 3 hyperparameters ($s$, $\lambda_1$ and $\lambda_z$) and thus tuning across a full tuning grid may incur a large computational cost. One solution to tune hyperparameters with a lower computational burden is to tune in two stages. First, in stage 1 we tune across a smaller grid with just $s$ and $\lambda_z$ and a small, fixed $lambda_1$ for numerical reasons. Then in stage 2, we take the optimal hyperparameter values and create a second grid built around a neighborhood of the optimal hyperparameter values from stage 1 and perform a second cross validation. This way we avoid making a large grid with all three hyperparameters $s$, $\lambda_a$ and $\lambda_z$.
 
-```{r, eval = FALSE, show = FALSE}
+```{r, eval = FALSE}
 ######################################
 # generate initial tuning grid
 ######################################
@@ -793,7 +793,7 @@ Sometimes we may want to fit entire paths of solution for some fixed $s$. The al
 
 
 
-```{r, eval = FALSE, show = FALSE}
+```{r, eval = FALSE}
 mod <- smtl(y = y, 
             X = X, 
             study = task, 
@@ -811,17 +811,51 @@ Now the solutions in `mod$beta` is a $K \times p \times T$ array where $T$ is th
 Now we have many solutions so if we want to make predictions we have to specify which hyperparameter value solutins we want predictions for or else the package will issue a warning and return no predictions.
 
 
-```{r, eval = FALSE, show = FALSE}
+```{r, eval = FALSE}
 preds <- sMTL::predict(model = mod, 
                        X = X, 
                        lambda_1 = 0.1, 
                        lambda_z = 0.01)
 ```
 
+# Troubleshooting
+
+* You are welcome to contact me about `sMTL` at gloewinger@gmail.com with any questions or error reports.
+
+* This GitHub account [gloewing/sMTL](https://github.com/gloewing/sMTL) hosts the development version of sMTL.
+
+* For any errors with downloading $\texttt{Julia}$, or the packages, see documentation for the dependent $\texttt{R}$ package `JuliaCall`. We use `JuliaCall` to download $\texttt{Julia}$ with the function `JuliaCall::julia_setup()` and we use `JuliaCall::julia_install_package_if_needed()` to download packages the $\texttt{Julia}$ packages $\texttt{TSVD}$, $~\texttt{LinearAlgebra}$ and $~\texttt{Statistics}$ through $\texttt{R}$. 
+
+* For any errors with connecting to an existing installation of $\texttt{Julia}$ see documentation for the `JuliaConnectoR` $\texttt{R}$ package. We use this to allow $\texttt{R}$ to start a $\texttt{Julia}$ session and call the $\texttt{.jl}$ files that contain our algorithms.
+
+* If using the `smtl_setup()` function causes errors, the following steps can be taken after installing $\texttt{Julia}$ and the $\texttt{Julia}$ packages:
+
+1. Open $\texttt{Julia}$ and type `>> println(Sys.BINDIR)` and copy the binary path (a string). Replace the string after `path <- ` in the `R` code below with this binary path and run the following:
+```{r, eval = FALSE}
+# save path of Julia binary location on your computer
+# ***replace with your computer's path***
+path <- "/Applications/Julia-1.7.app/Contents/Resources/julia/bin" 
+
+# set so JuliaConnectoR can access Julia installation
+Sys.setenv(JULIA_BINDIR = path )
+```
+
+2. Find the path of the `sMTL` package installation on your computer and save a $\texttt{.txt}$ file in the package installation source files so the package knows where to find the $\texttt{Julia}$ binary.
+```{r, eval = FALSE}
+# find path of sMTL package installation on your computer
+smtl_path <- paste0( .libPaths("sMTL"), "/sMTL/julia_path/" )
+smtl_path <- smtl_path[length(smtl_path)] # use most recent 
+    
+# save Julia path for sMTL package directory for future use
+fileConn <- file( paste0(smtl_path, "julia.path.txt") )
+base::writeLines(path, fileConn) # save new julia path
+close(fileConn)
+```
+
 
 # References
-Gabriel Loewinger, Kayhan Behdin, Kenneth Kishida, Giovanni Parmigiani and Rahul Mazumder. Multi-Task Learning for Sparsity Pattern Heterogeneity: A Discrete Optimization Approach. arXiv (2022).
+Gabriel Loewinger, Kayhan Behdin, Kenneth Kishida, Giovanni Parmigiani and Rahul Mazumder. [Multi-Task Learning for Sparsity Pattern Heterogeneity: A Discrete Optimization Approach](https://arxiv.org/abs/2212.08697). arXiv:2212.08697 (2022).
 
 Prasad Patil and Giovanni Parmigiani. [Training replicable predictors in multiple studies](https://www.pnas.org/doi/full/10.1073/pnas.1708283115). Proceedings of the National Academy of Sciences (2018).
 
-Yu Zhang and Qiang Yang. [A Survey on Multi-Task Learning](https://scholar.google.com/scholar_url?url=https://arxiv.org/pdf/1707.08114&hl=en&sa=X&ei=6IbIYr7xMo-5yQTW04rIBw&scisig=AAGBfm12ecsT1Wt4UCLfp0fvnw_iHIjZ2w&oi=scholarr). IEEE TRANSACTIONS ON KNOWLEDGE AND DATA ENGINEERING (2021).
+Yu Zhang and Qiang Yang. [A Survey on Multi-Task Learning](https://scholar.google.com/scholar_url?url=https://arxiv.org/pdf/1707.08114&hl=en&sa=X&ei=6IbIYr7xMo-5yQTW04rIBw&scisig=AAGBfm12ecsT1Wt4UCLfp0fvnw_iHIjZ2w&oi=scholarr). IEEE Transactions on Knowledge and Data Engineering (2021).
