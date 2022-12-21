@@ -7,7 +7,7 @@ Repository for the development version of the R Package `sMTL` as well as code t
 
 ## Installation
 
-The development version of the Sparse Multi-Task Learning $\texttt{R}$ Package `sMTL` can be downloaded as follows:
+The development version of the `s`parse `M`ulti-Task Learning $\texttt{R}$ Package `sMTL` can be downloaded as follows:
 
 ```{R}
 library(devtools)
