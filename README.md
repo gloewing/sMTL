@@ -1,7 +1,7 @@
 # Multi-Task Learning for Sparsity Pattern Heterogeneity: A Discrete Optimiztion Approach (sMTL)
 ## Repository Description
 
-Repository for the development version of the R Package `sMTL` as well as code to run analyses and reproduce figures in the associated manuscript.
+Repository for the development version of the R Package `sMTL` as well as code to run analyses and reproduce figures in the associated [manuscript](https://doi.org/10.48550/arXiv.2212.08697).
 
 ## `sMTL` R Package
 
@@ -35,7 +35,7 @@ Links to the data repositories for the neuroscience and cancer genomics applicat
 
 1) Neuroscience application: https://osf.io/tb8fx/
 
-Note that this data was originally from:
+Note that this data was originally published with the paper:
 
 Gabriel Loewinger, Prasad Patil, Kenneth T Kishida, Giovanni Parmigiani. (2022)
 Hierarchical resampling for bagging in multistudy prediction with applications to human neurochemical sensing. Annals of Applied Statistics. 16(4):2145-2165.
