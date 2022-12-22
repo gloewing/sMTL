@@ -1,4 +1,4 @@
-name: Document
+name: Publish Document
 title:
 username:
 account: rpubs
@@ -6,6 +6,6 @@ server: rpubs.com
 hostUrl: rpubs.com
 appId: https://api.rpubs.com/api/v1/document/986302/c2c3cad08c244c3289b3f5e93e9ee62d
 bundleId: https://api.rpubs.com/api/v1/document/986302/c2c3cad08c244c3289b3f5e93e9ee62d
-url: http://rpubs.com/publish/claim/986302/538a9542125346ca82b149aa7c915001
-when: 1671640187.77644
-lastSyncTime: 1671640187.77645
+url: http://rpubs.com/gloewinger/986302
+when: 1671736029.27206
+lastSyncTime: 1671736029.27207

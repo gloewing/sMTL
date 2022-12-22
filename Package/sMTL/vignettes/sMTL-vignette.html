@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html>
 
 <head>
@@ -10,7 +9,7 @@
 
 
 
-<meta name="date" content="2022-12-21" />
+<meta name="date" content="2022-12-22" />
 
 <title>sMTL Vignette</title>
 
@@ -1591,7 +1590,7 @@ div.tocify {
 Parmigiani, Rahul Mazumder</h4>
 <h4 class="author">National Institute on Mental Health (NIH), Harvard
 University, Massachusetts Institute of Technology (MIT)</h4>
-<h4 class="date">2022-12-21</h4>
+<h4 class="date">2022-12-22</h4>
 
 </div>
 
@@ -1702,13 +1701,14 @@ be completed before using the <code>sMTL</code> functions.</p>
 </div>
 <div id="installation" class="section level1">
 <h1>Installation</h1>
-<p><code>sMTL</code> can be installed directly from CRAN by
-executing:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;sMTL&quot;</span>)</span></code></pre></div>
+<!-- `sMTL` can be installed directly from CRAN by executing: -->
+<!-- ```{r, eval=FALSE} -->
+<!-- install.packages("sMTL") -->
+<!-- ``` -->
 <p>The development version of <code>sMTL</code> can be downloaded from
 github by executing:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devtools)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install_github</span>(<span class="st">&quot;gloewing/sMTL&quot;</span>, <span class="at">subdir =</span> <span class="st">&quot;Package/sMTL&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devtools)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install_github</span>(<span class="st">&quot;gloewing/sMTL&quot;</span>, <span class="at">subdir =</span> <span class="st">&quot;Package/sMTL&quot;</span>)</span></code></pre></div>
 <!-- If you face installation issues, please refer to the [Installation Troubleshooting Wiki](https://github.com/hazimehh/$\ell_0$Learn/wiki/Installation-Troubleshooting). If the issue is not resolved, you can submit an issue on [$\ell_0$Learn's Github Repo](https://github.com/hazimehh/$\ell_0$Learn). -->
 <p>The very first time we use <code>sMTL</code> we have to keep in mind
 the following:</p>
@@ -1719,41 +1719,49 @@ the following:</p>
 <li>The programming language <span class="math inline">\(\texttt{Julia}\)</span> is required. We have a
 function to automatically install it if it is not already:</li>
 </ol>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sMTL)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">smtl_setup</span>(<span class="at">installJulia =</span> <span class="cn">TRUE</span>, <span class="at">installPackages =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sMTL)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">smtl_setup</span>(<span class="at">installJulia =</span> <span class="cn">TRUE</span>, <span class="at">installPackages =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p>If you ran the code for step 1 above, then you can ignore the rest of
+the Package Setup section (steps 2-3) and skip to the Tutorial Guide
+section.</p>
 <ol start="2" style="list-style-type: decimal">
-<li>Three <span class="math inline">\(\texttt{Julia}\)</span> packages
-are required (<span class="math inline">\(\texttt{TSVD}\)</span>, <span class="math inline">\(~\texttt{LinearAlgebra}\)</span> and <span class="math inline">\(~\texttt{Statistics}\)</span>). We include a
-function to automatically install these if they are not already. If
-<span class="math inline">\(\texttt{Julia}\)</span> is installed but the
-packages are not, the function can install them without re-installing
-<span class="math inline">\(\texttt{Julia}\)</span>. If you ran the code
-for 1. above, you can ignore the rest of the set-up (2-3) and skip to
-fitting functions.</li>
-</ol>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sMTL)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">smtl_setup</span>(<span class="at">installJulia =</span> <span class="cn">FALSE</span>, <span class="at">installPackages =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
-<ol start="3" style="list-style-type: decimal">
 <li>The <span class="math inline">\(\texttt{Julia}\)</span> binary path
-must be set. If <span class="math inline">\(\texttt{Julia}\)</span> is
-installed with our function (item 1), this should be set automatically.
-If <span class="math inline">\(\texttt{Julia}\)</span> was already
-installed, simply open <span class="math inline">\(\texttt{Julia}\)</span> and type
-<code>&gt;&gt; println(Sys.BINDIR)</code> and this will show the binary
+must be set if you have an existing <span class="math inline">\(\texttt{Julia}\)</span> installation. If <span class="math inline">\(\texttt{Julia}\)</span> is installed with our
+function (item 1), this should be set automatically. If <span class="math inline">\(\texttt{Julia}\)</span> was already installed,
+simply open <span class="math inline">\(\texttt{Julia}\)</span> and
+execute the <span class="math inline">\(\texttt{Julia}\)</span> command
+<code>&gt;&gt; println(Sys.BINDIR)</code> and this will print the binary
 path.</li>
 </ol>
 <p>The following code is an example. Note the string after the code
 <code>path=</code> should be replaced with your computer’s path for
 Julia’s binary.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sMTL)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">smtl_setup</span>(<span class="at">path =</span> <span class="st">&quot;/Applications/Julia-1.5.app/Contents/Resources/julia/bin&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sMTL)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">smtl_setup</span>(<span class="at">path =</span> <span class="st">&quot;/Applications/Julia-1.5.app/Contents/Resources/julia/bin&quot;</span>)</span></code></pre></div>
+<p>Three <span class="math inline">\(\texttt{Julia}\)</span> packages
+are required so if you use an existing <span class="math inline">\(\texttt{Julia}\)</span> installation see the next
+step (step 3).</p>
+<ol start="3" style="list-style-type: decimal">
+<li>Three <span class="math inline">\(\texttt{Julia}\)</span> packages
+are required (<span class="math inline">\(\texttt{TSVD}\)</span>, <span class="math inline">\(~\texttt{LinearAlgebra}\)</span> and <span class="math inline">\(~\texttt{Statistics}\)</span>). We include a
+function to automatically install these if they are not already. If
+<span class="math inline">\(\texttt{Julia}\)</span> is installed but the
+packages are not, the function <code>smtl_setup()</code> can install
+them without re-installing <span class="math inline">\(\texttt{Julia}\)</span>. As described in step 2,
+the <code>path=</code> must be set to the location of the <span class="math inline">\(\texttt{Julia}\)</span> binary on your
+computer.</li>
+</ol>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sMTL)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">smtl_setup</span>(<span class="at">path =</span> <span class="st">&quot;/Applications/Julia-1.5.app/Contents/Resources/julia/bin&quot;</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">installJulia =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">installPackages =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <p>The <span class="math inline">\(\texttt{Julia}\)</span> binary path
 is saved internally the first time <code>smtl_setup()</code> is called,
 so one does not have to enter the binary path every time (assuming the
 initial binary path is correct). Every time you load the package
 henceforth, one only need run the following.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sMTL)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">smtl_setup</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sMTL)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">smtl_setup</span>()</span></code></pre></div>
 <p>Failure to run this function above will leave R unable to locate
 <span class="math inline">\(\texttt{Julia}\)</span> and the
 <code>sMTL</code> package functions will not work.</p>
@@ -1817,32 +1825,32 @@ standard normal entries</li>
 \boldsymbol{\beta}_k + \boldsymbol{\epsilon}_k\)</span></li>
 </ul>
 <p>This dataset can be generated in R as follows:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>) <span class="co"># fix the seed to get a reproducible result</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>K <span class="ot">&lt;-</span> <span class="dv">4</span> <span class="co"># number of datasets</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="co"># covariate dimension</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> <span class="dv">5</span> <span class="co"># support size</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>q <span class="ot">&lt;-</span> <span class="dv">7</span> <span class="co"># size of subset of covariates that can be non-zero for any task</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>n_k <span class="ot">&lt;-</span> <span class="dv">50</span> <span class="co"># task sample size</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> n_k <span class="sc">*</span> p <span class="co"># full dataset samplesize</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">matrix</span>( <span class="fu">rnorm</span>(N <span class="sc">*</span> p), <span class="at">nrow =</span> N, <span class="at">ncol=</span>p) <span class="co"># full design matrix</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">rnorm</span>(K <span class="sc">*</span> (p<span class="sc">+</span><span class="dv">1</span>) ), <span class="at">nrow =</span> p <span class="sc">+</span> <span class="dv">1</span>, <span class="at">ncol =</span> K) <span class="co"># betas before making sparse</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>Z <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="at">nrow =</span> p, <span class="at">ncol =</span> K) <span class="co"># matrix of supports</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">length =</span> N) <span class="co"># outcome vector</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co"># randomly sample support to make betas sparse</span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>K)     Z[<span class="dv">1</span><span class="sc">:</span>q, j] <span class="ot">&lt;-</span> <span class="fu">sample</span>( <span class="fu">c</span>( <span class="fu">rep</span>(<span class="dv">1</span>,s), <span class="fu">rep</span>(<span class="dv">0</span>, q <span class="sc">-</span> s) ), q, <span class="at">replace =</span> <span class="cn">FALSE</span> )</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>B[<span class="sc">-</span><span class="dv">1</span>,] <span class="ot">&lt;-</span> B[<span class="sc">-</span><span class="dv">1</span>,] <span class="sc">*</span> Z <span class="co"># make betas sparse and ensure all models have an intercept</span></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>task <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>K, <span class="at">each =</span> n_k) <span class="co"># vector of task labels (indices)</span></span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="co"># iterate through and make each task specific dataset</span></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>K){</span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    indx <span class="ot">&lt;-</span> <span class="fu">which</span>(task <span class="sc">==</span> j) <span class="co"># indices of task</span></span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    e <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_k)</span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    y[indx] <span class="ot">&lt;-</span> B[<span class="dv">1</span>, j] <span class="sc">+</span> X[indx,] <span class="sc">%*%</span> B[<span class="sc">-</span><span class="dv">1</span>,j] <span class="sc">+</span> e</span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(B) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;beta_&quot;</span>, <span class="dv">1</span><span class="sc">:</span>K)</span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(B) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Intercept&quot;</span>, <span class="fu">paste0</span>( <span class="st">&quot;X_&quot;</span>, <span class="dv">1</span><span class="sc">:</span>p ) )</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>) <span class="co"># fix the seed to get a reproducible result</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>K <span class="ot">&lt;-</span> <span class="dv">4</span> <span class="co"># number of datasets</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="co"># covariate dimension</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> <span class="dv">5</span> <span class="co"># support size</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>q <span class="ot">&lt;-</span> <span class="dv">7</span> <span class="co"># size of subset of covariates that can be non-zero for any task</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>n_k <span class="ot">&lt;-</span> <span class="dv">50</span> <span class="co"># task sample size</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> n_k <span class="sc">*</span> p <span class="co"># full dataset samplesize</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">matrix</span>( <span class="fu">rnorm</span>(N <span class="sc">*</span> p), <span class="at">nrow =</span> N, <span class="at">ncol=</span>p) <span class="co"># full design matrix</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">rnorm</span>(K <span class="sc">*</span> (p<span class="sc">+</span><span class="dv">1</span>) ), <span class="at">nrow =</span> p <span class="sc">+</span> <span class="dv">1</span>, <span class="at">ncol =</span> K) <span class="co"># betas before making sparse</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>Z <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="at">nrow =</span> p, <span class="at">ncol =</span> K) <span class="co"># matrix of supports</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">length =</span> N) <span class="co"># outcome vector</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co"># randomly sample support to make betas sparse</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>K)     Z[<span class="dv">1</span><span class="sc">:</span>q, j] <span class="ot">&lt;-</span> <span class="fu">sample</span>( <span class="fu">c</span>( <span class="fu">rep</span>(<span class="dv">1</span>,s), <span class="fu">rep</span>(<span class="dv">0</span>, q <span class="sc">-</span> s) ), q, <span class="at">replace =</span> <span class="cn">FALSE</span> )</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>B[<span class="sc">-</span><span class="dv">1</span>,] <span class="ot">&lt;-</span> B[<span class="sc">-</span><span class="dv">1</span>,] <span class="sc">*</span> Z <span class="co"># make betas sparse and ensure all models have an intercept</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>task <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>K, <span class="at">each =</span> n_k) <span class="co"># vector of task labels (indices)</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="co"># iterate through and make each task specific dataset</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>K){</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    indx <span class="ot">&lt;-</span> <span class="fu">which</span>(task <span class="sc">==</span> j) <span class="co"># indices of task</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    e <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_k)</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    y[indx] <span class="ot">&lt;-</span> B[<span class="dv">1</span>, j] <span class="sc">+</span> X[indx,] <span class="sc">%*%</span> B[<span class="sc">-</span><span class="dv">1</span>,j] <span class="sc">+</span> e</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(B) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;beta_&quot;</span>, <span class="dv">1</span><span class="sc">:</span>K)</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(B) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Intercept&quot;</span>, <span class="fu">paste0</span>( <span class="st">&quot;X_&quot;</span>, <span class="dv">1</span><span class="sc">:</span>p ) )</span></code></pre></div>
 <p>Note that the <code>task</code> vector is a <span class="math inline">\(N \times 1\)</span> vector where element <span class="math inline">\(i\)</span> indicates the task index (<span class="math inline">\(\in \{1,2,...,K\}\)</span>) of observation <span class="math inline">\(i\)</span>.</p>
 <p>First let’s see the structure of the <span class="math inline">\(\mathbb{B} \in \mathbb{R}^{p+1 \times K}\)</span>
 where column <span class="math inline">\(k\)</span> is equal to <span class="math inline">\(\boldsymbol{\beta}_k\)</span>. As we can see there
@@ -1850,7 +1858,7 @@ is heterogeneity across tasks both in the support (which elements are
 non-zero) and in the value of the non-zero coefficients. But there is
 enough shared structure that borrowing strength across tasks would be
 expected to improve performance.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>(B[<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>,],<span class="dv">2</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>(B[<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>,],<span class="dv">2</span>))</span></code></pre></div>
 <pre><code>##           beta_1 beta_2 beta_3 beta_4
 ## Intercept  -0.08  -0.64   0.33   0.72
 ## X_1         1.61   0.00   1.06   1.37
@@ -1879,14 +1887,14 @@ above for conciseness.</p>
 model with 5 non-zero coefficients (i.e., <span class="math inline">\(s=5\)</span>) and a ridge penalty <span class="math inline">\(\lambda_1 = 0.001\)</span>, we use the
 <code>smtl()</code> function and then print out the coefficients stored
 in <code>beta</code>:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> sMTL<span class="sc">::</span><span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">X =</span> X, </span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">study =</span> task, </span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">s =</span> <span class="dv">5</span>, </span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">commonSupp =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">lambda_1 =</span> <span class="fl">0.001</span>)</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>(mod<span class="sc">$</span>beta[<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>,],<span class="dv">2</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> sMTL<span class="sc">::</span><span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">X =</span> X, </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">study =</span> task, </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">s =</span> <span class="dv">5</span>, </span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">commonSupp =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">lambda_1 =</span> <span class="fl">0.001</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>(mod<span class="sc">$</span>beta[<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>,],<span class="dv">2</span>))</span></code></pre></div>
 <pre><code>##           beta_1 beta_2 beta_3 beta_4
 ## Intercept  -0.37  -0.60   0.36   1.13
 ## V1          1.51  -0.11   1.16   1.49
@@ -1914,14 +1922,14 @@ non-zeros.</p>
 ~\forall~k \in \{1,2,...,K\} \notag
 \end{aligned}
 \]</span></p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">X =</span> X, </span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">study =</span> task, </span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">s =</span> <span class="dv">5</span>, </span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">commonSupp =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_2 =</span> <span class="fl">2.75</span>)</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>(mod<span class="sc">$</span>beta[<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>,],<span class="dv">2</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">X =</span> X, </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">study =</span> task, </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">s =</span> <span class="dv">5</span>, </span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">commonSupp =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_2 =</span> <span class="fl">2.75</span>)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>(mod<span class="sc">$</span>beta[<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>,],<span class="dv">2</span>))</span></code></pre></div>
 <pre><code>##           beta_1 beta_2 beta_3 beta_4
 ## Intercept  -0.18  -0.52   0.28   1.32
 ## V1          1.10   0.55   0.96   1.00
@@ -1953,14 +1961,14 @@ Ridge penalty:</p>
 ~\forall~k \in \{1,2,...,K\} \notag
 \end{aligned}
 \]</span></p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">X =</span> X, </span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">study =</span> task, </span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">s =</span> <span class="dv">5</span>, </span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_1 =</span> <span class="fl">0.001</span>)</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>(mod<span class="sc">$</span>beta[<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>,],<span class="dv">2</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">X =</span> X, </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">study =</span> task, </span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">s =</span> <span class="dv">5</span>, </span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_1 =</span> <span class="fl">0.001</span>)</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>(mod<span class="sc">$</span>beta[<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>,],<span class="dv">2</span>))</span></code></pre></div>
 <pre><code>##           beta_1 beta_2 beta_3 beta_4
 ## Intercept  -0.16  -0.57   0.25   0.88
 ## V1          1.74   0.00   0.98   1.42
@@ -1994,15 +2002,15 @@ Regularization</h2>
 s  ~~~~~~~~~~~ ~~~\mbox{for}~ k \in \{1,2,...,K\}   \notag
 \end{aligned}
 \]</span></p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">X =</span> X, </span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">study =</span> task, </span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">s =</span> <span class="dv">5</span>, </span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_1 =</span> <span class="fl">0.001</span>,</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_z =</span> <span class="fl">0.25</span>)</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>(mod<span class="sc">$</span>beta[<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>,], <span class="dv">2</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">X =</span> X, </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">study =</span> task, </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">s =</span> <span class="dv">5</span>, </span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_1 =</span> <span class="fl">0.001</span>,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_z =</span> <span class="fl">0.25</span>)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>(mod<span class="sc">$</span>beta[<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>,], <span class="dv">2</span>))</span></code></pre></div>
 <pre><code>##           beta_1 beta_2 beta_3 beta_4
 ## Intercept  -0.36  -0.60   0.37   1.10
 ## V1          1.50  -0.12   1.18   1.48
@@ -2018,15 +2026,15 @@ let’s turn the <span class="math inline">\(\lambda_z\)</span> penalty up
 to show that the Common Support problem is a special case when <span class="math inline">\(\lambda_z \rightarrow \infty\)</span> (although in
 practice <span class="math inline">\(\lambda_z\)</span> does not need to
 be very big to induce a solution with a common support).</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">X =</span> X, </span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">study =</span> task, </span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">s =</span> <span class="dv">5</span>, </span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_1 =</span> <span class="fl">0.001</span>,</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_z =</span> <span class="dv">10</span>)</span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>( mod<span class="sc">$</span>beta[<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>,], <span class="dv">2</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">X =</span> X, </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">study =</span> task, </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">s =</span> <span class="dv">5</span>, </span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_1 =</span> <span class="fl">0.001</span>,</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_z =</span> <span class="dv">10</span>)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>( mod<span class="sc">$</span>beta[<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>,], <span class="dv">2</span>))</span></code></pre></div>
 <pre><code>##           beta_1 beta_2 beta_3 beta_4
 ## Intercept  -0.36  -0.60   0.37   1.10
 ## V1          1.50  -0.12   1.18   1.48
@@ -2063,13 +2071,13 @@ coefficient values):</p>
 s  ~~~~~~~~~~~ ~~~\mbox{for}~ k \in \{1,2,...,K\}   \notag
 \end{aligned}
 \]</span></p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">X =</span> X, </span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">study =</span> task, </span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">s =</span> <span class="dv">5</span>, </span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_2 =</span> <span class="fl">0.5</span>,</span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_z =</span> <span class="fl">0.1</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">X =</span> X, </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">study =</span> task, </span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">s =</span> <span class="dv">5</span>, </span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_2 =</span> <span class="fl">0.5</span>,</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_z =</span> <span class="fl">0.1</span>)</span></code></pre></div>
 </div>
 <div id="f-predictions" class="section level2">
 <h2>1f) Predictions</h2>
@@ -2078,9 +2086,9 @@ output structure. We feed <code>predict()</code> a model object and some
 new data <code>X</code>. Here we make predictions on the training data
 for simplicity but in practice we would likely be more interested in
 predictions on new observations.</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>preds <span class="ot">&lt;-</span> sMTL<span class="sc">::</span><span class="fu">predict</span>(<span class="at">model =</span> mod, <span class="at">X =</span> X[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>,])</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>( <span class="fu">head</span>(preds) )</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>preds <span class="ot">&lt;-</span> sMTL<span class="sc">::</span><span class="fu">predict</span>(<span class="at">model =</span> mod, <span class="at">X =</span> X[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>,])</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>( <span class="fu">head</span>(preds) )</span></code></pre></div>
 <pre><code>##        task_1     task_2     task_3     task_4
 ## 1 -1.23179826 -4.4010715 -3.4726519  0.5208468
 ## 2 -0.48204960 -0.5706786 -0.2639711  1.7627481
@@ -2124,28 +2132,28 @@ standard normal entries</li>
 \boldsymbol{\beta}_k + \boldsymbol{\epsilon}_k\)</span></li>
 </ul>
 <p>This dataset can be generated in R as follows:</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>) <span class="co"># fix the seed to get a reproducible result</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>K <span class="ot">&lt;-</span> <span class="dv">4</span> <span class="co"># number of datasets</span></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="co"># covariate dimension</span></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> <span class="dv">5</span> <span class="co"># support size</span></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>q <span class="ot">&lt;-</span> <span class="dv">7</span> <span class="co"># size of subset of covariates that can be non-zero for any task</span></span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">50</span> <span class="co"># full dataset samplesize</span></span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">matrix</span>( <span class="fu">rnorm</span>(N <span class="sc">*</span> p), <span class="at">nrow =</span> N, <span class="at">ncol=</span>p) <span class="co"># full design matrix</span></span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">rnorm</span>(K <span class="sc">*</span> (p<span class="sc">+</span><span class="dv">1</span>) ), <span class="at">nrow =</span> p <span class="sc">+</span> <span class="dv">1</span>, <span class="at">ncol =</span> K) <span class="co"># betas before making sparse</span></span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>Z <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="at">nrow =</span> p, <span class="at">ncol =</span> K) <span class="co"># matrix of supports</span></span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">nrow =</span> N, <span class="at">ncol =</span> K) <span class="co"># outcome vector</span></span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="co"># randomly sample support to make betas sparse</span></span>
-<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>K)     Z[<span class="dv">1</span><span class="sc">:</span>q, j] <span class="ot">&lt;-</span> <span class="fu">sample</span>( <span class="fu">c</span>( <span class="fu">rep</span>(<span class="dv">1</span>,s), <span class="fu">rep</span>(<span class="dv">0</span>, q <span class="sc">-</span> s) ), q, <span class="at">replace =</span> <span class="cn">FALSE</span> )</span>
-<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>B[<span class="sc">-</span><span class="dv">1</span>,] <span class="ot">&lt;-</span> B[<span class="sc">-</span><span class="dv">1</span>,] <span class="sc">*</span> Z <span class="co"># make betas sparse and ensure all models have an intercept</span></span>
-<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a><span class="co"># iterate through and make each task specific dataset</span></span>
-<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>K){</span>
-<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>    e <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(N)</span>
-<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>    y[,j] <span class="ot">&lt;-</span> B[<span class="dv">1</span>, j] <span class="sc">+</span> X <span class="sc">%*%</span> B[<span class="sc">-</span><span class="dv">1</span>,j] <span class="sc">+</span> e</span>
-<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(B) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;beta_&quot;</span>, <span class="dv">1</span><span class="sc">:</span>K)</span>
-<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(B) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Intercept&quot;</span>, <span class="fu">paste0</span>( <span class="st">&quot;X_&quot;</span>, <span class="dv">1</span><span class="sc">:</span>p ) )</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>) <span class="co"># fix the seed to get a reproducible result</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>K <span class="ot">&lt;-</span> <span class="dv">4</span> <span class="co"># number of datasets</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="co"># covariate dimension</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> <span class="dv">5</span> <span class="co"># support size</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>q <span class="ot">&lt;-</span> <span class="dv">7</span> <span class="co"># size of subset of covariates that can be non-zero for any task</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">50</span> <span class="co"># full dataset samplesize</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">matrix</span>( <span class="fu">rnorm</span>(N <span class="sc">*</span> p), <span class="at">nrow =</span> N, <span class="at">ncol=</span>p) <span class="co"># full design matrix</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">rnorm</span>(K <span class="sc">*</span> (p<span class="sc">+</span><span class="dv">1</span>) ), <span class="at">nrow =</span> p <span class="sc">+</span> <span class="dv">1</span>, <span class="at">ncol =</span> K) <span class="co"># betas before making sparse</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>Z <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="at">nrow =</span> p, <span class="at">ncol =</span> K) <span class="co"># matrix of supports</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">nrow =</span> N, <span class="at">ncol =</span> K) <span class="co"># outcome vector</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="co"># randomly sample support to make betas sparse</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>K)     Z[<span class="dv">1</span><span class="sc">:</span>q, j] <span class="ot">&lt;-</span> <span class="fu">sample</span>( <span class="fu">c</span>( <span class="fu">rep</span>(<span class="dv">1</span>,s), <span class="fu">rep</span>(<span class="dv">0</span>, q <span class="sc">-</span> s) ), q, <span class="at">replace =</span> <span class="cn">FALSE</span> )</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>B[<span class="sc">-</span><span class="dv">1</span>,] <span class="ot">&lt;-</span> B[<span class="sc">-</span><span class="dv">1</span>,] <span class="sc">*</span> Z <span class="co"># make betas sparse and ensure all models have an intercept</span></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="co"># iterate through and make each task specific dataset</span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>K){</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>    e <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(N)</span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>    y[,j] <span class="ot">&lt;-</span> B[<span class="dv">1</span>, j] <span class="sc">+</span> X <span class="sc">%*%</span> B[<span class="sc">-</span><span class="dv">1</span>,j] <span class="sc">+</span> e</span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(B) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;beta_&quot;</span>, <span class="dv">1</span><span class="sc">:</span>K)</span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(B) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Intercept&quot;</span>, <span class="fu">paste0</span>( <span class="st">&quot;X_&quot;</span>, <span class="dv">1</span><span class="sc">:</span>p ) )</span></code></pre></div>
 <p>Note that we do not have a <code>task</code> vector here. Instead we
 concatenate the outcomes <span class="math inline">\(\boldsymbol{y}_k\)</span> into a matrix, <span class="math inline">\(\mathbb{Y} \in \mathbb{R}^{n \times
 K}\)</span>.</p>
@@ -2155,7 +2163,7 @@ is heterogeneity across tasks both in the support (which elements are
 non-zero) and in the magnitude of the coefficients. But there is enough
 shared structure that borrowing strength across tasks would be expected
 to improve performance.</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>(B[<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>,],<span class="dv">2</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>(B[<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>,],<span class="dv">2</span>))</span></code></pre></div>
 <pre><code>##           beta_1 beta_2 beta_3 beta_4
 ## Intercept  -0.52   2.38   2.31   1.08
 ## X_1         1.63   2.34   0.00   0.00
@@ -2191,13 +2199,13 @@ not include the <code>study=</code> syntax that we use for Multi-Task
 learning or Domain Generalization. Instead the columns of the <span class="math inline">\(y\)</span> object are treated as separate
 ``labels’’ (akin to separate tasks). Otherwise the syntax is the exact
 same.</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> sMTL<span class="sc">::</span><span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">X =</span> X, </span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">s =</span> <span class="dv">5</span>, </span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">commonSupp =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">lambda_1 =</span> <span class="fl">0.001</span>)</span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>(mod<span class="sc">$</span>beta[<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>,],<span class="dv">2</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> sMTL<span class="sc">::</span><span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">X =</span> X, </span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">s =</span> <span class="dv">5</span>, </span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">commonSupp =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">lambda_1 =</span> <span class="fl">0.001</span>)</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>(mod<span class="sc">$</span>beta[<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>,],<span class="dv">2</span>))</span></code></pre></div>
 <pre><code>##           beta_1 beta_2 beta_3 beta_4
 ## Intercept  -0.53   2.29   2.31   1.42
 ## V1          1.69   2.07  -0.03  -0.16
@@ -2227,14 +2235,14 @@ same.</p>
 s  ~~~~~~~~~~~ ~~~\mbox{for}~ k \in \{1,2,...,K\}   \notag
 \end{aligned}
 \]</span></p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> sMTL<span class="sc">::</span><span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">X =</span> X, </span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">s =</span> <span class="dv">5</span>, </span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">lambda_1 =</span> <span class="fl">0.001</span>,</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">lambda_z =</span> <span class="fl">0.1</span>)</span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>(mod<span class="sc">$</span>beta[<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>,],<span class="dv">2</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> sMTL<span class="sc">::</span><span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">X =</span> X, </span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">s =</span> <span class="dv">5</span>, </span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">lambda_1 =</span> <span class="fl">0.001</span>,</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">lambda_z =</span> <span class="fl">0.1</span>)</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>(mod<span class="sc">$</span>beta[<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>,],<span class="dv">2</span>))</span></code></pre></div>
 <pre><code>##           beta_1 beta_2 beta_3 beta_4
 ## Intercept  -0.54   2.29   2.29   1.22
 ## V1          1.70   2.07   0.00   0.00
@@ -2272,32 +2280,32 @@ standard normal entries</li>
 \boldsymbol{\beta}_k + \boldsymbol{\epsilon}_k\)</span></li>
 </ul>
 <p>This dataset can be generated in R as follows:</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>) <span class="co"># fix the seed to get a reproducible result</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>K <span class="ot">&lt;-</span> <span class="dv">4</span> <span class="co"># number of datasets</span></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="co"># covariate dimension</span></span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> <span class="dv">5</span> <span class="co"># support size</span></span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>q <span class="ot">&lt;-</span> <span class="dv">7</span> <span class="co"># size of subset of covariates that can be non-zero for any task</span></span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>n_k <span class="ot">&lt;-</span> <span class="dv">50</span> <span class="co"># task sample size</span></span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> n_k <span class="sc">*</span> p <span class="co"># full dataset samplesize</span></span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">matrix</span>( <span class="fu">rnorm</span>(N <span class="sc">*</span> p), <span class="at">nrow =</span> N, <span class="at">ncol=</span>p) <span class="co"># full design matrix</span></span>
-<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">rnorm</span>(K <span class="sc">*</span> (p<span class="sc">+</span><span class="dv">1</span>) ), <span class="at">nrow =</span> p <span class="sc">+</span> <span class="dv">1</span>, <span class="at">ncol =</span> K) <span class="co"># betas before making sparse</span></span>
-<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>Z <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="at">nrow =</span> p, <span class="at">ncol =</span> K) <span class="co"># matrix of supports</span></span>
-<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">length =</span> N) <span class="co"># outcome vector</span></span>
-<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="co"># randomly sample support to make betas sparse</span></span>
-<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>K)     Z[<span class="dv">1</span><span class="sc">:</span>q, j] <span class="ot">&lt;-</span> <span class="fu">sample</span>( <span class="fu">c</span>( <span class="fu">rep</span>(<span class="dv">1</span>,s), <span class="fu">rep</span>(<span class="dv">0</span>, q <span class="sc">-</span> s) ), q, <span class="at">replace =</span> <span class="cn">FALSE</span> )</span>
-<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>B[<span class="sc">-</span><span class="dv">1</span>,] <span class="ot">&lt;-</span> B[<span class="sc">-</span><span class="dv">1</span>,] <span class="sc">*</span> Z <span class="co"># make betas sparse and ensure all models have an intercept</span></span>
-<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>task <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>K, <span class="at">each =</span> n_k) <span class="co"># vector of task labels (indices)</span></span>
-<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a><span class="co"># iterate through and make each task specific dataset</span></span>
-<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>K){</span>
-<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>    indx <span class="ot">&lt;-</span> <span class="fu">which</span>(task <span class="sc">==</span> j) <span class="co"># indices of task</span></span>
-<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>    e <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_k)</span>
-<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a>    y[indx] <span class="ot">&lt;-</span> B[<span class="dv">1</span>, j] <span class="sc">+</span> X[indx,] <span class="sc">%*%</span> B[<span class="sc">-</span><span class="dv">1</span>,j] <span class="sc">+</span> e</span>
-<span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(B) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;beta_&quot;</span>, <span class="dv">1</span><span class="sc">:</span>K)</span>
-<span id="cb30-26"><a href="#cb30-26" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(B) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Intercept&quot;</span>, <span class="fu">paste0</span>( <span class="st">&quot;X_&quot;</span>, <span class="dv">1</span><span class="sc">:</span>p ) )</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>) <span class="co"># fix the seed to get a reproducible result</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>K <span class="ot">&lt;-</span> <span class="dv">4</span> <span class="co"># number of datasets</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="co"># covariate dimension</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> <span class="dv">5</span> <span class="co"># support size</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>q <span class="ot">&lt;-</span> <span class="dv">7</span> <span class="co"># size of subset of covariates that can be non-zero for any task</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>n_k <span class="ot">&lt;-</span> <span class="dv">50</span> <span class="co"># task sample size</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> n_k <span class="sc">*</span> p <span class="co"># full dataset samplesize</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>X <span class="ot">&lt;-</span> <span class="fu">matrix</span>( <span class="fu">rnorm</span>(N <span class="sc">*</span> p), <span class="at">nrow =</span> N, <span class="at">ncol=</span>p) <span class="co"># full design matrix</span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">rnorm</span>(K <span class="sc">*</span> (p<span class="sc">+</span><span class="dv">1</span>) ), <span class="at">nrow =</span> p <span class="sc">+</span> <span class="dv">1</span>, <span class="at">ncol =</span> K) <span class="co"># betas before making sparse</span></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>Z <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="at">nrow =</span> p, <span class="at">ncol =</span> K) <span class="co"># matrix of supports</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">length =</span> N) <span class="co"># outcome vector</span></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a><span class="co"># randomly sample support to make betas sparse</span></span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>K)     Z[<span class="dv">1</span><span class="sc">:</span>q, j] <span class="ot">&lt;-</span> <span class="fu">sample</span>( <span class="fu">c</span>( <span class="fu">rep</span>(<span class="dv">1</span>,s), <span class="fu">rep</span>(<span class="dv">0</span>, q <span class="sc">-</span> s) ), q, <span class="at">replace =</span> <span class="cn">FALSE</span> )</span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>B[<span class="sc">-</span><span class="dv">1</span>,] <span class="ot">&lt;-</span> B[<span class="sc">-</span><span class="dv">1</span>,] <span class="sc">*</span> Z <span class="co"># make betas sparse and ensure all models have an intercept</span></span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>task <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>K, <span class="at">each =</span> n_k) <span class="co"># vector of task labels (indices)</span></span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a><span class="co"># iterate through and make each task specific dataset</span></span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>K){</span>
+<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>    indx <span class="ot">&lt;-</span> <span class="fu">which</span>(task <span class="sc">==</span> j) <span class="co"># indices of task</span></span>
+<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a>    e <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n_k)</span>
+<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a>    y[indx] <span class="ot">&lt;-</span> B[<span class="dv">1</span>, j] <span class="sc">+</span> X[indx,] <span class="sc">%*%</span> B[<span class="sc">-</span><span class="dv">1</span>,j] <span class="sc">+</span> e</span>
+<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(B) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;beta_&quot;</span>, <span class="dv">1</span><span class="sc">:</span>K)</span>
+<span id="cb29-26"><a href="#cb29-26" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(B) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Intercept&quot;</span>, <span class="fu">paste0</span>( <span class="st">&quot;X_&quot;</span>, <span class="dv">1</span><span class="sc">:</span>p ) )</span></code></pre></div>
 <p>Note that the <code>task</code> vector is a <span class="math inline">\(N \times 1\)</span> vector where element <span class="math inline">\(i\)</span> indicates the task index (<span class="math inline">\(\{1,2,...,K\}\)</span>) of observation <span class="math inline">\(i\)</span>. This is equivalent to a “Domain” or
 “Study.”</p>
 <p>First let’s see the structure of the <span class="math inline">\(\mathbb{B} \in \mathbb{R}^{p+1 \times K}\)</span>
@@ -2307,7 +2315,7 @@ the support (which elements are non-zero) and in the magnitude of the
 coefficients. Again, there appears to be enough shared structure that
 borrowing strength across domains would be expected to improve
 performance on predicting some new, “unseen” domain.</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>(B[<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>,],<span class="dv">2</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">round</span>(B[<span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>,],<span class="dv">2</span>))</span></code></pre></div>
 <pre><code>##           beta_1 beta_2 beta_3 beta_4
 ## Intercept  -0.08  -0.64   0.33   0.72
 ## X_1         1.61   0.00   1.06   1.37
@@ -2343,30 +2351,30 @@ output using average weights, <span class="math inline">\(w_k\)</span>,
 (i.e., <span class="math inline">\(w_k = 1/K, \forall~ k ~ \in
 \{1,2,...,K\}\)</span>), or multi-study stacking weights, <span class="math inline">\(w_k\)</span>. We introduce cross validation
 functions more generally below.</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tuning grid</span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>grid <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">s =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">5</span>), </span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">lambda_1 =</span> <span class="fu">c</span>(<span class="fl">0.01</span>, <span class="fl">0.1</span>, <span class="fl">0.01</span>, <span class="fl">0.1</span>), </span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">lambda_2 =</span> <span class="fu">rep</span>(<span class="dv">0</span>, <span class="dv">4</span>), </span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>                   <span class="at">lambda_z =</span> <span class="fu">c</span>(<span class="fl">0.01</span>, <span class="fl">0.1</span>, <span class="fl">0.01</span>, <span class="fl">0.1</span>)</span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>                   )</span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="co"># cross validation</span></span>
-<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>tn <span class="ot">&lt;-</span> <span class="fu">cv.smtl</span>(<span class="at">y =</span> y, </span>
-<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>              <span class="at">X =</span> X, </span>
-<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>              <span class="at">study =</span> task, </span>
-<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>              <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>              <span class="at">grid =</span> grid,</span>
-<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>              <span class="at">nfolds =</span> <span class="dv">5</span>,</span>
-<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>              <span class="at">multiTask =</span> <span class="cn">FALSE</span>) </span>
-<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a><span class="co"># model fitting</span></span>
-<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> sMTL<span class="sc">::</span><span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
-<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a>                <span class="at">X =</span> X, </span>
-<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a>                <span class="at">study =</span> task, </span>
-<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a>                <span class="at">s =</span> tn<span class="sc">$</span>best<span class="fl">.1</span>se<span class="sc">$</span>s, </span>
-<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a>                <span class="at">commonSupp =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a>                <span class="at">lambda_1 =</span> tn<span class="sc">$</span>best<span class="fl">.1</span>se<span class="sc">$</span>lambda_1,</span>
-<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a>                <span class="at">lambda_z =</span> tn<span class="sc">$</span>best<span class="fl">.1</span>se<span class="sc">$</span>lambda_z)</span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tuning grid</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>grid <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">s =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">5</span>), </span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">lambda_1 =</span> <span class="fu">c</span>(<span class="fl">0.01</span>, <span class="fl">0.1</span>, <span class="fl">0.01</span>, <span class="fl">0.1</span>), </span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">lambda_2 =</span> <span class="fu">rep</span>(<span class="dv">0</span>, <span class="dv">4</span>), </span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>                   <span class="at">lambda_z =</span> <span class="fu">c</span>(<span class="fl">0.01</span>, <span class="fl">0.1</span>, <span class="fl">0.01</span>, <span class="fl">0.1</span>)</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>                   )</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="co"># cross validation</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>tn <span class="ot">&lt;-</span> <span class="fu">cv.smtl</span>(<span class="at">y =</span> y, </span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>              <span class="at">X =</span> X, </span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>              <span class="at">study =</span> task, </span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>              <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>              <span class="at">grid =</span> grid,</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>              <span class="at">nfolds =</span> <span class="dv">5</span>,</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>              <span class="at">multiTask =</span> <span class="cn">FALSE</span>) </span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a><span class="co"># model fitting</span></span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> sMTL<span class="sc">::</span><span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a>                <span class="at">X =</span> X, </span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a>                <span class="at">study =</span> task, </span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a>                <span class="at">s =</span> tn<span class="sc">$</span>best<span class="fl">.1</span>se<span class="sc">$</span>s, </span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a>                <span class="at">commonSupp =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a>                <span class="at">lambda_1 =</span> tn<span class="sc">$</span>best<span class="fl">.1</span>se<span class="sc">$</span>lambda_1,</span>
+<span id="cb32-24"><a href="#cb32-24" aria-hidden="true" tabindex="-1"></a>                <span class="at">lambda_z =</span> tn<span class="sc">$</span>best<span class="fl">.1</span>se<span class="sc">$</span>lambda_z)</span></code></pre></div>
 </div>
 </div>
 <div id="cross-validation" class="section level1">
@@ -2382,24 +2390,24 @@ problem.</p>
 <code>cv.smtl()</code> function generate a grid of hyperparameters for
 tuning internally, tune and then we fit a final model with the tuned
 hyperparameters.</p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># cross validation with internally generated grid</span></span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>tn <span class="ot">&lt;-</span> <span class="fu">cv.smtl</span>(<span class="at">y =</span> y, </span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">X =</span> X, </span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">study =</span> task, </span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">lambda_1 =</span> <span class="cn">TRUE</span>, </span>
-<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">lambda_2 =</span> <span class="cn">FALSE</span>, </span>
-<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">lambda_z =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">nfolds =</span> <span class="dv">5</span>) </span>
-<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a><span class="co"># fit final model</span></span>
-<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
-<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">X =</span> X, </span>
-<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">study =</span> task, </span>
-<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>            <span class="at">s =</span> tn<span class="sc">$</span>best<span class="sc">$</span>s, </span>
-<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>            <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_1 =</span> tn<span class="sc">$</span>best<span class="sc">$</span>lambda_1,</span>
-<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_z =</span> tn<span class="sc">$</span>best<span class="sc">$</span>lambda_z)</span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># cross validation with internally generated grid</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>tn <span class="ot">&lt;-</span> <span class="fu">cv.smtl</span>(<span class="at">y =</span> y, </span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">X =</span> X, </span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">study =</span> task, </span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">lambda_1 =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">lambda_2 =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">lambda_z =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">nfolds =</span> <span class="dv">5</span>) </span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a><span class="co"># fit final model</span></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">X =</span> X, </span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">study =</span> task, </span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>            <span class="at">s =</span> tn<span class="sc">$</span>best<span class="sc">$</span>s, </span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>            <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_1 =</span> tn<span class="sc">$</span>best<span class="sc">$</span>lambda_1,</span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_z =</span> tn<span class="sc">$</span>best<span class="sc">$</span>lambda_z)</span></code></pre></div>
 <p>We see that instead of providing a grid, we chose which
 hyperparameters we wanted to tune by setting them to
 <code>TRUE</code>.</p>
@@ -2409,6 +2417,37 @@ hyperparameters we wanted to tune by setting them to
 hyperparameter values may be very problem-specific. Next we show the
 same Multi-Task Learning problem with a (very small) custom grid and
 then fit a final model with the tuned hyperparameters.</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># generate grid</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>grid <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">s =</span> <span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">5</span>), </span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">lambda_1 =</span> <span class="fu">c</span>(<span class="fl">0.01</span>, <span class="fl">0.1</span>,<span class="fl">0.01</span>, <span class="fl">0.1</span>), </span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">lambda_2 =</span> <span class="dv">0</span>, </span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>                   <span class="at">lambda_z =</span> <span class="fu">c</span>(<span class="fl">0.01</span>, <span class="fl">0.1</span>,<span class="fl">0.01</span>, <span class="fl">0.1</span>))</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="co"># cross validation with custom grid</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>tn <span class="ot">&lt;-</span> <span class="fu">cv.smtl</span>(<span class="at">y =</span> y, </span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">X =</span> X, </span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>              <span class="at">study =</span> task, </span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>              <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>              <span class="at">grid =</span> grid,</span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>              <span class="at">nfolds =</span> <span class="dv">5</span>) </span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a><span class="co"># fit final model</span></span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a>            <span class="at">X =</span> X, </span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">study =</span> task, </span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a>            <span class="at">s =</span> tn<span class="sc">$</span>best<span class="sc">$</span>s, </span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a>            <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_1 =</span> tn<span class="sc">$</span>best<span class="sc">$</span>lambda_1,</span>
+<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_z =</span> tn<span class="sc">$</span>best<span class="sc">$</span>lambda_z)</span></code></pre></div>
+<p>Now we show a Domain-Generalization problem with a custom grid and
+then fit a final model with the tuned hyperparameters. We switch
+<code>multiTask=FALSE</code> and proceed as normal.</p>
+<p>For illustrative purposes, we also choose the <code>best.1se</code>
+parameter values which chooses the smallest <span class="math inline">\(s\)</span> that achieves an average cross
+validated prediction error within 1 standard error of the parameters
+with the best cross validated error (and the best regularization
+parameters for that <span class="math inline">\(s\)</span>). This can
+result in sparser models and is an alternative option.</p>
 <div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># generate grid</span></span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>grid <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">s =</span> <span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">5</span>), </span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">lambda_1 =</span> <span class="fu">c</span>(<span class="fl">0.01</span>, <span class="fl">0.1</span>,<span class="fl">0.01</span>, <span class="fl">0.1</span>), </span>
@@ -2421,48 +2460,17 @@ then fit a final model with the tuned hyperparameters.</p>
 <span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>              <span class="at">study =</span> task, </span>
 <span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>              <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
 <span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>              <span class="at">grid =</span> grid,</span>
-<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>              <span class="at">nfolds =</span> <span class="dv">5</span>) </span>
-<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a><span class="co"># fit final model</span></span>
-<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
-<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>            <span class="at">X =</span> X, </span>
-<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">study =</span> task, </span>
-<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a>            <span class="at">s =</span> tn<span class="sc">$</span>best<span class="sc">$</span>s, </span>
-<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a>            <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_1 =</span> tn<span class="sc">$</span>best<span class="sc">$</span>lambda_1,</span>
-<span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_z =</span> tn<span class="sc">$</span>best<span class="sc">$</span>lambda_z)</span></code></pre></div>
-<p>Now we show a Domain-Generalization problem with a custom grid and
-then fit a final model with the tuned hyperparameters. We switch
-<code>multiTask=FALSE</code> and proceed as normal.</p>
-<p>For illustrative purposes, we also choose the <code>best.1se</code>
-parameter values which chooses the smallest <span class="math inline">\(s\)</span> that achieves an average cross
-validated prediction error within 1 standard error of the parameters
-with the best cross validated error (and the best regularization
-parameters for that <span class="math inline">\(s\)</span>). This can
-result in sparser models and is an alternative option.</p>
-<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># generate grid</span></span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>grid <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">s =</span> <span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">5</span>), </span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">lambda_1 =</span> <span class="fu">c</span>(<span class="fl">0.01</span>, <span class="fl">0.1</span>,<span class="fl">0.01</span>, <span class="fl">0.1</span>), </span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">lambda_2 =</span> <span class="dv">0</span>, </span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>                   <span class="at">lambda_z =</span> <span class="fu">c</span>(<span class="fl">0.01</span>, <span class="fl">0.1</span>,<span class="fl">0.01</span>, <span class="fl">0.1</span>))</span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="co"># cross validation with custom grid</span></span>
-<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>tn <span class="ot">&lt;-</span> <span class="fu">cv.smtl</span>(<span class="at">y =</span> y, </span>
-<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">X =</span> X, </span>
-<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>              <span class="at">study =</span> task, </span>
-<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>              <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>              <span class="at">grid =</span> grid,</span>
-<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>              <span class="at">nfolds =</span> <span class="dv">5</span>,</span>
-<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>              <span class="at">multiTask =</span> <span class="cn">FALSE</span>) </span>
-<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a><span class="co"># fit final model</span></span>
-<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
-<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">X =</span> X, </span>
-<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a>            <span class="at">study =</span> task, </span>
-<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a>            <span class="at">s =</span> tn<span class="sc">$</span>best<span class="sc">$</span>s, </span>
-<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a>            <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb36-22"><a href="#cb36-22" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_1 =</span> tn<span class="sc">$</span>best<span class="sc">$</span>lambda_1,</span>
-<span id="cb36-23"><a href="#cb36-23" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_z =</span> tn<span class="sc">$</span>best<span class="sc">$</span>lambda_2)</span></code></pre></div>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>              <span class="at">nfolds =</span> <span class="dv">5</span>,</span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>              <span class="at">multiTask =</span> <span class="cn">FALSE</span>) </span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a><span class="co"># fit final model</span></span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">X =</span> X, </span>
+<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a>            <span class="at">study =</span> task, </span>
+<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a>            <span class="at">s =</span> tn<span class="sc">$</span>best<span class="sc">$</span>s, </span>
+<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a>            <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_1 =</span> tn<span class="sc">$</span>best<span class="sc">$</span>lambda_1,</span>
+<span id="cb35-23"><a href="#cb35-23" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_z =</span> tn<span class="sc">$</span>best<span class="sc">$</span>lambda_2)</span></code></pre></div>
 </div>
 </div>
 <div id="advanced-options" class="section level1">
@@ -2491,16 +2499,16 @@ assumption is using local search to find a solution for hyperparameter
 value <span class="math inline">\(j\)</span> should improve the quality
 of the solution for a model fit with hyperparameter <span class="math inline">\(j+1\)</span> too, since we use warm starts and
 paths of solutions.</p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># cross validation with custom grid using </span></span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>tn <span class="ot">&lt;-</span> <span class="fu">cv.smtl</span>(<span class="at">y =</span> y, </span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">X =</span> X, </span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">study =</span> task, </span>
-<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">grid =</span> grid,</span>
-<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">LocSrch_skip =</span> <span class="dv">3</span>,</span>
-<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">LocSrch_maxIter =</span> <span class="dv">5</span>,</span>
-<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">nfolds =</span> <span class="dv">5</span>,</span>
-<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>              <span class="at">multiTask =</span> <span class="cn">FALSE</span>) </span></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># cross validation with custom grid using </span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>tn <span class="ot">&lt;-</span> <span class="fu">cv.smtl</span>(<span class="at">y =</span> y, </span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">X =</span> X, </span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">study =</span> task, </span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">grid =</span> grid,</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">LocSrch_skip =</span> <span class="dv">3</span>,</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">LocSrch_maxIter =</span> <span class="dv">5</span>,</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">nfolds =</span> <span class="dv">5</span>,</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>              <span class="at">multiTask =</span> <span class="cn">FALSE</span>) </span></code></pre></div>
 </div>
 <div id="two-stage-cross-validation-for-solution-quality-and-speed" class="section level2">
 <h2>Two Stage Cross Validation for Solution Quality and Speed</h2>
@@ -2515,69 +2523,69 @@ stage 2, we take the optimal hyperparameter values and create a second
 grid built around a neighborhood of the optimal hyperparameter values
 from stage 1 and perform a second cross validation. This way we avoid
 making a large grid with all three hyperparameters <span class="math inline">\(s\)</span>, <span class="math inline">\(\lambda_a\)</span> and <span class="math inline">\(\lambda_z\)</span>.</p>
-<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="do">######################################</span></span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="co"># generate initial tuning grid</span></span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="do">######################################</span></span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">15</span>, <span class="dv">20</span>)</span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>lambda_1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1e-6</span>) <span class="co"># small fixed ridge penalty for regularization</span></span>
-<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>lambda_2 <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>lambda_z <span class="ot">&lt;-</span> <span class="fu">sort</span>( <span class="fu">unique</span>( <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">1e-6</span>, <span class="fl">1e-5</span>, <span class="fl">1e-4</span>, <span class="fl">1e-3</span>, </span>
-<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>                            <span class="fu">exp</span>(<span class="sc">-</span><span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">5</span>, <span class="at">length =</span> <span class="dv">8</span>)),  <span class="dv">1</span>, <span class="dv">3</span>) ),  <span class="at">decreasing =</span> <span class="cn">TRUE</span> )</span>
-<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>grid <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(s, lambda_1, lambda_2, lambda_z)</span>
-<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(grid) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;s&quot;</span>, <span class="st">&quot;lambda_1&quot;</span>, <span class="st">&quot;lambda_2&quot;</span>, <span class="st">&quot;lambda_z&quot;</span>)</span>
-<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a><span class="co"># order correctly</span></span>
-<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>grid <span class="ot">&lt;-</span> grid[  <span class="fu">order</span>(<span class="sc">-</span>grid<span class="sc">$</span>s,</span>
-<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>                      grid<span class="sc">$</span>lambda_1,</span>
-<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>                      <span class="sc">-</span>grid<span class="sc">$</span>lambda_z,</span>
-<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>                      <span class="at">decreasing=</span><span class="cn">TRUE</span>),     ]</span>
-<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a><span class="do">###################################################</span></span>
-<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a><span class="co"># stage 1: cross validation with initial grid </span></span>
-<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a><span class="do">###################################################</span></span>
-<span id="cb38-21"><a href="#cb38-21" aria-hidden="true" tabindex="-1"></a>tn <span class="ot">&lt;-</span> <span class="fu">cv.smtl</span>(<span class="at">y =</span> y, </span>
-<span id="cb38-22"><a href="#cb38-22" aria-hidden="true" tabindex="-1"></a>              <span class="at">X =</span> X, </span>
-<span id="cb38-23"><a href="#cb38-23" aria-hidden="true" tabindex="-1"></a>              <span class="at">study =</span> task, </span>
-<span id="cb38-24"><a href="#cb38-24" aria-hidden="true" tabindex="-1"></a>              <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb38-25"><a href="#cb38-25" aria-hidden="true" tabindex="-1"></a>              <span class="at">grid =</span> grid,</span>
-<span id="cb38-26"><a href="#cb38-26" aria-hidden="true" tabindex="-1"></a>              <span class="at">nfolds =</span> <span class="dv">5</span>,</span>
-<span id="cb38-27"><a href="#cb38-27" aria-hidden="true" tabindex="-1"></a>              <span class="at">multiTask =</span> <span class="cn">FALSE</span>) </span>
-<span id="cb38-28"><a href="#cb38-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-29"><a href="#cb38-29" aria-hidden="true" tabindex="-1"></a><span class="do">#############################################################################</span></span>
-<span id="cb38-30"><a href="#cb38-30" aria-hidden="true" tabindex="-1"></a><span class="co"># create second grid with optimal hyperparameters from stage 1</span></span>
-<span id="cb38-31"><a href="#cb38-31" aria-hidden="true" tabindex="-1"></a><span class="do">#############################################################################</span></span>
-<span id="cb38-32"><a href="#cb38-32" aria-hidden="true" tabindex="-1"></a><span class="co"># new sparsity grid</span></span>
-<span id="cb38-33"><a href="#cb38-33" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> tn<span class="sc">$</span>best<span class="sc">$</span>s</span>
-<span id="cb38-34"><a href="#cb38-34" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> <span class="fu">c</span>(s<span class="dv">-2</span>, s, s<span class="sc">+</span><span class="dv">2</span>)</span>
-<span id="cb38-35"><a href="#cb38-35" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> s[s <span class="sc">&gt;=</span> <span class="dv">1</span>]</span>
-<span id="cb38-36"><a href="#cb38-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-37"><a href="#cb38-37" aria-hidden="true" tabindex="-1"></a><span class="co"># ridge penalty grid</span></span>
-<span id="cb38-38"><a href="#cb38-38" aria-hidden="true" tabindex="-1"></a>lambda_1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1e-7</span>, <span class="fl">1e-5</span>, <span class="fl">1e-3</span>, <span class="fl">1e-1</span>)</span>
-<span id="cb38-39"><a href="#cb38-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-40"><a href="#cb38-40" aria-hidden="true" tabindex="-1"></a><span class="co"># new lambda_z grid</span></span>
-<span id="cb38-41"><a href="#cb38-41" aria-hidden="true" tabindex="-1"></a>lambda_z <span class="ot">&lt;-</span> tn<span class="sc">$</span>best<span class="sc">$</span>lambda_z</span>
-<span id="cb38-42"><a href="#cb38-42" aria-hidden="true" tabindex="-1"></a>lambda_z <span class="ot">&lt;-</span> <span class="fu">sort</span>( <span class="fu">c</span>( <span class="fu">seq</span>(<span class="fl">1.5</span>, <span class="dv">10</span>, <span class="at">length =</span> <span class="dv">5</span>), <span class="fu">seq</span>(<span class="fl">0.1</span>, <span class="dv">1</span>, <span class="at">length =</span> <span class="dv">5</span>) ) <span class="sc">*</span> lambda_z, <span class="at">decreasing =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb38-43"><a href="#cb38-43" aria-hidden="true" tabindex="-1"></a>lambda_z <span class="ot">&lt;-</span> lambda_z[lambda_z <span class="sc">&lt;=</span> <span class="dv">10</span>] <span class="co"># make sure this is below a threshold to prevent numerical issues</span></span>
-<span id="cb38-44"><a href="#cb38-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-45"><a href="#cb38-45" aria-hidden="true" tabindex="-1"></a>grid <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(  <span class="fu">expand.grid</span>( lambda_1, lambda_2, lambda_z, s) )</span>
-<span id="cb38-46"><a href="#cb38-46" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(grid) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;lambda_1&quot;</span>, <span class="st">&quot;lambda_2&quot;</span>, <span class="st">&quot;lambda_z&quot;</span>, <span class="st">&quot;s&quot;</span>)</span>
-<span id="cb38-47"><a href="#cb38-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-48"><a href="#cb38-48" aria-hidden="true" tabindex="-1"></a><span class="co"># order correctly</span></span>
-<span id="cb38-49"><a href="#cb38-49" aria-hidden="true" tabindex="-1"></a>grid <span class="ot">&lt;-</span> grid[  <span class="fu">order</span>(<span class="sc">-</span>grid<span class="sc">$</span>s,</span>
-<span id="cb38-50"><a href="#cb38-50" aria-hidden="true" tabindex="-1"></a>                      grid<span class="sc">$</span>lambda_1,</span>
-<span id="cb38-51"><a href="#cb38-51" aria-hidden="true" tabindex="-1"></a>                      <span class="sc">-</span>grid<span class="sc">$</span>lambda_z,</span>
-<span id="cb38-52"><a href="#cb38-52" aria-hidden="true" tabindex="-1"></a>                      <span class="at">decreasing=</span><span class="cn">TRUE</span>),     ]</span>
-<span id="cb38-53"><a href="#cb38-53" aria-hidden="true" tabindex="-1"></a>            </span>
-<span id="cb38-54"><a href="#cb38-54" aria-hidden="true" tabindex="-1"></a><span class="do">###################################################</span></span>
-<span id="cb38-55"><a href="#cb38-55" aria-hidden="true" tabindex="-1"></a><span class="co"># stage 2: cross validation with updated grid </span></span>
-<span id="cb38-56"><a href="#cb38-56" aria-hidden="true" tabindex="-1"></a><span class="do">###################################################</span></span>
-<span id="cb38-57"><a href="#cb38-57" aria-hidden="true" tabindex="-1"></a>tn <span class="ot">&lt;-</span> <span class="fu">cv.smtl</span>(<span class="at">y =</span> y, </span>
-<span id="cb38-58"><a href="#cb38-58" aria-hidden="true" tabindex="-1"></a>              <span class="at">X =</span> X, </span>
-<span id="cb38-59"><a href="#cb38-59" aria-hidden="true" tabindex="-1"></a>              <span class="at">study =</span> task, </span>
-<span id="cb38-60"><a href="#cb38-60" aria-hidden="true" tabindex="-1"></a>              <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb38-61"><a href="#cb38-61" aria-hidden="true" tabindex="-1"></a>              <span class="at">grid =</span> grid,</span>
-<span id="cb38-62"><a href="#cb38-62" aria-hidden="true" tabindex="-1"></a>              <span class="at">nfolds =</span> <span class="dv">5</span>,</span>
-<span id="cb38-63"><a href="#cb38-63" aria-hidden="true" tabindex="-1"></a>              <span class="at">multiTask =</span> <span class="cn">FALSE</span>) </span></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="do">######################################</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="co"># generate initial tuning grid</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="do">######################################</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">15</span>, <span class="dv">20</span>)</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>lambda_1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1e-6</span>) <span class="co"># small fixed ridge penalty for regularization</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>lambda_2 <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>lambda_z <span class="ot">&lt;-</span> <span class="fu">sort</span>( <span class="fu">unique</span>( <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">1e-6</span>, <span class="fl">1e-5</span>, <span class="fl">1e-4</span>, <span class="fl">1e-3</span>, </span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>                            <span class="fu">exp</span>(<span class="sc">-</span><span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">5</span>, <span class="at">length =</span> <span class="dv">8</span>)),  <span class="dv">1</span>, <span class="dv">3</span>) ),  <span class="at">decreasing =</span> <span class="cn">TRUE</span> )</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>grid <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(s, lambda_1, lambda_2, lambda_z)</span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(grid) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;s&quot;</span>, <span class="st">&quot;lambda_1&quot;</span>, <span class="st">&quot;lambda_2&quot;</span>, <span class="st">&quot;lambda_z&quot;</span>)</span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a><span class="co"># order correctly</span></span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>grid <span class="ot">&lt;-</span> grid[  <span class="fu">order</span>(<span class="sc">-</span>grid<span class="sc">$</span>s,</span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a>                      grid<span class="sc">$</span>lambda_1,</span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a>                      <span class="sc">-</span>grid<span class="sc">$</span>lambda_z,</span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a>                      <span class="at">decreasing=</span><span class="cn">TRUE</span>),     ]</span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a><span class="do">###################################################</span></span>
+<span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a><span class="co"># stage 1: cross validation with initial grid </span></span>
+<span id="cb37-20"><a href="#cb37-20" aria-hidden="true" tabindex="-1"></a><span class="do">###################################################</span></span>
+<span id="cb37-21"><a href="#cb37-21" aria-hidden="true" tabindex="-1"></a>tn <span class="ot">&lt;-</span> <span class="fu">cv.smtl</span>(<span class="at">y =</span> y, </span>
+<span id="cb37-22"><a href="#cb37-22" aria-hidden="true" tabindex="-1"></a>              <span class="at">X =</span> X, </span>
+<span id="cb37-23"><a href="#cb37-23" aria-hidden="true" tabindex="-1"></a>              <span class="at">study =</span> task, </span>
+<span id="cb37-24"><a href="#cb37-24" aria-hidden="true" tabindex="-1"></a>              <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb37-25"><a href="#cb37-25" aria-hidden="true" tabindex="-1"></a>              <span class="at">grid =</span> grid,</span>
+<span id="cb37-26"><a href="#cb37-26" aria-hidden="true" tabindex="-1"></a>              <span class="at">nfolds =</span> <span class="dv">5</span>,</span>
+<span id="cb37-27"><a href="#cb37-27" aria-hidden="true" tabindex="-1"></a>              <span class="at">multiTask =</span> <span class="cn">FALSE</span>) </span>
+<span id="cb37-28"><a href="#cb37-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-29"><a href="#cb37-29" aria-hidden="true" tabindex="-1"></a><span class="do">#############################################################################</span></span>
+<span id="cb37-30"><a href="#cb37-30" aria-hidden="true" tabindex="-1"></a><span class="co"># create second grid with optimal hyperparameters from stage 1</span></span>
+<span id="cb37-31"><a href="#cb37-31" aria-hidden="true" tabindex="-1"></a><span class="do">#############################################################################</span></span>
+<span id="cb37-32"><a href="#cb37-32" aria-hidden="true" tabindex="-1"></a><span class="co"># new sparsity grid</span></span>
+<span id="cb37-33"><a href="#cb37-33" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> tn<span class="sc">$</span>best<span class="sc">$</span>s</span>
+<span id="cb37-34"><a href="#cb37-34" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> <span class="fu">c</span>(s<span class="dv">-2</span>, s, s<span class="sc">+</span><span class="dv">2</span>)</span>
+<span id="cb37-35"><a href="#cb37-35" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> s[s <span class="sc">&gt;=</span> <span class="dv">1</span>]</span>
+<span id="cb37-36"><a href="#cb37-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-37"><a href="#cb37-37" aria-hidden="true" tabindex="-1"></a><span class="co"># ridge penalty grid</span></span>
+<span id="cb37-38"><a href="#cb37-38" aria-hidden="true" tabindex="-1"></a>lambda_1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1e-7</span>, <span class="fl">1e-5</span>, <span class="fl">1e-3</span>, <span class="fl">1e-1</span>)</span>
+<span id="cb37-39"><a href="#cb37-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-40"><a href="#cb37-40" aria-hidden="true" tabindex="-1"></a><span class="co"># new lambda_z grid</span></span>
+<span id="cb37-41"><a href="#cb37-41" aria-hidden="true" tabindex="-1"></a>lambda_z <span class="ot">&lt;-</span> tn<span class="sc">$</span>best<span class="sc">$</span>lambda_z</span>
+<span id="cb37-42"><a href="#cb37-42" aria-hidden="true" tabindex="-1"></a>lambda_z <span class="ot">&lt;-</span> <span class="fu">sort</span>( <span class="fu">c</span>( <span class="fu">seq</span>(<span class="fl">1.5</span>, <span class="dv">10</span>, <span class="at">length =</span> <span class="dv">5</span>), <span class="fu">seq</span>(<span class="fl">0.1</span>, <span class="dv">1</span>, <span class="at">length =</span> <span class="dv">5</span>) ) <span class="sc">*</span> lambda_z, <span class="at">decreasing =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb37-43"><a href="#cb37-43" aria-hidden="true" tabindex="-1"></a>lambda_z <span class="ot">&lt;-</span> lambda_z[lambda_z <span class="sc">&lt;=</span> <span class="dv">10</span>] <span class="co"># make sure this is below a threshold to prevent numerical issues</span></span>
+<span id="cb37-44"><a href="#cb37-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-45"><a href="#cb37-45" aria-hidden="true" tabindex="-1"></a>grid <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(  <span class="fu">expand.grid</span>( lambda_1, lambda_2, lambda_z, s) )</span>
+<span id="cb37-46"><a href="#cb37-46" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(grid) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;lambda_1&quot;</span>, <span class="st">&quot;lambda_2&quot;</span>, <span class="st">&quot;lambda_z&quot;</span>, <span class="st">&quot;s&quot;</span>)</span>
+<span id="cb37-47"><a href="#cb37-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-48"><a href="#cb37-48" aria-hidden="true" tabindex="-1"></a><span class="co"># order correctly</span></span>
+<span id="cb37-49"><a href="#cb37-49" aria-hidden="true" tabindex="-1"></a>grid <span class="ot">&lt;-</span> grid[  <span class="fu">order</span>(<span class="sc">-</span>grid<span class="sc">$</span>s,</span>
+<span id="cb37-50"><a href="#cb37-50" aria-hidden="true" tabindex="-1"></a>                      grid<span class="sc">$</span>lambda_1,</span>
+<span id="cb37-51"><a href="#cb37-51" aria-hidden="true" tabindex="-1"></a>                      <span class="sc">-</span>grid<span class="sc">$</span>lambda_z,</span>
+<span id="cb37-52"><a href="#cb37-52" aria-hidden="true" tabindex="-1"></a>                      <span class="at">decreasing=</span><span class="cn">TRUE</span>),     ]</span>
+<span id="cb37-53"><a href="#cb37-53" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb37-54"><a href="#cb37-54" aria-hidden="true" tabindex="-1"></a><span class="do">###################################################</span></span>
+<span id="cb37-55"><a href="#cb37-55" aria-hidden="true" tabindex="-1"></a><span class="co"># stage 2: cross validation with updated grid </span></span>
+<span id="cb37-56"><a href="#cb37-56" aria-hidden="true" tabindex="-1"></a><span class="do">###################################################</span></span>
+<span id="cb37-57"><a href="#cb37-57" aria-hidden="true" tabindex="-1"></a>tn <span class="ot">&lt;-</span> <span class="fu">cv.smtl</span>(<span class="at">y =</span> y, </span>
+<span id="cb37-58"><a href="#cb37-58" aria-hidden="true" tabindex="-1"></a>              <span class="at">X =</span> X, </span>
+<span id="cb37-59"><a href="#cb37-59" aria-hidden="true" tabindex="-1"></a>              <span class="at">study =</span> task, </span>
+<span id="cb37-60"><a href="#cb37-60" aria-hidden="true" tabindex="-1"></a>              <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb37-61"><a href="#cb37-61" aria-hidden="true" tabindex="-1"></a>              <span class="at">grid =</span> grid,</span>
+<span id="cb37-62"><a href="#cb37-62" aria-hidden="true" tabindex="-1"></a>              <span class="at">nfolds =</span> <span class="dv">5</span>,</span>
+<span id="cb37-63"><a href="#cb37-63" aria-hidden="true" tabindex="-1"></a>              <span class="at">multiTask =</span> <span class="cn">FALSE</span>) </span></code></pre></div>
 </div>
 <div id="fitting-whole-paths" class="section level2">
 <h2>Fitting Whole Paths</h2>
@@ -2592,14 +2600,14 @@ now one or more of the tuning parameter arguments <span class="math inline">\((\
 vector not a scalar. Notice that <span class="math inline">\(s\)</span>
 is always a scalar. We cannot put multiple values of <span class="math inline">\(s\)</span> in because the path of solutions is
 generated independently for each value of <span class="math inline">\(s\)</span>.</p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">X =</span> X, </span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">study =</span> task, </span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">s =</span> <span class="dv">5</span>, </span>
-<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_1 =</span> <span class="fu">c</span>(<span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>),</span>
-<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_z =</span> <span class="fu">c</span>(<span class="fl">0.01</span>, <span class="fl">0.05</span>, <span class="fl">0.1</span>)</span>
-<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>            )</span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">smtl</span>(<span class="at">y =</span> y, </span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">X =</span> X, </span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">study =</span> task, </span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">s =</span> <span class="dv">5</span>, </span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">commonSupp =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_1 =</span> <span class="fu">c</span>(<span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>),</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">lambda_z =</span> <span class="fu">c</span>(<span class="fl">0.01</span>, <span class="fl">0.05</span>, <span class="fl">0.1</span>)</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>            )</span></code></pre></div>
 <p>Now the solutions in <code>mod$beta</code> is a <span class="math inline">\(K \times p \times T\)</span> array where <span class="math inline">\(T\)</span> is the number of unique tuning value
 combinations (3 in the example above) used to fit the path of
 solutions.</p>
@@ -2609,10 +2617,10 @@ solutions.</p>
 <p>Now we have many solutions so if we want to make predictions we have
 to specify which hyperparameter value solutins we want predictions for
 or else the package will issue a warning and return no predictions.</p>
-<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>preds <span class="ot">&lt;-</span> sMTL<span class="sc">::</span><span class="fu">predict</span>(<span class="at">model =</span> mod, </span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">X =</span> X, </span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">lambda_1 =</span> <span class="fl">0.1</span>, </span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">lambda_z =</span> <span class="fl">0.01</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>preds <span class="ot">&lt;-</span> sMTL<span class="sc">::</span><span class="fu">predict</span>(<span class="at">model =</span> mod, </span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">X =</span> X, </span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">lambda_1 =</span> <span class="fl">0.1</span>, </span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">lambda_z =</span> <span class="fl">0.01</span>)</span></code></pre></div>
 </div>
 </div>
 <div id="troubleshooting" class="section level1">
@@ -2644,12 +2652,12 @@ string). Replace the string after <code>path &lt;-</code> in the
 <code>R</code> code below with this binary path and run the
 following:</li>
 </ol>
-<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># save path of Julia binary location on your computer</span></span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ***replace with your computer&#39;s path***</span></span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>path <span class="ot">&lt;-</span> <span class="st">&quot;/Applications/Julia-1.7.app/Contents/Resources/julia/bin&quot;</span> </span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="co"># set so JuliaConnectoR can access Julia installation</span></span>
-<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a><span class="fu">Sys.setenv</span>(<span class="at">JULIA_BINDIR =</span> path )</span></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># save path of Julia binary location on your computer</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ***replace with your computer&#39;s path***</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>path <span class="ot">&lt;-</span> <span class="st">&quot;/Applications/Julia-1.7.app/Contents/Resources/julia/bin&quot;</span> </span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="co"># set so JuliaConnectoR can access Julia installation</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a><span class="fu">Sys.setenv</span>(<span class="at">JULIA_BINDIR =</span> path )</span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
 <li>Find the path of the <code>sMTL</code> package installation on your
 computer and save a <span class="math inline">\(\texttt{.txt}\)</span>
@@ -2657,14 +2665,14 @@ file in the package installation source files so the package knows where
 to find the <span class="math inline">\(\texttt{Julia}\)</span>
 binary.</li>
 </ol>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># find path of sMTL package installation on your computer</span></span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>smtl_path <span class="ot">&lt;-</span> <span class="fu">paste0</span>( <span class="fu">.libPaths</span>(<span class="st">&quot;sMTL&quot;</span>), <span class="st">&quot;/sMTL/julia_path/&quot;</span> )</span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>smtl_path <span class="ot">&lt;-</span> smtl_path[<span class="fu">length</span>(smtl_path)] <span class="co"># use most recent </span></span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="co"># save Julia path for sMTL package directory for future use</span></span>
-<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>fileConn <span class="ot">&lt;-</span> <span class="fu">file</span>( <span class="fu">paste0</span>(smtl_path, <span class="st">&quot;julia.path.txt&quot;</span>) )</span>
-<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>base<span class="sc">::</span><span class="fu">writeLines</span>(path, fileConn) <span class="co"># save new julia path</span></span>
-<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a><span class="fu">close</span>(fileConn)</span></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># find path of sMTL package installation on your computer</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>smtl_path <span class="ot">&lt;-</span> <span class="fu">paste0</span>( <span class="fu">.libPaths</span>(<span class="st">&quot;sMTL&quot;</span>), <span class="st">&quot;/sMTL/julia_path/&quot;</span> )</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>smtl_path <span class="ot">&lt;-</span> smtl_path[<span class="fu">length</span>(smtl_path)] <span class="co"># use most recent </span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="co"># save Julia path for sMTL package directory for future use</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>fileConn <span class="ot">&lt;-</span> <span class="fu">file</span>( <span class="fu">paste0</span>(smtl_path, <span class="st">&quot;julia.path.txt&quot;</span>) )</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>base<span class="sc">::</span><span class="fu">writeLines</span>(path, fileConn) <span class="co"># save new julia path</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a><span class="fu">close</span>(fileConn)</span></code></pre></div>
 </div>
 <div id="references" class="section level1">
 <h1>References</h1>

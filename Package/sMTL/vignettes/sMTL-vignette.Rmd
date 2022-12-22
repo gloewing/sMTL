@@ -106,10 +106,10 @@ The toolkit is implemented in Julia along with an easy-to-use R interface. In th
 Note that model functions assume the design (feature) matrices are a $\texttt{matrix}$ data-type (not $\texttt{data.frames}$). Thus any conversion of, for example, categorical/factor variables into a set of indicator variables, to construct the corresponding design matrix must be completed before using the `sMTL` functions.
 
 # Installation
-`sMTL` can be installed directly from CRAN by executing:
-```{r, eval=FALSE}
-install.packages("sMTL")
-```
+<!-- `sMTL` can be installed directly from CRAN by executing: -->
+<!-- ```{r, eval=FALSE} -->
+<!-- install.packages("sMTL") -->
+<!-- ``` -->
 
 The development version of `sMTL` can be downloaded from github by executing:
 
@@ -130,14 +130,9 @@ library(sMTL)
 smtl_setup(installJulia = TRUE, installPackages = TRUE)
 ```
 
-2. Three $\texttt{Julia}$ packages are required ($\texttt{TSVD}$, $~\texttt{LinearAlgebra}$ and $~\texttt{Statistics}$). We include a function to automatically install these if they are not already. If $\texttt{Julia}$ is installed but the packages are not, the function can install them without re-installing $\texttt{Julia}$. If you ran the code for 1. above, you can ignore the rest of the set-up (2-3) and skip to fitting functions.
+If you ran the code for step 1 above, then you can ignore the rest of the Package Setup section (steps 2-3) and skip to the Tutorial Guide section.
 
-```{r, eval=FALSE}
-library(sMTL)
-smtl_setup(installJulia = FALSE, installPackages = TRUE)
-```
-
-3. The $\texttt{Julia}$ binary path must be set. If $\texttt{Julia}$ is installed with our function (item 1), this should be set automatically. If $\texttt{Julia}$ was already installed, simply open $\texttt{Julia}$ and type `>> println(Sys.BINDIR)` and this will show the binary path.
+2. The $\texttt{Julia}$ binary path must be set if you have an existing $\texttt{Julia}$ installation. If $\texttt{Julia}$ is installed with our function (item 1), this should be set automatically. If $\texttt{Julia}$ was already installed, simply open $\texttt{Julia}$ and execute the $\texttt{Julia}$ command `>> println(Sys.BINDIR)` and this will print the binary path.
 
 The following code is an example. Note the string after the code `path=` should be replaced with your computer's path for Julia's binary. 
 ```{r, eval=FALSE}
@@ -145,7 +140,20 @@ library(sMTL)
 smtl_setup(path = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin")
 ```
 
+Three $\texttt{Julia}$ packages are required so if you use an existing $\texttt{Julia}$ installation see the next step (step 3).
+
+3. Three $\texttt{Julia}$ packages are required ($\texttt{TSVD}$, $~\texttt{LinearAlgebra}$ and $~\texttt{Statistics}$). We include a function to automatically install these if they are not already. If $\texttt{Julia}$ is installed but the packages are not, the function `smtl_setup()` can install them without re-installing $\texttt{Julia}$. As described in step 2, the `path=` must be set to the location of the $\texttt{Julia}$ binary on your computer.
+
+```{r, eval=FALSE}
+library(sMTL)
+smtl_setup(path = "/Applications/Julia-1.5.app/Contents/Resources/julia/bin",
+           installJulia = FALSE, 
+           installPackages = TRUE)
+```
+
+
 The $\texttt{Julia}$ binary path is saved internally the first time `smtl_setup()` is called, so one does not have to enter the binary path every time (assuming the initial binary path is correct). Every time you load the package henceforth, one only need run the following.   
+
 ```{r, eval = FALSE}
 library(sMTL)
 smtl_setup()

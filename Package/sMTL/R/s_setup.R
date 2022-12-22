@@ -125,7 +125,7 @@ smtl_setup = function(path = NULL, installJulia = FALSE, installPackages = FALSE
     close(fileConn)
     
     # close Julia session
-    detach("package:JuliaCall", unload=TRUE) # unload JuliaCall package
+    # detach("package:JuliaCall", unload=TRUE) # unload JuliaCall package
     Sys.setenv(JULIA_BINDIR = juliaPath ) # set path for JuliaConnectoR
     
     message("Julia and Julia Packages Installed and Julia Path Found")
@@ -146,7 +146,7 @@ smtl_setup = function(path = NULL, installJulia = FALSE, installPackages = FALSE
       
       message("Julia Packages Installed")
       
-      detach("package:JuliaCall", unload=TRUE) # unload JuliaCall package
+      # detach("package:JuliaCall", unload=TRUE) # unload JuliaCall package
       Sys.setenv(JULIA_BINDIR = path ) # set path for JuliaConnectoR
       
     }
