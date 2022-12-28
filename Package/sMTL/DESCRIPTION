@@ -6,7 +6,10 @@ Authors@R: c(person("Gabriel", "Loewinger", email = "gloewinger@gmail.com", role
 		person("Giovanni", "Parmigiani", email = "gp@jimmy.harvard.edu", role = c("ths")), 
 		person("Rahul", "Mazumder", email = "rahulmaz@mit.edu", role = c("ths")),
 		person("National Science Foundation", "Grant DMS1810829", role = c("fnd")),
-		person("National Institutes of Health", "Grant T32 AI 007358", role = c("fnd")))
+		person("National Science Foundation", "Grant DMS2113707", role = c("fnd")),
+		person("National Science Foundation", "Grant NSF-IIS1718258,", role = c("fnd")),
+		person("Office of Naval Research", "Grant ONR N000142112841", role = c("fnd")),
+		person("National Institute on Drug Abuse (NIH)", "Grant F31DA052153", role = c("fnd")))
 Description: Implements sparse Multi-Task Learning and sparse domain generalization algorithms.
 		<doi:10.1101/856385>.
 Maintainer: Gabriel Loewinger <gloewinger@gmail.com>
