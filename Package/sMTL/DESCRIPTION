@@ -10,8 +10,9 @@ Authors@R: c(person("Gabriel", "Loewinger", email = "gloewinger@gmail.com", role
 		person("National Science Foundation", "Grant NSF-IIS1718258,", role = c("fnd")),
 		person("Office of Naval Research", "Grant ONR N000142112841", role = c("fnd")),
 		person("National Institute on Drug Abuse (NIH)", "Grant F31DA052153", role = c("fnd")))
-Description: Implements sparse Multi-Task Learning and sparse domain generalization algorithms.
-		<doi:10.1101/856385>.
+Description: Implements L0-constrained Multi-Task Learning and domain generalization algorithms. The algorithms are coded in Julia allowing for fast implementations of the coordinate descent and local combinatorial search algorithms. For more details, see a preprint of the paper: Loewinger et al., (2022) <https://arxiv.org/abs/2212.08697>.
+URL: https://github.com/gloewing/sMTL
+BugReports: https://github.com/gloewing/sMTL/issues
 Maintainer: Gabriel Loewinger <gloewinger@gmail.com>
 Depends: R (>= 3.5.0)
 License: MIT + file LICENSE
