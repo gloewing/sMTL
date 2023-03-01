@@ -13,7 +13,7 @@ The `sMTL` $\texttt{CRAN}$ package can be downloaded with the following $\texttt
 install.packages("sMTL")
 ```
 
-The development version of the Sparse Multi-Task Learning $\texttt{R}$ Package `sMTL` can be downloaded as follows:
+Alternatively, the development version of the Sparse Multi-Task Learning $\texttt{R}$ Package `sMTL` can be downloaded as follows:
 
 ```{R}
 library(devtools)
