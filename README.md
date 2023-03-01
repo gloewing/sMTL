@@ -7,7 +7,7 @@ Repository for the development version of the R Package `sMTL` as well as code t
 
 ## Installation
 
-The `sMTL` $\texttt{CRAN}$ package can be downloaded with the following $\texttt{R}$ command{
+The `sMTL` $\texttt{CRAN}$ package can be downloaded with the following $\texttt{R}$ command:
 
 ```{R}
 install.packages("sMTL")
