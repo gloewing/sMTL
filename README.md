@@ -48,6 +48,6 @@ Hierarchical resampling for bagging in multistudy prediction with applications t
 
 2) Breast Cancer application: https://osf.io/k6ynp/
 
-This data was a pre-processed version of data from:
+This is a pre-processed version of data from:
 
 Katie Planey. (2020). curatedBreastData: Curated breast cancer gene expression data with survival and treatment information R package version 2.18.0.
