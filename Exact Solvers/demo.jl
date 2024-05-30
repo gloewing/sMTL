@@ -1,6 +1,7 @@
 using LinearAlgebra, Distributions, Random, MAT, Pkg, JuMP, TSVD, Gurobi, Dates, MathOptInterface 
 
 include("../Exact Solvers/OA.jl")
+include("../Exact Solvers/smtl_grb.jl")
 
 Pkg.build("RCall")
 using RCall
@@ -13,7 +14,7 @@ Random.seed!(0)
 
 
 
-p = 20 # Number of predictors
+p = 200 # Number of predictors
 rho = 0.4 # Exponential Correlation Sigma_{ij} = rho^|i-j|
 
 vector = 1:p
@@ -26,7 +27,7 @@ dist = MvNormal(Sigma)
 
 s_true = 5 # Number of true nonzeros per task
 K = 5 # Number of tasks
-n = 200 # Number of samples per task
+n = 500 # Number of samples per task
 n_test = n # Number of test samples per task
 q = 1 # Support heterogeneity
 snr = 40 # SNR in dB
@@ -97,14 +98,22 @@ Z_init[idx] = ones(size(Z_init[idx]))
 
 
 # Run the outer approximation solver
-B_OA, GAP, T_OA = OA(y, X, K, s_est, lambda_z, lambda_1, Z_init,  M)
+B_OA, GAP_OA, T_OA = OA(y, X, K, s_est, lambda_z, lambda_1, Z_init,  M)
+
+
+# Run the Gurobi solver
+B_grb, GAP_grb, T_grb = smtl_grb(y, X, K, s_est, lambda_z, lambda_1, M, Z_init)
+
+
 
 # The results
 println("------")
 println("Apprxomate Solver Objective:")
 println(objective(B0, y, X, K, s_est, lambda_z, lambda_1))
-println("Exact Solver Objective:")
+println("Exact OA Solver Objective:")
 println(objective(B_OA, y, X, K, s_est, lambda_z, lambda_1))
+println("Exact Gurobi Solver Objective:")
+println(objective(B_grb, y, X, K, s_est, lambda_z, lambda_1))
 println("------")
 println("Apprxomate Solver Test RMSE:")
 println(test_error(X_test, y_test, B0, K, n_test))
