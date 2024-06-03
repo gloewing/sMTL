@@ -30,9 +30,13 @@ For these steps and a tutorial on package functions, please refer to [sMTL's Vig
 ## Repository Folders
 1) The 'Package' folder has code for the `sMTL` $\texttt{R}$ package that is current under development. This includes $\texttt{Julia}$ code to run algorithms and an $\texttt{R}$ wrapper code to tune and fit these models. This package is still under development and has not been widely tested.
 
-2) The 'sMTL_Paper' folder has code to run analyses and make figures for the manuscript. Some files will require changing path names. Please feel free to reach out to the author for more annotation or help with reproducing any analyses.
+2) The 'sMTL_Paper' folder has code to run analyses and make figures for the original (2022) version of the manuscript. Some files will require changing path names. Please feel free to reach out to the author for more annotation or help with reproducing any analyses.
 
 3) The 'sMTL_paper_Fig1_demo' folder contains code that can be used as a short self-contained demo/introduction to many of the methods proposed in the paper. This code should reproduce Figures 1 and 3 in the manuscript. It includes $\texttt{R}$ code for data simulation, calls the algorithms (through $\texttt{Julia}$) to tune and fit models on the data and then generate figures.
+
+4) The 'sMTL_Paper_2024' folder has code to run analyses and make figures for the updated manuscript (2024). Some files will require changing path names. Please feel free to reach out to the author for more annotation or help with reproducing any analyses.
+
+5) The 'Exact Solvers' folder has the outer approximation (exact solver) code described in the 2024 version of the paper (and used to produce results in Table 3).
 
 <br />
 
