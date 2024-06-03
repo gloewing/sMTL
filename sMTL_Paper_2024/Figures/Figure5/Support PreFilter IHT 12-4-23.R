@@ -8,9 +8,6 @@ full <- subset(full, select=-c(X.2, X.1, X, Channel, pH)) # remove unwanted vari
 
 # select random subset
 set.seed(1)
-# subset_size <- 100
-# idx <- sort(sample(3:ncol(full), subset_size, replace = FALSE))
-# full <- full[,c(1,2,idx)]
 
 juliaPath <- "/Applications/Julia-1.7.app/Contents/Resources/julia/bin"
 juliaFnPath_MT <- juliaFnPath <- "/Users/loewingergc/Desktop/NIMH Research/Sparse Multi-Study/IHT/Tune/"
