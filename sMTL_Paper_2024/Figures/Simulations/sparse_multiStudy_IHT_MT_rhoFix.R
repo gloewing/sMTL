@@ -519,10 +519,6 @@ print(paste0("start: ", iterNum))
                                mix_probs = c(mix_prob, 1 - mix_prob), # mixture probabilities: if NA then no mixture of gaussians
                                mix_mu = c(0, betaVar * mix_sd) # mixture means of mix of gaussians: if NA then no mixture of gaussians -- 2 standard deviations of random effects above 0
                                )
-        
-        # a=read.csv("fscv_density_betas")[,-1]
-        # order(rowMeans(abs(a[-1,])))[1:10]
-        # plot(density(as.numeric(a[519,])))
 
         ### SNR
         #-----------------------------
@@ -1708,7 +1704,6 @@ print(paste0("start: ", iterNum))
                      Lam1_seq=cvfitc$Lam1_seq
         )
         
-        # FIX INDICES
         resMat[iterNum, 109] <-  sum( model$W[-1,] != 0 ) / K # size of xupport
         resMat[iterNum, 110] <- multiTaskRmse_MT(data = mtTest, beta = model$W)
         
@@ -1802,7 +1797,6 @@ print(paste0("start: ", iterNum))
         resMat[iterNum, (curIdx + 5):(curIdx + 8)] <- colMeans(supMat)
         resMat[iterNum, curIdx + 9] <- asparse # alpha
         curIdx <- curIdx + 9 # update
-        # 68-71
         rm(beta_sprgl, lambdaMin, idxMatrix)
         ########################################################
         ########################
